@@ -258,21 +258,29 @@
         </select>
       </div>
       <div class="field">
+          <label>وحدة القياس</label>
+
+          <select id="add-unit" onchange="changeUnitLabels()">
+              <option value="قطعة">قطعة</option>
+              <option value="متر">متر</option>
+          </select>
+      </div>
+      <div class="field">
         <label>اسم الصنف / المواصفة</label>
         <input type="text" id="add-name" placeholder="مثال: سجاد تركي 3×4">
       </div>
       <div class="row2">
         <div class="field">
-          <label>الكمية</label>
-          <input type="number" id="add-qty" placeholder="0" min="1" inputmode="numeric">
+          <label id="qty-label">عدد القطع</label>
+          <input type="number" id="add-qty" min="0" step="1" inputmode="decimal">
         </div>
         <div class="field">
-          <label>سعر البيع (جنيه)</label>
-          <input type="number" id="add-price" placeholder="0" min="0" inputmode="numeric">
+          <label id="price-label">سعر القطعة</label>
+          <input type="number" id="add-price" min="0" step="0.01" inputmode="decimal">
         </div>
       </div>
       <div class="field">
-        <label>الحد الأدنى للتنبيه</label>
+        <label id="min-label">الحد الأدنى (عدد القطع)</label>
         <input type="number" id="add-min" placeholder="2" min="1" inputmode="numeric">
       </div>
       <div class="field">
@@ -293,11 +301,11 @@
       </div>
       <div class="row2">
         <div class="field">
-          <label>الكمية المباعة</label>
+          <label id="sell-qty-label">الكمية</label>
           <input type="number" id="sell-qty" placeholder="1" min="1" inputmode="numeric">
         </div>
         <div class="field">
-          <label>سعر البيع (جنيه)</label>
+          <label id="sell-price-label">سعر البيع (جنيه)</label>
           <input type="number" id="sell-price" placeholder="0" min="0" inputmode="numeric">
         </div>
       </div>
@@ -365,7 +373,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwiIgaYN9x0ZI4WA_JrBrCaj7DekJqi7tQjJsqsrR_FfBjFOC0Oun01IT8yFpmL6c_r_g/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0DP-7SMKiW9r6M5Qdv-GlBTEW8F6YWOtFCkkZHBoTzxqY6sYGadiCxFU_tJDSmOWQQQ/exec';
 
 let items = [];
 let sales = [];
@@ -591,33 +599,87 @@ function renderItems() {
     const imgHtml = item.img
       ? `<img class="item-img" src="${item.img}">`
       : `<div class="item-img-placeholder">${icon}</div>`;
-    const qty = Number(item.qty);
+    const qty = item.unit === "متر"
+    ? Number(item.qty).toFixed(2).replace(/\.00$/, "")
+    : Number(item.qty);
     const min = Number(item.min);
     const badge = qty === 0 ? '<span class="badge badge-out">نفد</span>' : qty <= min ? '<span class="badge badge-low">منخفض</span>' : '<span class="badge badge-ok">متاح</span>';
     return `<div class="item-row">
       ${imgHtml}
       <div class="item-info">
         <div class="item-name">${item.name}</div>
-        <div class="item-meta">${item.type} · ${Number(item.price).toLocaleString()} ج ${badge}</div>
+        <div class="item-meta">
+            ${item.type} ·
+            ${Number(item.price).toLocaleString()} ج / ${item.unit}
+            · ${badge}
+        </div>
       </div>
-      <div class="item-qty"><div class="item-qty-num">${qty}</div><div class="item-qty-lbl">قطعة</div></div>
+      <div class="item-qty"><div class="item-qty-num">${qty}</div><div class="item-qty-lbl">${item.unit}</div></div>
       ${isAdmin ? `<button class="edit-btn" onclick="openEdit(${i})"><i class="ti ti-edit"></i></button><button class="delete-btn" onclick="deleteItem(${i})"><i class="ti ti-trash"></i></button>` : ''}
     </div>`;
   }).join('') + '</div>';
 }
 
 function renderSellSelect() {
-  const s = document.getElementById('sell-item');
-  const available = items.filter(i => Number(i.qty) > 0);
-  s.innerHTML = available.length
-    ? available.map(item => `<option value="${items.indexOf(item)}">${item.name} (${item.qty} قطعة)</option>`).join('')
-    : '<option disabled>لا يوجد أصناف متاحة</option>';
-  updateSellPrice();
+
+    const s = document.getElementById('sell-item');
+
+    const available = items.filter(i => Number(i.qty) > 0);
+
+    if (!available.length) {
+
+        s.innerHTML = '<option>لا يوجد أصناف متاحة</option>';
+        return;
+
+    }
+
+    s.innerHTML = available.map(item => {
+
+        const qty = item.unit === "متر"
+            ? Number(item.qty).toFixed(2).replace(/\.00$/, "")
+            : Number(item.qty);
+
+        return `
+            <option value="${items.indexOf(item)}">
+                ${item.name} (${qty} ${item.unit})
+            </option>
+        `;
+
+    }).join('');
+
+    updateSellPrice();
+
 }
 
 function updateSellPrice() {
-  const idx = parseInt(document.getElementById('sell-item').value);
-  if (!isNaN(idx) && items[idx]) document.getElementById('sell-price').value = items[idx].price;
+
+    const idx = parseInt(document.getElementById('sell-item').value);
+
+    if (isNaN(idx) || !items[idx]) return;
+
+    const item = items[idx];
+
+    document.getElementById('sell-price').value = item.price;
+
+    // تحديث تسمية السعر حسب الوحدة
+    const priceLabel = document.getElementById("sell-price-label");
+    if (priceLabel) {
+        priceLabel.textContent = item.unit === "متر"
+            ? "سعر المتر"
+            : "سعر القطعة";
+    }
+
+    // تحديث تسمية الكمية حسب الوحدة
+    const qtyLabel = document.getElementById("sell-qty-label");
+    if (qtyLabel) {
+        qtyLabel.textContent = item.unit === "متر"
+            ? `الكمية (متر) - المتاح ${item.qty}`
+            : `الكمية (قطعة) - المتاح ${item.qty}`;
+    }
+
+    // السماح بالكسور للمتر فقط
+    const qtyInput = document.getElementById("sell-qty");
+    qtyInput.step = item.unit === "متر" ? "0.01" : "1";
 }
 
 function renderHistory() {
@@ -645,24 +707,33 @@ async function addItem() {
       return;
   }
   const type = document.getElementById('add-type').value;
+  const unit = document.getElementById('add-unit').value;
+  const unitText = unit === "متر" ? "متر" : "قطعة";
   const name = document.getElementById('add-name').value.trim();
-  const qty = parseInt(document.getElementById('add-qty').value) || 0;
+  const qty = unit === "متر"
+    ? (parseFloat(document.getElementById('add-qty').value) || 0)
+    : (parseInt(document.getElementById('add-qty').value) || 0);
   const price = parseInt(document.getElementById('add-price').value) || 0;
-  const min = parseInt(document.getElementById('add-min').value) || 2;
+  const min = unit === "متر"
+    ? (parseFloat(document.getElementById('add-min').value) || 2)
+    : (parseInt(document.getElementById('add-min').value) || 2);
   if (!name) { showToast('❌ ادخل اسم الصنف'); return; }
-  if (qty < 1) { showToast('❌ الكمية لازم 1 على الأقل'); return; }
+  if (unit === "قطعة" && !Number.isInteger(qty)) {
+    showToast("❌ عدد القطع يجب أن يكون رقمًا صحيحًا");
+    return;
+}
   const btn = document.getElementById('btn-add');
   btn.disabled = true;
   const imgData = null;
-  const existing = items.findIndex(i => i.name === name);
+  const existing = items.findIndex(i => i.name === name && i.unit === unit);
   if (existing >= 0) {
     items[existing].qty = Number(items[existing].qty) + qty;
     if (imgData) items[existing].img = imgData;
-    addAuditLog('add', `أضاف ${qty} قطعة لـ "${name}"`);
-    showToast(`✅ تمت إضافة ${qty} قطعة لـ ${name}`);
+    addAuditLog('add', `أضاف ${qty} ${unitText} لـ "${name}"`);
+    showToast(`✅ تمت إضافة ${qty} ${unitText} لـ ${name}`);
   } else {
-    items.push({ type, name, qty, price, min, img: imgData || null });
-    addAuditLog('add', `أضاف صنف جديد: "${name}" (${qty} قطعة)`);
+    items.push({ type, name, unit, qty, price, min, img: imgData || null });
+    addAuditLog('add', `أضاف صنف جديد: "${name}" (${qty} ${unitText})`);
     showToast(`✅ تمت إضافة ${name}`);
   }
   await saveData();
@@ -679,20 +750,52 @@ async function addItem() {
 
 async function sellItem() {
   const idx = parseInt(document.getElementById('sell-item').value);
-  const qty = parseInt(document.getElementById('sell-qty').value) || 1;
-  const price = parseInt(document.getElementById('sell-price').value) || 0;
-  if (isNaN(idx)) { showToast('❌ اختر صنف أولاً'); return; }
-  if (qty > Number(items[idx].qty)) { showToast('❌ الكمية أكبر من المتاح'); return; }
+
+  if (isNaN(idx)) {
+      showToast('❌ اختر صنف أولاً');
+      return;
+  }
+
+  const item = items[idx];
+
+  const qty = item.unit === "متر"
+      ? (parseFloat(document.getElementById('sell-qty').value) || 0)
+      : (parseInt(document.getElementById('sell-qty').value) || 0);
+      if (qty <= 0) {
+          showToast("❌ أدخل كمية صحيحة");
+          return;
+      }
+
+      if (item.unit === "قطعة" && !Number.isInteger(qty)) {
+          showToast("❌ لا يمكن بيع نصف قطعة");
+          return;
+      }
+  const price = parseFloat(document.getElementById('sell-price').value) || 0;
+  if (qty > Number(item.qty)) { showToast('❌ الكمية أكبر من المتاح'); return; }
   const btn = document.getElementById('btn-sell');
   btn.disabled = true;
-  items[idx].qty = Number(items[idx].qty) - qty;
+  item.qty = Number(item.qty) - qty;
   const now = new Date();
   const date = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-  sales.push({ name: items[idx].name, qty, total: qty * price, date });
-  addAuditLog('sell', `باع ${qty} قطعة من "${items[idx].name}" بـ ${(qty*price).toLocaleString()} جنيه`);
+  sales.push({
+    name: item.name,
+    type: item.type,
+    unit: item.unit,
+    qty,
+    unitPrice: price,
+    total: qty * price,
+    date,
+    seller: currentUser.username
+});
+  addAuditLog(
+      'sell',
+      `باع ${qty} ${item.unit} من "${item.name}" بـ ${(qty * price).toLocaleString()} جنيه`
+  );
   await saveData();
   renderStats(); renderSellSelect();
-  showToast(`✅ تم تسجيل بيع ${qty} قطعة بـ ${(qty*price).toLocaleString()} جنيه`);
+  showToast(
+      `✅ تم تسجيل بيع ${qty} ${item.unit} بـ ${(qty * price).toLocaleString()} جنيه`
+  );
   document.getElementById('sell-qty').value = '';
   btn.disabled = false;
 }
@@ -1114,6 +1217,45 @@ async function deleteUser() {
 
 function isAdmin() {
     return currentUser && currentUser.role === "admin";
+}
+
+function changeUnitLabels() {
+
+    const unit = document.getElementById("add-unit").value;
+
+    const qtyLabel = document.getElementById("qty-label");
+    const priceLabel = document.getElementById("price-label");
+    const minLabel = document.getElementById("min-label");
+
+    const qtyInput = document.getElementById("add-qty");
+    const minInput = document.getElementById("add-min");
+
+    if (unit === "قطعة") {
+
+        qtyLabel.textContent = "عدد القطع";
+        priceLabel.textContent = "سعر القطعة";
+        minLabel.textContent = "الحد الأدنى (عدد القطع)";
+
+        qtyInput.step = "1";
+        qtyInput.placeholder = "مثال: 10";
+
+        minInput.step = "1";
+        minInput.placeholder = "2";
+
+    } else {
+
+        qtyLabel.textContent = "عدد الأمتار";
+        priceLabel.textContent = "سعر المتر";
+        minLabel.textContent = "الحد الأدنى (بالمتر)";
+
+        qtyInput.step = "0.01";
+        qtyInput.placeholder = "مثال: 12.50";
+
+        minInput.step = "0.01";
+        minInput.placeholder = "1.50";
+
+    }
+
 }
 
 function logout() {
