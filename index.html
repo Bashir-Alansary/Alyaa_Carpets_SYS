@@ -214,6 +214,9 @@
       <div class="header-title">سجاد علياء</div>
       <div class="header-sub">نظام إدارة المخزون</div>
     </div>
+    <button class="logout-btn" onclick="logout()">
+        🚪 تسجيل خروج
+    </button>
   </div>
 
   <div class="sync-bar">
@@ -362,11 +365,12 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxR3D5BX4XEAmP8HK1mcRPEO43ZuZNJRijVVYLn-wpTDAwQw5mXAgoruI2wuSj-LeNsA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwiIgaYN9x0ZI4WA_JrBrCaj7DekJqi7tQjJsqsrR_FfBjFOC0Oun01IT8yFpmL6c_r_g/exec';
 
 let items = [];
 let sales = [];
 let currentUser = null;
+let editingUserIndex = -1;
 
 function setSyncStatus(status, text) {
   const dot = document.getElementById('sync-dot');
@@ -486,7 +490,7 @@ function renderUsersList(list = users) {
         return;
     }
 
-    list.forEach(user => {
+    list.forEach((user, index) => {
 
         container.innerHTML += `
 
@@ -518,9 +522,23 @@ function renderUsersList(list = users) {
 
                     ${user.username}
 
+                    ${
+                        user.active
+                        ? '<span style="color:green"> ● مفعل</span>'
+                        : '<span style="color:red"> ● معطل</span>'
+                    }
+
                 </div>
 
             </div>
+
+            <button
+                class="edit-btn"
+                onclick="openUserModal(${index})">
+
+                ✏️
+
+            </button>
 
         </div>
 
@@ -988,13 +1006,121 @@ async function addUser() {
 
 }
 
+function openUserModal(index) {
+
+    editingUserIndex = index;
+
+    const user = users[index];
+
+    document.getElementById("edit-user-name").value = user.name;
+    document.getElementById("edit-user-username").value = user.username;
+    document.getElementById("edit-user-password").value = "";
+    document.getElementById("edit-user-role").value = user.role;
+    document.getElementById("edit-user-active").checked = user.active;
+
+    document.getElementById("user-modal").classList.add("open");
+
+}
+
+function closeUserModal() {
+
+    editingUserIndex = -1;
+
+    document.getElementById("user-modal").classList.remove("open");
+
+}
+
+async function saveUser() {
+
+    if (editingUserIndex < 0) return;
+
+    const user = users[editingUserIndex];
+
+    const updatedUser = {
+        name: document.getElementById("edit-user-name").value.trim(),
+        username: document.getElementById("edit-user-username").value.trim(),
+        password: document.getElementById("edit-user-password").value.trim(),
+        role: document.getElementById("edit-user-role").value,
+        active: document.getElementById("edit-user-active").checked
+    };
+
+    const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+            action: "updateUser",
+            oldUsername: user.username,
+            newData: updatedUser
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.status === "ok") {
+
+        // تحديث محلي
+        users[editingUserIndex] = {
+            ...user,
+            ...updatedUser,
+            password: updatedUser.password || user.password
+        };
+
+        renderUsersList();
+        closeUserModal();
+
+        showToast("✅ تم حفظ التعديلات");
+
+    } else {
+
+        showToast("❌ فشل في الحفظ");
+
+    }
+}
+
+async function deleteUser() {
+
+    if (editingUserIndex < 0) return;
+
+    const user = users[editingUserIndex];
+
+    if (!confirm(`هل أنت متأكد من حذف المستخدم: ${user.name} ؟`)) {
+        return;
+    }
+
+    const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+            action: "deleteUser",
+            username: user.username
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.status === "ok") {
+
+        users.splice(editingUserIndex, 1);
+
+        renderUsersList();
+        closeUserModal();
+
+        showToast("🗑️ تم حذف المستخدم");
+
+    } else {
+
+        showToast("❌ فشل الحذف");
+
+    }
+}
+
 function isAdmin() {
     return currentUser && currentUser.role === "admin";
 }
 
-function logout(){
+function logout() {
 
     localStorage.removeItem("currentUser");
+
+    currentUser = null;
 
     location.reload();
 
@@ -1002,5 +1128,65 @@ function logout(){
 
 checkAuth();
 </script>
+
+<div id="user-modal" class="modal-overlay">
+
+    <div class="modal">
+
+        <div class="modal-title">
+
+            تعديل المستخدم
+
+            <button class="modal-close" onclick="closeUserModal()">
+                ×
+            </button>
+
+        </div>
+
+        <div class="field">
+            <label>الاسم</label>
+            <input type="text" id="edit-user-name">
+        </div>
+
+        <div class="field">
+            <label>اسم المستخدم</label>
+            <input type="text" id="edit-user-username">
+        </div>
+
+        <div class="field">
+            <label>كلمة المرور (اختياري)</label>
+            <input type="password" id="edit-user-password" placeholder="اتركه لو مش عايز تغيّره">
+        </div>
+
+        <div class="field">
+            <label>الصلاحية</label>
+            <select id="edit-user-role">
+                <option value="admin">Admin</option>
+                <option value="cashier">Cashier</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>
+                <input type="checkbox" id="edit-user-active">
+                المستخدم مفعل
+            </label>
+        </div>
+
+        <div class="btn-row">
+
+            <button class="btn-primary" onclick="saveUser()">
+                💾 حفظ
+            </button>
+
+            <button class="btn-secondary" onclick="deleteUser()">
+                🗑 حذف
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 </body>
 </html>
