@@ -576,15 +576,63 @@ function switchTab(tab) {
 }
 
 function renderStats() {
-  const totalItems = items.reduce((s,i) => s + Number(i.qty), 0);
-  const totalSales = sales.reduce((s,i) => s + Number(i.total), 0);
-  const lowStock = items.filter(i => Number(i.qty) > 0 && Number(i.qty) <= Number(i.min)).length;
-  const outStock = items.filter(i => Number(i.qty) === 0).length;
-  document.getElementById('stats').innerHTML = `
-    <div class="stat-card"><div class="stat-label">إجمالي المخزون</div><div class="stat-val">${totalItems} <span class="stat-unit">قطعة</span></div></div>
-    <div class="stat-card"><div class="stat-label">إجمالي المبيعات</div><div class="stat-val">${Number(totalSales).toLocaleString()} <span class="stat-unit">ج</span></div></div>
-    <div class="stat-card"><div class="stat-label">أصناف منخفضة</div><div class="stat-val" style="color:#92400e">${lowStock}</div></div>
-    <div class="stat-card"><div class="stat-label">أصناف نفدت</div><div class="stat-val" style="color:#9b1c1c">${outStock}</div></div>`;
+
+    const totalPieces = items
+        .filter(i => (i.unit || "قطعة") === "قطعة")
+        .reduce((s, i) => s + Number(i.qty), 0);
+
+    const totalMeters = items
+        .filter(i => i.unit === "متر")
+        .reduce((s, i) => s + Number(i.qty), 0);
+
+    const totalSales = sales.reduce((s, i) => s + Number(i.total), 0);
+
+    const lowStock = items.filter(i =>
+        Number(i.qty) > 0 &&
+        Number(i.qty) <= Number(i.min)
+    ).length;
+
+    const outStock = items.filter(i =>
+        Number(i.qty) === 0
+    ).length;
+
+    document.getElementById('stats').innerHTML = `
+
+        <div class="stat-card">
+            <div class="stat-label">إجمالي المخزون</div>
+            <div class="stat-val" style="font-size:22px;">
+                📦 ${totalPieces} قطعة
+                <br>
+                <span style="font-size:18px;color:var(--text-muted)">
+                    📏 ${totalMeters.toFixed(2).replace(/\.00$/, "")} متر
+                </span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">إجمالي المبيعات</div>
+            <div class="stat-val">
+                ${Number(totalSales).toLocaleString()}
+                <span class="stat-unit">ج</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">أصناف منخفضة</div>
+            <div class="stat-val" style="color:#92400e">
+                ${lowStock}
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">أصناف نفدت</div>
+            <div class="stat-val" style="color:#9b1c1c">
+                ${outStock}
+            </div>
+        </div>
+
+    `;
+
 }
 
 function renderItems() {
