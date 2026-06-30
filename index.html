@@ -92,6 +92,16 @@
   .history-price { font-size: 15px; font-weight: 700; color: var(--success); white-space: nowrap; margin-right: 8px; }
   .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; line-height: 1.8; }
   .empty-state i { font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.4; }
+
+  .cart-item { background: var(--surface-0); border: 1px solid var(--border); border-radius: 14px; padding: 10px 13px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .cart-item-name { font-size: 13.5px; color: var(--text-primary); font-weight: 600; }
+  .cart-item-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .cart-item-right { display: flex; align-items: center; gap: 10px; }
+  .cart-item-total { font-size: 14px; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+  .cart-item-remove { width: 28px; height: 28px; border-radius: 50%; border: none; background: rgba(232,68,42,0.12); color: var(--red); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; flex-shrink: 0; }
+  .invoice-group { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 13px 15px; box-shadow: var(--shadow); margin-bottom: 0; }
+  .invoice-group-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .invoice-line { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); padding: 3px 0; }
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 11px 22px; border-radius: 22px; font-size: 14px; font-weight: 500; display: none; z-index: 9999; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.2); font-family: inherit; }
   .total-bar { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); border: none; border-radius: 16px; padding: 14px 18px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-lg); }
   .total-bar-label { font-size: 13px; color: rgba(255,255,255,0.75); font-weight: 600; }
@@ -383,6 +393,86 @@
 .search-box input::placeholder {
     color: var(--text-muted);
 }
+
+.invoice-details{
+    display:none;
+    margin-top:10px;
+}
+
+.invoice-details.open{
+    display:block;
+}
+
+.invoice-group-head{
+    cursor:pointer;
+}
+
+.invoice-note{
+    margin-top:12px;
+    padding:10px;
+    background:#f7f7f7;
+    border-radius:8px;
+    font-size:14px;
+}
+
+.filter-buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:15px;
+}
+
+.btn-filter{
+    border:none;
+    background:#f5f7fb;
+    color:#555;
+    padding:10px 18px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .25s ease;
+    box-shadow:0 2px 6px rgba(0,0,0,.05);
+}
+
+.btn-filter:hover{
+    background:#e9eefc;
+    transform:translateY(-1px);
+}
+
+.btn-filter.active{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    box-shadow:0 6px 16px rgba(37,99,235,.30);
+}
+
+.btn-filter:active{
+    transform:scale(.97);
+}
+
+.history-actions{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:20px;
+    flex-wrap:wrap;
+}
+
+.btn-danger-outline{
+    background:#fff;
+    color:#dc2626;
+    border:1px solid #dc2626;
+    border-radius:12px;
+    padding:10px 18px;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.btn-danger-outline:hover{
+    background:#dc2626;
+    color:#fff;
+}
+
 </style>
 </head>
 <body>
@@ -450,11 +540,13 @@
     <div class="tab active" onclick="switchTab('inventory')"><i class="ti ti-package"></i>المخزون</div>
     <div class="tab admin-only" onclick="switchTab('add')"><i class="ti ti-plus"></i>إضافة</div>
     <div class="tab" onclick="switchTab('sell')"><i class="ti ti-shopping-cart"></i>بيع</div>
-    <div class="tab" onclick="switchTab('history')"><i class="ti ti-history"></i>سجل</div>
+    <div class="tab" onclick="switchTab('history')"><i class="ti ti-history"></i>الفواتير</div>
     <div class="tab admin-only" onclick="switchTab('reports')"><i class="ti ti-chart-bar"></i>تقارير</div>
     <div class="tab admin-only" onclick="switchTab('users')"><i class="ti ti-users"></i>موظفين</div>
-    <div class="tab admin-only" onclick="switchTab('audit')"><i class="ti ti-clipboard-list"></i>سجل</div>
-  </div>
+    <div class="tab admin-only" onclick="switchTab('settings')">
+        <i class="ti ti-settings"></i>الإعدادات
+    </div>
+</div>
 
   <div id="tab-inventory">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
@@ -544,19 +636,156 @@
           <input type="number" id="sell-price" placeholder="0" min="0" inputmode="numeric">
         </div>
       </div>
-      <button class="btn-primary" id="btn-sell" onclick="sellItem()"><i class="ti ti-shopping-cart"></i> تسجيل البيع</button>
+      <button class="btn-primary" id="btn-add-cart" onclick="addToCart()" style="background:linear-gradient(135deg,#1f7a4d,#2fa86a)"><i class="ti ti-playlist-add"></i> أضف للفاتورة</button>
+    </div>
+
+    <div class="form-card" id="cart-card" style="display:none">
+      <div class="field" style="margin-bottom:10px">
+        <label style="margin-bottom:8px">عناصر الفاتورة الحالية</label>
+        <div id="cart-list"></div>
+      </div>
+      <div class="total-bar" style="margin-bottom:10px">
+        <div class="total-bar-label">إجمالي الفاتورة</div>
+        <div class="total-bar-val" id="cart-total-val">0 جنيه</div>
+      </div>
+      <div class="field" style="margin-top:15px;">
+        <details>
+            <summary style="cursor:pointer;font-weight:600;">
+                📝 ملاحظات (اختياري)
+            </summary>
+
+            <textarea
+                id="invoice-note"
+                rows="3"
+                placeholder="اكتب أي ملاحظة خاصة بهذه الفاتورة..."
+                style="margin-top:10px;"></textarea>
+        </details>
+    </div>
+      <button class="btn-primary" id="btn-sell" onclick="finalizeSale()"><i class="ti ti-shopping-cart"></i> تسجيل البيع وإغلاق الفاتورة</button>
     </div>
   </div>
 
-  <div id="tab-history" style="display:none">
-    <div class="total-bar">
-      <div class="total-bar-label">إجمالي المبيعات</div>
-      <div class="total-bar-val" id="total-sales-val">0 جنيه</div>
+    <div id="tab-history" style="display:none">
+
+    <div class="form-card">
+
+        <div class="field">
+            <label>بحث</label>
+            <input
+                type="text"
+                id="history-search"
+                placeholder="رقم الفاتورة - الصنف - البائع..."
+                oninput="renderHistory()">
+        </div>
+
+        <div class="filter-buttons">
+
+            <button class="btn-filter active"
+                onclick="setHistoryFilter('today',this)">
+                اليوم
+            </button>
+
+            <button class="btn-filter"
+                onclick="setHistoryFilter('week',this)">
+                الأسبوع
+            </button>
+
+            <button class="btn-filter"
+                onclick="setHistoryFilter('month',this)">
+                الشهر
+            </button>
+
+            <button class="btn-filter"
+                onclick="setHistoryFilter('all',this)">
+                الكل
+            </button>
+
+            <button class="btn-filter"
+                onclick="toggleCustomDate()">
+                فترة مخصصة
+            </button>
+
+        </div>
+
+        <div id="custom-date-filter" style="display:none;margin-top:15px;">
+
+            <div class="row2">
+
+                <div class="field">
+                    <label>من</label>
+                    <input
+                        type="date"
+                        id="history-from">
+                </div>
+
+                <div class="field">
+                    <label>إلى</label>
+                    <input
+                        type="date"
+                        id="history-to">
+                </div>
+
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+                <button
+                    class="btn-primary"
+                    onclick="applyCustomHistoryFilter()">
+
+                    تطبيق
+
+                </button>
+
+                <button
+                    class="btn-secondary"
+                    onclick="resetHistoryFilter()">
+
+                    إعادة تعيين
+
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
-    <div class="section-title">آخر العمليات</div>
-    <div class="history-list" id="history-list"></div>
-    <button class="btn-clear" onclick="clearSales()"><i class="ti ti-trash"></i> مسح كل سجل المبيعات</button>
-  </div>
+
+    <div class="section-title">
+        🧾 الفواتير
+    </div>
+
+    <div
+        id="history-list"
+        class="history-list">
+
+    </div>
+
+    <div class="history-actions">
+
+    <button
+        class="btn-primary admin-only"
+        onclick="exportSales()">
+
+        <i class="ti ti-download"></i>
+
+        تنزيل نسخة
+
+    </button>
+
+    <button
+        class="btn-danger-outline admin-only"
+        onclick="clearSales()">
+
+        <i class="ti ti-trash"></i>
+
+        حذف جميع الفواتير
+
+    </button>
+
+</div>
+
+</div>
 
   <div id="tab-reports" style="display:none">
     <div class="report-filter">
@@ -568,12 +797,6 @@
     <div class="stats" id="report-stats"></div>
     <div class="section-title" id="report-top-title">الأكثر مبيعاً</div>
     <div id="report-top-list"></div>
-  </div>
-
-  <!-- AUDIT TAB -->
-  <div id="tab-audit" style="display:none">
-    <div class="section-title">سجل العمليات</div>
-    <div id="audit-list"></div>
   </div>
 
   <!-- USERS TAB -->
@@ -608,7 +831,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDaJgGZ5g0VPiB767c75yhuDBdpaBMrXyCMcS1cwexzj276wDwSgMLfR7OPsBwm3QMtA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwyIPSKRCQ-6fKs99kNIV9tFoBx7q3pTIqKGn3Kc_i_f57_8Mc-wadf2ujycBqIUzvviw/exec';
 
 let items = [];
 let sales = [];
@@ -616,6 +839,9 @@ let types = [];
 let currentUser = null;
 let editingUserIndex = -1;
 let itemSearch = "";
+let visibleInvoices = 5;
+let historyFilter = "all";
+let customHistoryFilter = false;
 
 function setSyncStatus(status, text) {
   const dot = document.getElementById('sync-dot');
@@ -811,7 +1037,6 @@ function switchTab(tab) {
   if (tab === 'inventory') renderItems();
   if (tab === 'reports') renderReports();
   if (tab === 'users') loadUsers();
-  // if (tab === 'audit') renderAuditLog();
 }
 
 function renderStats() {
@@ -1075,23 +1300,318 @@ function updateSellPrice() {
     qtyInput.step = item.unit === "متر" ? "0.01" : "1";
 }
 
-function renderHistory() {
-  const el = document.getElementById('history-list');
-  const total = sales.reduce((s,i) => s + Number(i.total), 0);
-  document.getElementById('total-sales-val').textContent = total.toLocaleString() + ' جنيه';
-  if (!sales.length) {
-    el.innerHTML = '<div class="empty-state"><i class="ti ti-receipt"></i>لا توجد مبيعات بعد</div>';
-    return;
-  }
-  el.innerHTML = [...sales].reverse().slice(0, 30).map(s => `
-    <div class="history-item">
-      <div><div class="history-name">${s.name}</div><div class="history-meta">${s.qty} قطعة · ${s.date}</div></div>
-      <div class="history-price">+${Number(s.total).toLocaleString()} ج</div>
-    </div>`).join('');
+function setHistoryFilter(filter, btn) {
+
+    historyFilter = filter;
+    customHistoryFilter = false;
+    visibleInvoices = 5;
+
+    document
+        .querySelectorAll(".btn-filter")
+        .forEach(b => b.classList.remove("active"));
+
+    if (btn)
+        btn.classList.add("active");
+
+    const custom = document.getElementById("custom-date-filter");
+    if (custom)
+        custom.style.display = "none";
+
+    renderHistory();
 }
 
-function addAuditLog(action, message) {
-    console.log(`[${action}] ${message}`);
+function toggleCustomDate() {
+
+    customHistoryFilter = true;
+
+    const div = document.getElementById("custom-date-filter");
+
+    div.style.display =
+        div.style.display === "none"
+        ? "block"
+        : "none";
+
+}
+
+function applyCustomHistoryFilter() {
+
+    visibleInvoices = 5;
+
+    renderHistory();
+
+}
+
+function resetHistoryFilter() {
+
+    historyFilter = "all";
+
+    customHistoryFilter = false;
+
+    visibleInvoices = 5;
+
+    document.getElementById("history-search").value = "";
+
+    document.getElementById("history-from").value = "";
+
+    document.getElementById("history-to").value = "";
+
+    document.getElementById("custom-date-filter").style.display = "none";
+
+    renderHistory();
+
+}
+
+function showMoreInvoices(){
+
+    visibleInvoices += 5;
+
+    renderHistory();
+
+}
+
+function renderHistory() {
+
+    const el = document.getElementById("history-list");
+
+    if (!sales.length) {
+        el.innerHTML = "لا توجد فواتير بعد";
+        return;
+    }
+
+    let filteredSales = [...sales];
+
+    // =========================
+    // البحث
+    // =========================
+
+    const search = (
+        document.getElementById("history-search")?.value || ""
+    ).trim().toLowerCase();
+
+    if (search) {
+
+        filteredSales = filteredSales.filter(s =>
+
+            (s.invoiceId || "").toLowerCase().includes(search) ||
+
+            (s.name || "").toLowerCase().includes(search) ||
+
+            (s.seller || "").toLowerCase().includes(search)
+
+        );
+
+    }
+
+    // =========================
+    // الفلاتر
+    // =========================
+
+    const now = new Date();
+
+    filteredSales = filteredSales.filter(s => {
+
+        if (!s.date) return false;
+
+        const d = new Date(s.date);
+
+        if (customHistoryFilter) {
+
+            const from = document.getElementById("history-from").value;
+            const to = document.getElementById("history-to").value;
+
+            if (from && d < new Date(from))
+                return false;
+
+            if (to) {
+
+                const end = new Date(to);
+                end.setHours(23,59,59,999);
+
+                if (d > end)
+                    return false;
+
+            }
+
+            return true;
+
+        }
+
+        switch(historyFilter){
+
+        case "today":
+
+            return (
+                d.getDate() === now.getDate() &&
+                d.getMonth() === now.getMonth() &&
+                d.getFullYear() === now.getFullYear()
+            );
+
+        case "week":{
+
+            const first = new Date(now);
+            first.setDate(now.getDate() - 7);
+
+            return d >= first;
+
+        }
+
+        case "month":
+
+            return (
+                d.getMonth() === now.getMonth() &&
+                d.getFullYear() === now.getFullYear()
+            );
+
+        default:
+
+            return true;
+    }
+
+    });
+
+    // =========================
+    // تجميع الفواتير
+    // =========================
+
+    const invoices = [];
+    const map = {};
+
+    filteredSales.forEach((s,i)=>{
+
+        const key = s.invoiceId || ("legacy-"+i);
+
+        if(!map[key]){
+
+            map[key]={
+                invoiceId:key,
+                date:s.date,
+                seller:s.seller,
+                note:s.note || "",
+                total:0,
+                items:[]
+            };
+
+            invoices.push(map[key]);
+
+        }
+
+        map[key].items.push(s);
+
+        map[key].total += Number(s.total);
+
+    });
+
+    invoices.reverse();
+
+    const visible = invoices.slice(0,visibleInvoices);
+
+    if(!visible.length){
+
+        el.innerHTML="لا توجد نتائج";
+
+        return;
+
+    }
+
+    el.innerHTML = visible.map(inv=>{
+
+        const rows = inv.items.map(it=>`
+
+            <div class="invoice-line">
+
+                <span>
+
+                    ${it.name}
+
+                    (${it.qty} ${it.unit})
+
+                </span>
+
+                <span>
+
+                    ${Number(it.total).toLocaleString()} ج
+
+                </span>
+
+            </div>
+
+        `).join("");
+
+        return `
+
+        <div class="invoice-group">
+
+            <div
+                class="invoice-group-head"
+                onclick="this.nextElementSibling.classList.toggle('open')">
+
+                <div>
+
+                    <div class="history-name">
+
+                        🧾 ${inv.invoiceId}
+
+                    </div>
+
+                    <div class="history-meta">
+
+                        ${inv.date}
+
+                        ${inv.seller ? " • "+inv.seller : ""}
+
+                    </div>
+
+                </div>
+
+                <div class="history-price">
+
+                    ${inv.total.toLocaleString()} ج
+
+                </div>
+
+            </div>
+
+            <div class="invoice-details">
+
+                ${rows}
+
+                ${
+                    inv.note
+                    ?
+                    `<div class="invoice-note">
+
+                        📝 ${inv.note}
+
+                    </div>`
+                    :
+                    ""
+                }
+
+            </div>
+
+        </div>
+
+        `;
+
+    }).join("");
+
+    if(visibleInvoices < invoices.length){
+
+        el.innerHTML += `
+
+            <button
+                class="btn-secondary"
+                style="width:100%;margin-top:15px"
+                onclick="showMoreInvoices()">
+
+                عرض المزيد
+
+            </button>
+
+        `;
+
+    }
+
 }
 
 async function addItem() {
@@ -1122,11 +1642,9 @@ async function addItem() {
   if (existing >= 0) {
     items[existing].qty = Number(items[existing].qty) + qty;
     if (imgData) items[existing].img = imgData;
-    addAuditLog('add', `أضاف ${qty} ${unitText} لـ "${name}"`);
     showToast(`✅ تمت إضافة ${qty} ${unitText} لـ ${name}`);
   } else {
     items.push({ type, name, unit, qty, price, min, img: imgData || null });
-    addAuditLog('add', `أضاف صنف جديد: "${name}" (${qty} ${unitText})`);
     showToast(`✅ تمت إضافة ${name}`);
   }
   await saveData();
@@ -1141,10 +1659,12 @@ async function addItem() {
   btn.disabled = false;
 }
 
-async function sellItem() {
+let sellCart = [];
+
+function addToCart() {
   const idx = parseInt(document.getElementById('sell-item').value);
 
-  if (isNaN(idx)) {
+  if (isNaN(idx) || !items[idx]) {
       showToast('❌ اختر صنف أولاً');
       return;
   }
@@ -1154,41 +1674,134 @@ async function sellItem() {
   const qty = item.unit === "متر"
       ? (parseFloat(document.getElementById('sell-qty').value) || 0)
       : (parseInt(document.getElementById('sell-qty').value) || 0);
-      if (qty <= 0) {
-          showToast("❌ أدخل كمية صحيحة");
-          return;
-      }
 
-      if (item.unit === "قطعة" && !Number.isInteger(qty)) {
-          showToast("❌ لا يمكن بيع نصف قطعة");
-          return;
-      }
+  if (qty <= 0) {
+      showToast("❌ أدخل كمية صحيحة");
+      return;
+  }
+
+  if (item.unit === "قطعة" && !Number.isInteger(qty)) {
+      showToast("❌ لا يمكن بيع نصف قطعة");
+      return;
+  }
+
   const price = parseFloat(document.getElementById('sell-price').value) || 0;
-  if (qty > Number(item.qty)) { showToast('❌ الكمية أكبر من المتاح'); return; }
+
+  // الكمية المتاحة بعد خصم ما هو موجود بالفعل في الفاتورة الحالية لنفس الصنف
+  const alreadyInCart = sellCart
+      .filter(c => c.itemIndex === idx)
+      .reduce((s, c) => s + Number(c.qty), 0);
+
+  if (qty + alreadyInCart > Number(item.qty)) {
+      showToast('❌ الكمية أكبر من المتاح في المخزون');
+      return;
+  }
+
+  sellCart.push({
+      itemIndex: idx,
+      name: item.name,
+      type: item.type,
+      unit: item.unit,
+      qty,
+      price,
+      total: qty * price
+  });
+
+  showToast(`✅ تمت إضافة ${item.name} للفاتورة`);
+  document.getElementById('sell-qty').value = '';
+  renderCart();
+}
+
+function removeFromCart(i) {
+  sellCart.splice(i, 1);
+  renderCart();
+}
+
+function renderCart() {
+  const card = document.getElementById('cart-card');
+  const list = document.getElementById('cart-list');
+
+  if (!sellCart.length) {
+      card.style.display = 'none';
+      list.innerHTML = '';
+      return;
+  }
+
+  card.style.display = '';
+
+  list.innerHTML = sellCart.map((c, i) => `
+    <div class="cart-item">
+      <div>
+        <div class="cart-item-name">${c.name}</div>
+        <div class="cart-item-meta">${c.qty} ${c.unit} × ${c.price.toLocaleString()} ج</div>
+      </div>
+      <div class="cart-item-right">
+        <div class="cart-item-total">${c.total.toLocaleString()} ج</div>
+        <button class="cart-item-remove" onclick="removeFromCart(${i})"><i class="ti ti-x"></i></button>
+      </div>
+    </div>
+  `).join('');
+
+  const total = sellCart.reduce((s, c) => s + c.total, 0);
+  document.getElementById('cart-total-val').textContent = total.toLocaleString() + ' جنيه';
+}
+
+async function finalizeSale() {
+  if (!sellCart.length) {
+      showToast('❌ الفاتورة فارغة');
+      return;
+  }
+
   const btn = document.getElementById('btn-sell');
   btn.disabled = true;
-  item.qty = Number(item.qty) - qty;
+
+  // التأكد إن الكميات لسه متاحة قبل التنفيذ النهائي (حماية من تغييرات لحظية)
+  for (const c of sellCart) {
+      const stockItem = items[c.itemIndex];
+      const sameItemQtyInCart = sellCart
+          .filter(x => x.itemIndex === c.itemIndex)
+          .reduce((s, x) => s + Number(x.qty), 0);
+      if (!stockItem || sameItemQtyInCart > Number(stockItem.qty)) {
+          showToast(`❌ الكمية المتاحة من "${c.name}" تغيرت، راجع الفاتورة`);
+          btn.disabled = false;
+          return;
+      }
+  }
+
   const now = new Date();
   const date = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-  sales.push({
-    name: item.name,
-    type: item.type,
-    unit: item.unit,
-    qty,
-    unitPrice: price,
-    total: qty * price,
-    date,
-    seller: currentUser.username
-});
-  addAuditLog(
-      'sell',
-      `باع ${qty} ${item.unit} من "${item.name}" بـ ${(qty * price).toLocaleString()} جنيه`
-  );
+  const invoiceId = `INV-${now.getTime()}`;
+  const invoiceNote = document.getElementById('invoice-note').value.trim();
+
+  let invoiceTotal = 0;
+  const itemsSummary = [];
+
+  sellCart.forEach(c => {
+      const stockItem = items[c.itemIndex];
+      stockItem.qty = Number(stockItem.qty) - c.qty;
+      sales.push({
+        invoiceId,
+        name: c.name,
+        type: c.type,
+        unit: c.unit,
+        qty: c.qty,
+        unitPrice: c.price,
+        total: c.total,
+        date,
+        seller: currentUser.username,
+        note: invoiceNote
+    });
+      invoiceTotal += c.total;
+      itemsSummary.push(`${c.qty} ${c.unit} ${c.name}`);
+  });
+
   await saveData();
   renderStats(); renderSellSelect();
-  showToast(
-      `✅ تم تسجيل بيع ${qty} ${item.unit} بـ ${(qty * price).toLocaleString()} جنيه`
-  );
+  showToast(`✅ تم تسجيل الفاتورة بإجمالي ${invoiceTotal.toLocaleString()} جنيه`);
+
+  sellCart = [];
+  renderCart();
+  document.getElementById('invoice-note').value = '';
   document.getElementById('sell-qty').value = '';
   btn.disabled = false;
 }
@@ -1201,8 +1814,6 @@ async function deleteItem(i) {
     }
 
     if (confirm(`هتحذف "${items[i].name}"؟`)) {
-
-        addAuditLog('delete', `حذف صنف: "${items[i].name}"`);
 
         items.splice(i, 1);
 
@@ -1329,7 +1940,6 @@ async function saveEdit() {
     price: parseInt(document.getElementById('edit-price').value) || 0,
     min: parseInt(document.getElementById('edit-min').value) || 2,
   };
-  addAuditLog('edit', `عدّل صنف: "${items[editIndex].name}"`);
   await saveData();
   renderStats(); renderItems(); checkLowStock();
   closeEdit();
@@ -1866,6 +2476,91 @@ function logout() {
     currentUser = null;
 
     location.reload();
+
+}
+
+function downloadBackup() {
+
+    showToast("🚧 سيتم تنفيذ النسخة الاحتياطية في الخطوة القادمة");
+
+}
+
+function deleteAllSales() {
+
+    showToast("🚧 سنضيف نظام التأكيد أولاً");
+
+}
+
+function exportSales() {
+
+    if (!sales.length) {
+        showToast("❌ لا توجد فواتير للتصدير");
+        return;
+    }
+
+    const rows = [];
+
+    rows.push([
+        "رقم الفاتورة",
+        "التاريخ",
+        "البائع",
+        "الصنف",
+        "النوع",
+        "الوحدة",
+        "الكمية",
+        "سعر الوحدة",
+        "الإجمالي",
+        "ملاحظات"
+    ]);
+
+    sales.forEach(s => {
+
+        rows.push([
+            s.invoiceId || "",
+            s.date || "",
+            s.seller || "",
+            s.name || "",
+            s.type || "",
+            s.unit || "",
+            s.qty || 0,
+            s.unitPrice || 0,
+            s.total || 0,
+            s.note || ""
+        ]);
+
+    });
+
+    const csv = rows
+        .map(r =>
+            r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")
+        )
+        .join("\n");
+
+    const blob = new Blob(
+        ["\uFEFF" + csv],
+        { type: "text/csv;charset=utf-8;" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+        "فواتير_" +
+        new Date().toISOString().slice(0,10) +
+        ".csv";
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+
+    showToast("✅ تم تصدير الفواتير");
 
 }
 
