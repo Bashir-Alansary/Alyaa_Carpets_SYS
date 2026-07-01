@@ -1982,6 +1982,9 @@ function renderItems() {
             style="${isOpen ? "" : "display:none"}">
         `;
 
+        grouped[type].sort((a, b) =>
+            a.name.localeCompare(b.name, "ar")
+        );
         grouped[type].forEach(item => {
 
             const index = items.indexOf(item);
