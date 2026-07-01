@@ -377,13 +377,11 @@
 
     padding:14px 18px;
 
-    margin-top:18px;
+    margin:18px 0 10px;
 
-    margin-bottom:8px;
+    background:linear-gradient(135deg,#374151,#4B5563);
 
-    background:#eef4ff;
-
-    border:1px solid #dbe7ff;
+    color:#fff;
 
     border-radius:14px;
 
@@ -391,19 +389,46 @@
 
     transition:.25s;
 
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+
 }
 
 .type-header:hover{
 
-    background:#e4efff;
+    transform:translateY(-1px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
 
 }
 
 .type-count{
-    color:gray;
-    font-size:14px;
-    margin-right:8px;
+
+    background:rgba(255,255,255,.18);
+
+    color:#fff;
+
+    padding:4px 10px;
+
+    border-radius:999px;
+
+    font-size:12px;
+
+    font-weight:600;
+
 }
+
+.type-arrow{
+
+    color:#fff;
+
+    font-size:15px;
+
+    width:20px;
+
+    text-align:center;
+
+}
+
 
 .type-actions{
     display:flex;
@@ -1958,7 +1983,7 @@ function renderItems() {
                         class="type-edit-btn"
                         onclick="editType('${type.replace(/'/g,"\\'")}')">
 
-                        <i class="ti ti-edit"></i>
+                        <i class="ti ti-pencil"></i>
 
                     </button>
 
@@ -1989,8 +2014,8 @@ function renderItems() {
             const index = items.indexOf(item);
 
             const imgHtml = item.img
-                ? `<img class="item-img" src="${item.img}">`
-                : `<div class="item-img-placeholder">${icon}</div>`;
+            ? `<img class="item-img" src="${item.img}">`
+            : `<div class="item-icon">${icon}</div>`;
 
             const qty = item.unit === "متر"
                 ? Number(item.qty).toFixed(2).replace(/\.00$/, "")
@@ -2036,7 +2061,7 @@ function renderItems() {
 
                     ${
                         isAdmin
-                        ? `<button class="edit-btn" onclick="openEdit(${index})"><i class="ti ti-edit"></i></button>
+                        ? `<button class="edit-btn" onclick="openEdit(${index})"><i class="ti ti-pencil"></i></button>
                            <button class="delete-btn" onclick="deleteItem(${index})"><i class="ti ti-trash"></i></button>`
                         : ""
                     }
