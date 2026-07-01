@@ -71,14 +71,69 @@
   .btn-primary:active { opacity: 0.85; }
   .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
   .item-list { display: flex; flex-direction: column; gap: 8px; }
-  .item-row { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 13px; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow); margin-bottom: 2px; }
+.item-row{
+
+    background:var(--surface-2);
+
+    border:1px solid var(--border);
+
+    border-radius:14px;
+
+    padding:10px 14px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:8px;
+
+    transition:.2s;
+
+}
+
+.item-row:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+
+}
   .item-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; background: linear-gradient(135deg, #f0f4f8, #e2eaf2); }
   .item-info { flex: 1; min-width: 0; }
-  .item-name { font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .item-meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .item-qty { text-align: center; min-width: 44px; }
-  .item-qty-num { font-size: 20px; font-weight: 700; color: var(--text-primary); }
-  .item-qty-lbl { font-size: 11px; color: var(--text-muted); }
+.item-name{
+
+    font-size:15px;
+
+    font-weight:700;
+
+    color:var(--text-primary);
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+}
+.item-meta{
+
+    margin-top:6px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+
+    font-size:12px;
+
+    color:var(--text-muted);
+
+} 
   .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
   .badge-ok { background: var(--success-bg); color: var(--success); }
   .badge-low { background: var(--warning-bg); color: var(--warning); }
@@ -313,16 +368,35 @@
   .btn-clear { width: 100%; padding: 11px; background: none; color: var(--danger); border: 1px solid #fca5a5; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .btn-clear:active { background: var(--danger-bg); }
   .type-header{
-    margin:20px 0 10px;
-    padding:10px 14px;
-    font-weight:700;
-    font-size:18px;
-    border-right:4px solid var(--primary);
-    background:var(--surface-2);
-    border-radius:12px;
+
     display:flex;
-    align-items:center;
+
     justify-content:space-between;
+
+    align-items:center;
+
+    padding:14px 18px;
+
+    margin-top:18px;
+
+    margin-bottom:8px;
+
+    background:#eef4ff;
+
+    border:1px solid #dbe7ff;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.type-header:hover{
+
+    background:#e4efff;
+
 }
 
 .type-count{
@@ -967,9 +1041,6 @@
     <div class="tab" onclick="switchTab('history')"><i class="ti ti-history"></i>الفواتير</div>
     <div class="tab admin-only" onclick="switchTab('reports')"><i class="ti ti-chart-bar"></i>تقارير</div>
     <div class="tab admin-only" onclick="switchTab('users')"><i class="ti ti-users"></i>موظفين</div>
-    <div class="tab admin-only" onclick="switchTab('settings')">
-        <i class="ti ti-settings"></i>الإعدادات
-    </div>
 </div>
 
   <div id="tab-inventory">
@@ -1126,7 +1197,7 @@
 
             <button class="btn-filter"
                 onclick="toggleCustomDate()">
-                فترة مخصصة
+                فترة
             </button>
 
         </div>
@@ -1244,7 +1315,7 @@
 
             <button class="btn-filter"
                 onclick="toggleReportCustomDate()">
-                فترة مخصصة
+                فترة
             </button>
 
         </div>
@@ -1847,23 +1918,68 @@ function renderItems() {
         grouped[item.type].push(item);
     });
 
+    const openedTypes = window.openedTypes || {};
+    window.openedTypes = openedTypes;
     let html = "";
 
     Object.keys(grouped).forEach(type => {
 
         const icon = type === "سجاد" ? "🟫" : "🟨";
 
+        const isOpen = openedTypes[type] !== false;
+
         html += `
-            <div class="type-header">
-                <span>${icon} ${type}
-                <span class="type-count">(${grouped[type].length})</span></span>
-                ${isAdmin ? `<span class="type-actions">
-                    <button class="type-edit-btn" onclick="editType('${type.replace(/'/g, "\\'")}')"><i class="ti ti-edit"></i></button>
-                    <button class="type-delete-btn" onclick="deleteTypeConfirm('${type.replace(/'/g, "\\'")}')"><i class="ti ti-trash"></i></button>
-                </span>` : ''}
+        <div class="type-header"
+            onclick="toggleType('${type.replace(/'/g,"\\'")}')">
+
+            <div class="type-left">
+
+                <span class="type-arrow">
+                    ${isOpen ? "▼" : "▶"}
+                </span>
+
+                <span class="type-title">
+
+                    ${icon} ${type}
+
+                    <span class="type-count">
+                        ${grouped[type].length}
+                    </span>
+
+                </span>
+
             </div>
 
-            <div class="item-list">
+            ${
+                isAdmin
+                ?
+                `<span class="type-actions" onclick="event.stopPropagation()">
+
+                    <button
+                        class="type-edit-btn"
+                        onclick="editType('${type.replace(/'/g,"\\'")}')">
+
+                        <i class="ti ti-edit"></i>
+
+                    </button>
+
+                    <button
+                        class="type-delete-btn"
+                        onclick="deleteTypeConfirm('${type.replace(/'/g,"\\'")}')">
+
+                        <i class="ti ti-trash"></i>
+
+                    </button>
+
+                </span>`
+                :
+                ""
+            }
+
+        </div>
+
+        <div class="item-list"
+            style="${isOpen ? "" : "display:none"}">
         `;
 
         grouped[type].forEach(item => {
@@ -1894,25 +2010,25 @@ function renderItems() {
 
                     <div class="item-info">
 
-                        <div class="item-name">${item.name}</div>
+                        <div class="item-name">
+
+                            ${item.name}
+
+                        </div>
 
                         <div class="item-meta">
 
-                            ${Number(item.price).toLocaleString()} ج / ${item.unit}
+                            <span>📦 ${qty} ${item.unit}</span>
 
-                            ·
+                            <span>•</span>
+
+                            <span>💰 ${Number(item.price).toLocaleString()} ج/${item.unit}</span>
+
+                            <span>•</span>
 
                             ${badge}
 
                         </div>
-
-                    </div>
-
-                    <div class="item-qty">
-
-                        <div class="item-qty-num">${qty}</div>
-
-                        <div class="item-qty-lbl">${item.unit}</div>
 
                     </div>
 
@@ -3714,6 +3830,15 @@ function renderTypesManager() {
         `;
 
     });
+
+}
+
+function toggleType(type){
+
+    window.openedTypes[type] =
+        !(window.openedTypes[type] !== false);
+
+    renderItems();
 
 }
 
