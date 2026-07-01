@@ -426,9 +426,9 @@
     border:none;
     background:#f5f7fb;
     color:#555;
-    padding:10px 18px;
+    padding:6px 14px;
     border-radius:999px;
-    font-size:14px;
+    font-size:13px;
     font-weight:600;
     cursor:pointer;
     transition:all .25s ease;
@@ -471,6 +471,430 @@
 .btn-danger-outline:hover{
     background:#dc2626;
     color:#fff;
+}
+
+/* ===========================
+   Reports
+=========================== */
+
+.report-cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,minmax(0,1fr));
+
+    gap:15px;
+
+    margin-bottom:20px;
+
+}
+
+.report-card{
+
+    background:#fff;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+
+    text-align:center;
+
+    transition:.25s;
+
+}
+
+.report-card:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.report-card-title{
+
+    color:#777;
+
+    font-size:14px;
+
+    margin-bottom:10px;
+
+}
+
+.report-card-value{
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    color:var(--primary);
+
+}
+
+.report-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,minmax(0,1fr));
+
+    gap:15px;
+
+    margin-bottom:20px;
+
+}
+
+.report-section{
+
+    background:#fff;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+
+    margin-bottom:20px;
+
+}
+
+.report-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.report-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.report-item-name{
+
+    font-weight:600;
+
+}
+
+.report-item-value{
+
+    color:var(--primary);
+
+    font-weight:bold;
+
+}
+
+.report-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.report-table th{
+
+    background:#f7f7f7;
+
+    padding:12px;
+
+    text-align:center;
+
+    font-weight:bold;
+
+}
+
+.report-table td{
+
+    padding:12px;
+
+    border-top:1px solid #eee;
+
+    text-align:center;
+
+}
+
+.report-table tr:hover{
+
+    background:#fafafa;
+
+}
+
+.report-buttons{
+
+    display:flex;
+
+    gap:12px;
+
+    margin-top:20px;
+
+    flex-wrap:wrap;
+
+}
+
+.report-buttons button{
+
+    flex:1;
+
+    min-width:180px;
+
+}
+
+.report-empty{
+
+    color:#999;
+
+    text-align:center;
+
+    padding:20px;
+
+}
+
+.report-danger{
+
+    color:#dc2626;
+
+    font-weight:bold;
+
+}
+
+.report-warning{
+
+    color:#f59e0b;
+
+    font-weight:bold;
+
+}
+
+.report-success{
+
+    color:#16a34a;
+
+    font-weight:bold;
+
+}
+
+@media(max-width:768px){
+
+    .report-cards{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .report-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .report-buttons{
+
+        flex-direction:column;
+
+    }
+
+}
+
+.report-clickable{
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.report-clickable:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
+
+}
+
+.report-card-subtitle{
+
+    margin-top:8px;
+
+    color:#888;
+
+    font-size:14px;
+
+}
+
+.report-card-link{
+
+    margin-top:15px;
+
+    color:var(--primary);
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:6px;
+
+}
+
+.stock-alert-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:14px 0;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.stock-alert-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.stock-alert-name{
+
+    font-weight:600;
+
+}
+
+.stock-alert-info{
+
+    color:#777;
+
+    font-size:13px;
+
+    margin-top:4px;
+
+}
+
+.stock-alert-qty{
+
+    font-weight:bold;
+
+    color:#ef4444;
+
+}
+
+#stock-alert-modal{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.45);
+
+    z-index:9999;
+
+    padding:20px;
+
+}
+
+#stock-alert-modal .modal{
+
+    width:min(650px,95vw);
+
+    max-height:85vh;
+
+    overflow:auto;
+
+    border-radius:18px;
+
+    background:#fff;
+
+    animation:fadeUp .25s;
+
+}
+
+.modal-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px 22px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.modal-close-btn{
+
+    width:38px;
+
+    height:38px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#f3f4f6;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:20px;
+
+    transition:.2s;
+
+}
+
+.modal-close-btn:hover{
+
+    background:#ef4444;
+
+    color:#fff;
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        transform:translateY(20px);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:translateY(0);
+
+        opacity:1;
+
+    }
+
 }
 
 </style>
@@ -787,17 +1211,291 @@
 
 </div>
 
-  <div id="tab-reports" style="display:none">
-    <div class="report-filter">
-      <button class="filter-btn active" onclick="setFilter('day')">اليوم</button>
-      <button class="filter-btn" onclick="setFilter('week')">الأسبوع</button>
-      <button class="filter-btn" onclick="setFilter('month')">الشهر</button>
-      <button class="filter-btn" onclick="setFilter('all')">الكل</button>
+  <div id="tab-reports" style="display:none;">
+
+    <div class="section-title">
+        <i class="ti ti-chart-bar"></i>
+        التقارير
     </div>
-    <div class="stats" id="report-stats"></div>
-    <div class="section-title" id="report-top-title">الأكثر مبيعاً</div>
-    <div id="report-top-list"></div>
-  </div>
+
+    <div class="form-card">
+
+        <div class="filter-buttons">
+
+            <button class="btn-filter active"
+                onclick="setReportFilter('today',this)">
+                اليوم
+            </button>
+
+            <button class="btn-filter"
+                onclick="setReportFilter('week',this)">
+                الأسبوع
+            </button>
+
+            <button class="btn-filter"
+                onclick="setReportFilter('month',this)">
+                الشهر
+            </button>
+
+            <button class="btn-filter"
+                onclick="setReportFilter('all',this)">
+                الكل
+            </button>
+
+            <button class="btn-filter"
+                onclick="toggleReportCustomDate()">
+                فترة مخصصة
+            </button>
+
+        </div>
+
+        <div id="report-custom-date"
+            style="display:none;margin-top:15px;">
+
+            <div class="row2">
+
+                <div class="field">
+                    <label>من</label>
+                    <input type="date" id="report-from">
+                </div>
+
+                <div class="field">
+                    <label>إلى</label>
+                    <input type="date" id="report-to">
+                </div>
+
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+                <button
+                    class="btn-primary"
+                    onclick="applyReportFilter()">
+
+                    تطبيق
+
+                </button>
+
+                <button
+                    class="btn-secondary"
+                    onclick="resetReportFilter()">
+
+                    إعادة تعيين
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- الكروت -->
+
+    <div class="report-cards">
+
+        <div class="report-card">
+
+            <div class="report-card-title">
+                💰 إجمالي المبيعات
+            </div>
+
+            <div class="report-card-value"
+                id="report-total-sales">
+                0 جنيه
+            </div>
+
+        </div>
+
+        <div class="report-card">
+
+            <div class="report-card-title">
+                🧾 عدد الفواتير
+            </div>
+
+            <div class="report-card-value"
+                id="report-total-invoices">
+                0
+            </div>
+
+        </div>
+
+        <div class="report-card">
+
+            <div class="report-card-title">
+                📦 الكمية المباعة
+            </div>
+
+            <div class="report-card-value"
+                id="report-total-qty">
+                0
+            </div>
+
+        </div>
+
+        <div class="report-card">
+
+            <div class="report-card-title">
+                💵 متوسط الفاتورة
+            </div>
+
+            <div class="report-card-value"
+                id="report-average">
+                0 جنيه
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- تنبيهات المخزون -->
+
+    <div class="report-grid">
+
+        <div class="report-card report-clickable"
+            onclick="openOutStockModal()">
+
+            <div class="report-card-title">
+
+                ❌ نفد بالكامل
+
+            </div>
+
+            <div
+                class="report-card-value report-danger"
+                id="report-out-stock-count">
+
+                0
+
+            </div>
+
+            <div class="report-card-subtitle">
+
+                صنف
+
+            </div>
+
+            <div class="report-card-link">
+
+                عرض التفاصيل
+                <i class="ti ti-chevron-left"></i>
+
+            </div>
+
+        </div>
+
+        <div class="report-card report-clickable"
+            onclick="openLowStockModal()">
+
+            <div class="report-card-title">
+
+                ⚠️ قرب النفاد
+
+            </div>
+
+            <div
+                class="report-card-value"
+                style="color:#f59e0b"
+                id="report-low-stock-count">
+
+                0
+
+            </div>
+
+            <div class="report-card-subtitle">
+
+                صنف
+
+            </div>
+
+            <div class="report-card-link">
+
+                عرض التفاصيل
+                <i class="ti ti-chevron-left"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- أكثر المنتجات مبيعاً -->
+
+    <div class="report-section">
+
+        <div class="section-title">
+            🔥 أكثر المنتجات مبيعاً
+        </div>
+
+        <div id="report-top-list">
+
+            لا توجد بيانات.
+
+        </div>
+
+    </div>
+
+    <!-- أعلى الإيرادات -->
+
+    <div class="report-section">
+
+        <div class="section-title">
+            💰 أعلى المنتجات إيراداً
+        </div>
+
+        <div id="report-top-revenue">
+
+            لا توجد بيانات.
+
+        </div>
+
+    </div>
+
+    <!-- جدول الأصناف -->
+
+    <div class="report-section">
+
+        <div class="section-title">
+            📋 ملخص الأصناف
+        </div>
+
+        <div id="report-table">
+
+        </div>
+
+    </div>
+
+    <!-- الأزرار -->
+
+    <div class="report-buttons">
+
+        <div class="report-buttons">
+
+        <button
+            class="btn-primary admin-only"
+            onclick="previewReport()">
+
+            <i class="ti ti-printer"></i>
+
+            معاينة التقرير
+
+        </button>
+
+        <button
+            class="btn-secondary admin-only"
+            onclick="exportReportExcel()">
+
+            <i class="ti ti-table-export"></i>
+
+            تصدير Excel
+
+        </button>
+
+</div>
+
+    </div>
+
+</div>
 
   <!-- USERS TAB -->
   <div id="tab-users" style="display:none">
@@ -842,6 +1540,10 @@ let itemSearch = "";
 let visibleInvoices = 5;
 let historyFilter = "all";
 let customHistoryFilter = false;
+let reportFilter = "today";
+let reportFrom = "";
+let reportTo = "";
+
 
 function setSyncStatus(status, text) {
   const dot = document.getElementById('sync-dot');
@@ -1369,6 +2071,116 @@ function showMoreInvoices(){
 
 }
 
+function filterSalesByDate(sourceSales, filter, from = "", to = "") {
+
+    const now = new Date();
+    now.setHours(23,59,59,999);
+
+    return sourceSales.filter(s => {
+
+        if (!s.date) return false;
+
+        const d = new Date(s.date);
+
+        switch (filter) {
+
+            case "today": {
+
+                return (
+                    d.getDate() === now.getDate() &&
+                    d.getMonth() === now.getMonth() &&
+                    d.getFullYear() === now.getFullYear()
+                );
+
+            }
+
+            case "week": {
+
+                const start = new Date(now);
+
+                start.setDate(start.getDate() - 6);
+
+                start.setHours(0,0,0,0);
+
+                return d >= start && d <= now;
+
+            }
+
+            case "month": {
+
+                return (
+                    d.getMonth() === now.getMonth() &&
+                    d.getFullYear() === now.getFullYear()
+                );
+
+            }
+
+            case "custom": {
+
+                if (!from || !to)
+                    return false;
+
+                const start = new Date(from);
+                start.setHours(0,0,0,0);
+
+                const end = new Date(to);
+                end.setHours(23,59,59,999);
+
+                return d >= start && d <= end;
+
+            }
+
+            default:
+
+                return true;
+
+        }
+
+    });
+
+}
+
+function getFilteredSales() {
+
+    let filteredSales = [...sales];
+
+    // البحث
+    const search = (
+        document.getElementById("history-search")?.value || ""
+    ).trim().toLowerCase();
+
+    if (search) {
+        filteredSales = filteredSales.filter(s =>
+            (s.invoiceId || "").toLowerCase().includes(search) ||
+            (s.name || "").toLowerCase().includes(search) ||
+            (s.seller || "").toLowerCase().includes(search)
+        );
+    }
+
+    if (customHistoryFilter) {
+
+    const from = document.getElementById("history-from").value;
+    const to = document.getElementById("history-to").value;
+
+    filteredSales = filterSalesByDate(
+        filteredSales,
+        "custom",
+        from,
+        to
+    );
+
+} else {
+
+    filteredSales = filterSalesByDate(
+        filteredSales,
+        historyFilter
+    );
+
+}
+
+    return filteredSales;
+}
+
 function renderHistory() {
 
     const el = document.getElementById("history-list");
@@ -1378,96 +2190,7 @@ function renderHistory() {
         return;
     }
 
-    let filteredSales = [...sales];
-
-    // =========================
-    // البحث
-    // =========================
-
-    const search = (
-        document.getElementById("history-search")?.value || ""
-    ).trim().toLowerCase();
-
-    if (search) {
-
-        filteredSales = filteredSales.filter(s =>
-
-            (s.invoiceId || "").toLowerCase().includes(search) ||
-
-            (s.name || "").toLowerCase().includes(search) ||
-
-            (s.seller || "").toLowerCase().includes(search)
-
-        );
-
-    }
-
-    // =========================
-    // الفلاتر
-    // =========================
-
-    const now = new Date();
-
-    filteredSales = filteredSales.filter(s => {
-
-        if (!s.date) return false;
-
-        const d = new Date(s.date);
-
-        if (customHistoryFilter) {
-
-            const from = document.getElementById("history-from").value;
-            const to = document.getElementById("history-to").value;
-
-            if (from && d < new Date(from))
-                return false;
-
-            if (to) {
-
-                const end = new Date(to);
-                end.setHours(23,59,59,999);
-
-                if (d > end)
-                    return false;
-
-            }
-
-            return true;
-
-        }
-
-        switch(historyFilter){
-
-        case "today":
-
-            return (
-                d.getDate() === now.getDate() &&
-                d.getMonth() === now.getMonth() &&
-                d.getFullYear() === now.getFullYear()
-            );
-
-        case "week":{
-
-            const first = new Date(now);
-            first.setDate(now.getDate() - 7);
-
-            return d >= first;
-
-        }
-
-        case "month":
-
-            return (
-                d.getMonth() === now.getMonth() &&
-                d.getFullYear() === now.getFullYear()
-            );
-
-        default:
-
-            return true;
-    }
-
-    });
+    const filteredSales = getFilteredSales();
 
     // =========================
     // تجميع الفواتير
@@ -1515,28 +2238,28 @@ function renderHistory() {
 
     el.innerHTML = visible.map(inv=>{
 
-        const rows = inv.items.map(it=>`
+        const rows = inv.items.map(it => {
 
-            <div class="invoice-line">
+    console.log(sales.filter(s => Number(s.qty) < 0));
 
-                <span>
+    return `
 
-                    ${it.name}
+        <div class="invoice-line">
 
-                    (${it.qty} ${it.unit})
+            <span>
+                ${it.name}
+                (${it.qty} ${it.unit})
+            </span>
 
-                </span>
+            <span>
+                ${Number(it.total).toLocaleString()} ج
+            </span>
 
-                <span>
+        </div>
 
-                    ${Number(it.total).toLocaleString()} ج
+    `;
 
-                </span>
-
-            </div>
-
-        `).join("");
-
+}).join("");
         return `
 
         <div class="invoice-group">
@@ -1614,6 +2337,308 @@ function renderHistory() {
 
 }
 
+function renderReports() {
+
+    const reportSales = getReportSales();
+
+    // إجمالي المبيعات
+    const totalSales = reportSales.reduce((sum, s) => sum + Number(s.total || 0), 0);
+
+    // الفواتير
+    const invoiceIds = [...new Set(
+        reportSales.map(s => s.invoiceId || s.date)
+    )];
+
+    const invoicesCount = invoiceIds.length;
+
+    // الكمية المباعة
+    const totalQty = reportSales.reduce((sum, s) => sum + Number(s.qty || 0), 0);
+
+    // متوسط الفاتورة
+    const averageInvoice = invoicesCount
+        ? totalSales / invoicesCount
+        : 0;
+
+    //--------------------------------
+    // الكروت
+    //--------------------------------
+
+    document.getElementById("report-total-sales").textContent =
+        totalSales.toLocaleString() + " جنيه";
+
+    document.getElementById("report-total-invoices").textContent =
+        invoicesCount;
+
+    document.getElementById("report-total-qty").textContent =
+        totalQty;
+
+    document.getElementById("report-average").textContent =
+        averageInvoice.toLocaleString(undefined,{
+            maximumFractionDigits:0
+        }) + " جنيه";
+
+        //--------------------------------
+        // الأصناف المنتهية
+        //--------------------------------
+
+        const outStock = items.filter(item => Number(item.qty) <= 0);
+
+        document.getElementById("report-out-stock-count").textContent =
+            outStock.length;
+
+        //--------------------------------
+        // الأصناف القريبة من النفاد
+        //--------------------------------
+
+        const LOW_STOCK_LIMIT = 5;
+
+        const lowStock = items.filter(item => {
+
+            const qty = Number(item.qty);
+
+            return qty > 0 && qty <= LOW_STOCK_LIMIT;
+
+        });
+
+        document.getElementById("report-low-stock-count").textContent =
+            lowStock.length;
+
+                //--------------------------------
+    // أكثر المنتجات مبيعاً
+    //--------------------------------
+
+    const topProducts = {};
+
+    reportSales.forEach(s => {
+
+        if (!topProducts[s.name]) {
+
+            topProducts[s.name] = {
+
+                qty: 0,
+
+                unit: s.unit || ""
+
+            };
+
+        }
+
+        topProducts[s.name].qty += Number(s.qty);
+
+    });
+
+    const topList = Object.entries(topProducts)
+
+    .sort((a,b)=>b[1].qty-a[1].qty)
+
+    .slice(0,5);
+
+    const medals=["🥇","🥈","🥉","4️⃣","5️⃣"];
+
+    document.getElementById("report-top-list").innerHTML=
+
+    topList.length ?
+
+    topList.map((p,i)=>`
+
+    <div class="report-item">
+
+    <div>
+
+    <b>${medals[i]} ${p[0]}</b>
+
+    </div>
+
+    <div class="report-item-value">
+
+    ${p[1].qty} ${p[1].unit}
+
+    </div>
+
+    </div>
+
+    `).join("")
+
+    :
+
+    "<div class='report-empty'>لا توجد بيانات</div>";
+
+    //--------------------------------
+    // أعلى الإيرادات
+    //--------------------------------
+
+    const revenueProducts={};
+
+    reportSales.forEach(s=>{
+
+        if(!revenueProducts[s.name]){
+
+            revenueProducts[s.name]={
+
+                total:0
+
+            };
+
+        }
+
+        revenueProducts[s.name].total+=Number(s.total);
+
+    });
+
+    const revenueList=
+
+    Object.entries(revenueProducts)
+
+    .sort((a,b)=>b[1].total-a[1].total)
+
+    .slice(0,5);
+
+    document.getElementById("report-top-revenue").innerHTML=
+
+    revenueList.length?
+
+    revenueList.map((p,i)=>`
+
+    <div class="report-item">
+
+    <div>
+
+    <b>${medals[i]} ${p[0]}</b>
+
+    </div>
+
+    <div class="report-item-value">
+
+    ${p[1].total.toLocaleString()} ج
+
+    </div>
+
+    </div>
+
+    `).join("")
+
+    :
+
+    "<div class='report-empty'>لا توجد بيانات</div>";
+
+    //--------------------------------
+    // ملخص الأصناف
+    //--------------------------------
+
+    const summary={};
+
+    items.forEach(i=>{
+
+        summary[i.name]={
+
+            sold:0,
+
+            revenue:0,
+
+            remain:Number(i.qty),
+
+            unit:i.unit
+
+        };
+
+    });
+
+    reportSales.forEach(s=>{
+
+        if(summary[s.name]){
+
+            summary[s.name].sold+=Number(s.qty);
+
+            summary[s.name].revenue+=Number(s.total);
+
+        }
+
+    });
+
+    document.getElementById("report-table").innerHTML=`
+
+    <table class="report-table">
+
+    <thead>
+
+    <tr>
+
+    <th>الصنف</th>
+
+    <th>المباع</th>
+
+    <th>المتبقي</th>
+
+    <th>الإيراد</th>
+
+    </tr>
+
+    </thead>
+
+    <tbody>
+
+    ${Object.entries(summary).map(([name,d])=>`
+
+    <tr>
+
+    <td>${name}</td>
+
+    <td>${d.sold} ${d.unit}</td>
+
+    <td>${d.remain} ${d.unit}</td>
+
+    <td>${d.revenue.toLocaleString()} ج</td>
+
+    </tr>
+
+    `).join("")}
+
+    </tbody>
+
+    </table>
+
+    `;
+
+}
+
+function exportReportExcel(){
+
+    const reportSales = getReportSales();
+
+    const rows = reportSales.map(s=>({
+
+        التاريخ:s.date,
+
+        الفاتورة:s.invoiceId,
+
+        الصنف:s.name,
+
+        النوع:s.type,
+
+        الكمية:s.qty,
+
+        الوحدة:s.unit,
+
+        السعر:s.unitPrice,
+
+        الإجمالي:s.total,
+
+        البائع:s.seller
+
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+
+    const wb = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(wb,ws,"المبيعات");
+
+    XLSX.writeFile(wb,"تقرير_المبيعات.xlsx");
+
+}
+
+
+
 async function addItem() {
   if (!isAdmin()) {
       alert("ليس لديك صلاحية لإضافة منتجات");
@@ -1686,6 +2711,15 @@ function addToCart() {
   }
 
   const price = parseFloat(document.getElementById('sell-price').value) || 0;
+  if (!Number.isFinite(price) || price <= 0) {
+    showToast("❌ سعر البيع غير صحيح");
+    return;
+}
+
+if (!Number.isFinite(qty) || qty <= 0) {
+    showToast("❌ الكمية غير صحيحة");
+    return;
+}
 
   // الكمية المتاحة بعد خصم ما هو موجود بالفعل في الفاتورة الحالية لنفس الصنف
   const alreadyInCart = sellCart
@@ -1777,6 +2811,23 @@ async function finalizeSale() {
   const itemsSummary = [];
 
   sellCart.forEach(c => {
+    if (!Number.isFinite(Number(c.qty)) || Number(c.qty) <= 0) {
+        showToast("❌ الكمية غير صحيحة");
+        btn.disabled = false;
+        return;
+    }
+
+    if (!Number.isFinite(Number(c.price)) || Number(c.price) < 0) {
+        showToast("❌ سعر الوحدة غير صحيح");
+        btn.disabled = false;
+        return;
+    }
+
+    if (!Number.isFinite(Number(c.total)) || Number(c.total) < 0) {
+        showToast("❌ إجمالي السعر غير صحيح");
+        btn.disabled = false;
+        return;
+    }
       const stockItem = items[c.itemIndex];
       stockItem.qty = Number(stockItem.qty) - c.qty;
       sales.push({
@@ -1848,45 +2899,6 @@ function filterSalesByPeriod(f) {
     if (f === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     return true;
   });
-}
-
-function renderReports() {
-  const filtered = filterSalesByPeriod(currentFilter);
-  const totalRev = filtered.reduce((s,i) => s + Number(i.total), 0);
-  const totalQty = filtered.reduce((s,i) => s + Number(i.qty), 0);
-  const totalTx = filtered.length;
-
-  const labels = { day: 'اليوم', week: 'الأسبوع', month: 'الشهر الحالي', all: 'إجمالي كل الوقت' };
-  document.getElementById('report-top-title').textContent = 'الأكثر مبيعاً — ' + labels[currentFilter];
-
-  document.getElementById('report-stats').innerHTML = `
-    <div class="stat-card"><div class="stat-label">إجمالي الإيرادات</div><div class="stat-val">${totalRev.toLocaleString()} <span class="stat-unit">ج</span></div></div>
-    <div class="stat-card"><div class="stat-label">قطع مباعة</div><div class="stat-val">${totalQty} <span class="stat-unit">قطعة</span></div></div>
-    <div class="stat-card"><div class="stat-label">عدد الصفقات</div><div class="stat-val">${totalTx}</div></div>
-    <div class="stat-card"><div class="stat-label">متوسط الصفقة</div><div class="stat-val">${totalTx ? Math.round(totalRev/totalTx).toLocaleString() : 0} <span class="stat-unit">ج</span></div></div>`;
-
-  const byItem = {};
-  filtered.forEach(s => {
-    if (!byItem[s.name]) byItem[s.name] = { qty: 0, total: 0 };
-    byItem[s.name].qty += Number(s.qty);
-    byItem[s.name].total += Number(s.total);
-  });
-  const sorted = Object.entries(byItem).sort((a,b) => b[1].total - a[1].total);
-  const rankClass = ['gold','silver','bronze'];
-  const el = document.getElementById('report-top-list');
-  if (!sorted.length) {
-    el.innerHTML = '<div class="empty-state"><i class="ti ti-chart-bar"></i>لا توجد مبيعات في هذه الفترة</div>';
-    return;
-  }
-  el.innerHTML = sorted.map(([name, d], i) => `
-    <div class="top-item">
-      <div class="top-rank ${rankClass[i] || ''}">${i+1}</div>
-      <div class="top-info">
-        <div class="top-name">${name}</div>
-        <div class="top-meta">${d.qty} قطعة مباعة</div>
-      </div>
-      <div class="top-total">${d.total.toLocaleString()} ج</div>
-    </div>`).join('');
 }
 
 async function clearSales() {
@@ -1963,6 +2975,136 @@ function showLoginScreen() {
 function showMainApp() {
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("app").style.display = "block";
+}
+
+function setReportFilter(filter, btn){
+
+    reportFilter = filter;
+
+    document
+        .querySelectorAll("#tab-reports .btn-filter")
+        .forEach(b=>b.classList.remove("active"));
+
+    btn.classList.add("active");
+
+    document.getElementById("report-custom-date").style.display="none";
+
+    renderReports();
+
+}
+
+function toggleReportCustomDate(){
+
+    const box=document.getElementById("report-custom-date");
+
+    box.style.display=
+        box.style.display==="none"
+        ? "block"
+        : "none";
+
+}
+
+function applyReportFilter(){
+
+    reportFilter="custom";
+
+    reportFrom=document.getElementById("report-from").value;
+
+    reportTo=document.getElementById("report-to").value;
+
+    renderReports();
+
+}
+
+function resetReportFilter(){
+
+    reportFilter="today";
+
+    reportFrom="";
+
+    reportTo="";
+
+    document.getElementById("report-from").value="";
+
+    document.getElementById("report-to").value="";
+
+    document.getElementById("report-custom-date").style.display="none";
+
+    document
+        .querySelectorAll("#tab-reports .btn-filter")
+        .forEach(b=>b.classList.remove("active"));
+
+    document
+        .querySelector("#tab-reports .btn-filter")
+        .classList.add("active");
+
+    renderReports();
+
+}
+
+function getReportSales() {
+
+    const now = new Date();
+
+    // تصفير الوقت للمقارنة
+    now.setHours(23, 59, 59, 999);
+
+    return sales.filter(s => {
+
+        const d = new Date(s.date);
+
+        switch (reportFilter) {
+
+            case "today": {
+
+                const today = new Date();
+
+                today.setHours(0, 0, 0, 0);
+
+                const end = new Date();
+
+                end.setHours(23, 59, 59, 999);
+
+                return d >= today && d <= end;
+            }
+
+            case "week": {
+
+                const first = new Date();
+
+                first.setDate(first.getDate() - 6);
+                first.setHours(0, 0, 0, 0);
+
+                return d >= first && d <= now;
+            }
+
+            case "month":
+
+                return (
+                    d.getMonth() === now.getMonth() &&
+                    d.getFullYear() === now.getFullYear()
+                );
+
+            case "custom": {
+
+                if (!reportFrom || !reportTo) return false;
+
+                const from = new Date(reportFrom);
+                from.setHours(0, 0, 0, 0);
+
+                const to = new Date(reportTo);
+                to.setHours(23, 59, 59, 999);
+
+                return d >= from && d <= to;
+            }
+
+            default:
+
+                return true;
+        }
+
+    });
+
 }
 
 function checkAuth() {
@@ -2313,6 +3455,112 @@ async function deleteUser() {
     }
 }
 
+function openOutStockModal(){
+
+    const list=document.getElementById("stock-alert-list");
+
+    document.getElementById("stock-alert-title").textContent="❌ الأصناف المنتهية";
+
+    const out=items.filter(i=>Number(i.qty)<=0);
+
+    if(!out.length){
+
+        list.innerHTML="<div class='empty'>لا توجد أصناف منتهية.</div>";
+
+    }else{
+
+        list.innerHTML=out.map(i=>`
+
+            <div class="stock-alert-item">
+
+                <div>
+
+                    <div class="stock-alert-name">
+
+                        ${i.name}
+
+                    </div>
+
+                    <div class="stock-alert-info">
+
+                        ${i.type}
+
+                    </div>
+
+                </div>
+
+                <div class="stock-alert-qty">
+
+                    0 ${i.unit}
+
+                </div>
+
+            </div>
+
+        `).join("");
+
+    }
+
+    document.getElementById("stock-alert-modal").style.display="flex";
+
+}
+
+function openLowStockModal(){
+
+    const list=document.getElementById("stock-alert-list");
+
+    document.getElementById("stock-alert-title").textContent="⚠️ الأصناف القريبة من النفاد";
+
+    const low=items.filter(i=>Number(i.qty)>0&&Number(i.qty)<=5);
+
+    if(!low.length){
+
+        list.innerHTML="<div class='empty'>لا توجد أصناف قريبة من النفاد.</div>";
+
+    }else{
+
+        list.innerHTML=low.map(i=>`
+
+            <div class="stock-alert-item">
+
+                <div>
+
+                    <div class="stock-alert-name">
+
+                        ${i.name}
+
+                    </div>
+
+                    <div class="stock-alert-info">
+
+                        ${i.type}
+
+                    </div>
+
+                </div>
+
+                <div class="stock-alert-qty">
+
+                    ${i.qty} ${i.unit}
+
+                </div>
+
+            </div>
+
+        `).join("");
+
+    }
+
+    document.getElementById("stock-alert-modal").style.display="flex";
+
+}
+
+function closeStockAlertModal(){
+
+    document.getElementById("stock-alert-modal").style.display="none";
+
+}
+
 function isAdmin() {
     return currentUser && currentUser.role === "admin";
 }
@@ -2513,7 +3761,9 @@ function exportSales() {
         "ملاحظات"
     ]);
 
-    sales.forEach(s => {
+    const filteredSales = getFilteredSales();
+
+    filteredSales.forEach(s => {
 
         rows.push([
             s.invoiceId || "",
@@ -2650,5 +3900,44 @@ checkAuth();
     </div>
 
 </div>
+
+<!-- مودال تنبيهات المخزون -->
+
+<div
+    class="modal-overlay"
+    id="stock-alert-modal"
+    style="display:none;">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h3 id="stock-alert-title">
+
+                تنبيهات المخزون
+
+            </h3>
+
+            <button class="modal-close-btn" onclick="closeStockAlertModal()">
+                <i class="ti ti-x"></i>
+            </button>
+
+        </div>
+
+        <div
+            id="stock-alert-list"
+            class="modal-body">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/vfs_fonts.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </body>
 </html>
