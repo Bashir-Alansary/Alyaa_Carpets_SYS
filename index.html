@@ -514,6 +514,176 @@
     font-size:14px;
 }
 
+/* ===================== زرار عرض الفاتورة ===================== */
+
+.receipt-view-btn{
+    width:32px;
+    height:32px;
+    border-radius:10px;
+    border:none;
+    background:var(--accent-bg);
+    color:var(--accent);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:15px;
+    cursor:pointer;
+    flex-shrink:0;
+}
+.receipt-view-btn:active{ background:#e3e9f2; }
+
+/* ===================== مودال عرض الفاتورة ===================== */
+
+.receipt-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:var(--surface-0);
+    z-index:1300;
+    overflow-y:auto;
+    padding:0 0 30px;
+}
+.receipt-overlay.open{ display:block; }
+
+.receipt-topbar{
+    position:sticky;
+    top:0;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 16px;
+    background:var(--surface-0);
+    border-bottom:1px solid var(--border);
+}
+.receipt-topbar h3{ font-size:15px; font-weight:700; color:var(--text-primary); }
+.receipt-close{
+    width:34px; height:34px; border-radius:10px; border:none;
+    background:var(--surface-2); color:var(--text-secondary);
+    font-size:18px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:var(--shadow);
+}
+
+.receipt-wrap{
+    max-width:360px;
+    margin:22px auto 0;
+    padding:0 16px;
+}
+
+.receipt-capture{ position:relative; }
+
+.receipt-paper{
+    background:#fff;
+    border-radius:14px 14px 0 0;
+    box-shadow:var(--shadow-lg);
+    padding:26px 22px 22px;
+    position:relative;
+}
+
+.receipt-roller{
+    width:56px; height:8px; border-radius:6px;
+    background:var(--navy);
+    margin:0 auto 18px;
+}
+
+.receipt-shop{
+    text-align:center;
+    font-size:19px;
+    font-weight:900;
+    color:var(--text-primary);
+    letter-spacing:-0.2px;
+}
+.receipt-tagline{
+    text-align:center;
+    font-size:11px;
+    color:var(--text-muted);
+    margin-top:3px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+}
+
+.receipt-meta{
+    margin-top:16px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    font-size:12.5px;
+    color:var(--text-secondary);
+}
+.receipt-meta b{ color:var(--text-primary); }
+
+.receipt-dashed{
+    border-top:1.5px dashed var(--border);
+    margin:16px 0;
+}
+
+.receipt-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:8px;
+    padding:7px 0;
+    font-size:13px;
+}
+.receipt-row .r-name{ color:var(--text-primary); font-weight:600; }
+.receipt-row .r-sub{ color:var(--text-muted); font-size:11.5px; margin-top:2px; }
+.receipt-row .r-total{ color:var(--text-primary); font-weight:700; white-space:nowrap; }
+
+.receipt-total-band{
+    margin-top:14px;
+    background:var(--red-bg);
+    border-radius:12px;
+    padding:14px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.receipt-total-band .t-label{ font-size:12px; color:var(--red); font-weight:700; }
+.receipt-total-band .t-value{ font-size:24px; color:var(--red); font-weight:900; }
+
+.receipt-thanks{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--text-muted);
+    margin-top:16px;
+    line-height:1.7;
+}
+
+.receipt-zigzag{
+    height:16px;
+    width:100%;
+    background-image: radial-gradient(circle at 10px 0, transparent 9px, #fff 9.5px);
+    background-size: 20px 16px;
+    background-repeat: repeat-x;
+    background-position: -10px -1px;
+}
+
+.receipt-actions{
+    display:flex;
+    gap:8px;
+    margin-top:22px;
+}
+.receipt-actions button{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:5px;
+    padding:12px 6px;
+    border-radius:14px;
+    border:1px solid var(--border);
+    background:var(--surface-2);
+    color:var(--text-primary);
+    font-size:12px;
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+}
+.receipt-actions button i{ font-size:19px; color:var(--accent); }
+.receipt-actions button:active{ background:var(--surface-0); }
+
 .filter-buttons{
     display:flex;
     gap:10px;
@@ -1765,6 +1935,7 @@ let currentUser = null;
 let editingUserIndex = -1;
 let itemSearch = "";
 let visibleInvoices = 5;
+let historyInvoicesCache = [];
 let historyFilter = "all";
 let customHistoryFilter = false;
 let reportFilter = "today";
@@ -2536,6 +2707,8 @@ function renderHistory() {
 
     invoices.reverse();
 
+    historyInvoicesCache = invoices;
+
     const visible = invoices.slice(0,visibleInvoices);
 
     if(!visible.length){
@@ -2546,7 +2719,7 @@ function renderHistory() {
 
     }
 
-    el.innerHTML = visible.map(inv=>{
+    el.innerHTML = visible.map((inv, i)=>{
 
         const rows = inv.items.map(it => {
 
@@ -2594,9 +2767,20 @@ function renderHistory() {
 
                 </div>
 
-                <div class="history-price">
+                <div style="display:flex; align-items:center; gap:8px;">
 
-                    ${inv.total.toLocaleString()} ج
+                    <div class="history-price">
+
+                        ${inv.total.toLocaleString()} ج
+
+                    </div>
+
+                    <button
+                        class="receipt-view-btn"
+                        title="عرض الفاتورة"
+                        onclick="event.stopPropagation(); openReceipt(${i})">
+                        <i class="ti ti-receipt"></i>
+                    </button>
 
                 </div>
 
@@ -2641,6 +2825,252 @@ function renderHistory() {
 
         `;
 
+    }
+
+}
+
+// =========================================================
+// عرض الفاتورة (Receipt) - مشاركة / طباعة / تحميل
+// =========================================================
+
+// تنسيق تاريخ ووقت الفاتورة بشكل واضح مهما كانت الصيغة المخزنة
+// (أحيانًا جوجل شيت بيحول التاريخ لصيغة ISO تلقائيًا، فبنتعامل مع الحالتين)
+function formatReceiptDateTime(rawDate) {
+
+    const d = parseSaleDate(rawDate);
+    if (!d) return rawDate || "-";
+
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+
+    let hours = d.getHours();
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? "م" : "ص";
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+
+    return `${day}/${month}/${year} - ${hours}:${minutes} ${ampm}`;
+
+}
+
+function renderReceiptPaperHTML(inv) {
+
+    const rowsHTML = inv.items.map(it => `
+        <div class="receipt-row">
+            <div>
+                <div class="r-name">${it.name}</div>
+                <div class="r-sub">${it.qty} ${it.unit} × ${Number(it.unitPrice).toLocaleString()} ج</div>
+            </div>
+            <div class="r-total">${Number(it.total).toLocaleString()} ج</div>
+        </div>
+    `).join("");
+
+    return `
+        <div class="receipt-paper">
+
+            <div class="receipt-roller"></div>
+
+            <div class="receipt-shop">سجاد علياء</div>
+            <div class="receipt-tagline">فاتورة بيع</div>
+
+            <div class="receipt-meta">
+                <div>رقم الفاتورة: <b>${inv.invoiceId}</b></div>
+                <div>التاريخ: <b>${formatReceiptDateTime(inv.date)}</b></div>
+                ${inv.seller ? `<div>البائع: <b>${inv.seller}</b></div>` : ""}
+            </div>
+
+            <div class="receipt-dashed"></div>
+
+            ${rowsHTML}
+
+            ${inv.note ? `<div class="invoice-note">📝 ${inv.note}</div>` : ""}
+
+            <div class="receipt-total-band">
+                <span class="t-label">الإجمالي</span>
+                <span class="t-value">${Number(inv.total).toLocaleString()} ج</span>
+            </div>
+
+            <div class="receipt-thanks">
+                شكرًا لتعاملكم معنا 🌹<br>سجاد علياء
+            </div>
+
+        </div>
+        <div class="receipt-zigzag"></div>
+    `;
+
+}
+
+let currentReceiptInvoice = null;
+
+function openReceipt(i) {
+
+    const inv = historyInvoicesCache[i];
+    if (!inv) return;
+
+    currentReceiptInvoice = inv;
+
+    document.getElementById("receipt-capture").innerHTML = renderReceiptPaperHTML(inv);
+    document.getElementById("receipt-overlay").classList.add("open");
+
+}
+
+function closeReceipt() {
+    document.getElementById("receipt-overlay").classList.remove("open");
+    currentReceiptInvoice = null;
+}
+
+// طباعة الفاتورة في نافذة منفصلة (نفس أسلوب طباعة التقرير المستخدم في التطبيق)
+function printReceipt() {
+
+    if (!currentReceiptInvoice) return;
+
+    const win = window.open('', '_blank');
+
+    win.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+        <meta charset="UTF-8">
+        <title>فاتورة ${currentReceiptInvoice.invoiceId} - سجاد علياء</title>
+        <style>
+            * { box-sizing:border-box; }
+            body{
+                font-family:'Cairo','Segoe UI',Tahoma,Arial,sans-serif;
+                direction:rtl;
+                background:#f0f4f8;
+                padding:24px;
+            }
+            .print-actions{ max-width:360px; margin:0 auto 16px; }
+            .print-actions button{
+                width:100%; background:#0d1f35; color:#fff; border:none;
+                border-radius:10px; padding:12px; font-size:14px; cursor:pointer;
+                font-family:inherit;
+            }
+            @media print{ .print-actions{ display:none; } body{ background:#fff; padding:0; } }
+            .receipt-wrap{ max-width:360px; margin:0 auto; }
+            .receipt-paper{ background:#fff; border-radius:14px 14px 0 0; box-shadow:0 8px 32px rgba(13,31,53,0.14); padding:26px 22px 22px; }
+            .receipt-roller{ width:56px; height:8px; border-radius:6px; background:#0d1f35; margin:0 auto 18px; }
+            .receipt-shop{ text-align:center; font-size:19px; font-weight:900; color:#0d1f35; }
+            .receipt-tagline{ text-align:center; font-size:11px; color:#8fa3bc; margin-top:3px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; }
+            .receipt-meta{ margin-top:16px; display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#4a6080; }
+            .receipt-meta b{ color:#0d1f35; }
+            .receipt-dashed{ border-top:1.5px dashed #e2eaf2; margin:16px 0; }
+            .receipt-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; padding:7px 0; font-size:13px; }
+            .receipt-row .r-name{ color:#0d1f35; font-weight:600; }
+            .receipt-row .r-sub{ color:#8fa3bc; font-size:11.5px; margin-top:2px; }
+            .receipt-row .r-total{ color:#0d1f35; font-weight:700; white-space:nowrap; }
+            .invoice-note{ margin-top:12px; padding:10px; background:#f7f7f7; border-radius:8px; font-size:14px; }
+            .receipt-total-band{ margin-top:14px; background:#fff1ee; border-radius:12px; padding:14px 16px; display:flex; justify-content:space-between; align-items:center; }
+            .receipt-total-band .t-label{ font-size:12px; color:#e8442a; font-weight:700; }
+            .receipt-total-band .t-value{ font-size:24px; color:#e8442a; font-weight:900; }
+            .receipt-thanks{ text-align:center; font-size:11.5px; color:#8fa3bc; margin-top:16px; line-height:1.7; }
+            .receipt-zigzag{ height:16px; width:100%; background-image:radial-gradient(circle at 10px 0, transparent 9px, #fff 9.5px); background-size:20px 16px; background-repeat:repeat-x; background-position:-10px -1px; }
+        </style>
+        </head>
+        <body>
+            <div class="print-actions">
+                <button onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
+            </div>
+            <div class="receipt-wrap">
+                ${renderReceiptPaperHTML(currentReceiptInvoice)}
+            </div>
+        </body>
+        </html>
+    `);
+
+    win.document.close();
+
+}
+
+// تحويل الفاتورة لصورة (مستخدمة في التحميل والمشاركة)
+// بنستخدم dom-to-image-more (مش html2canvas) لأنها بترسم النص عن طريق
+// المتصفح نفسه (SVG) فبتحافظ على شكل الحروف العربية المتصلة صح تمامًا
+async function captureReceiptBlob() {
+    const node = document.getElementById("receipt-capture");
+    const scale = 2;
+
+    return await domtoimage.toBlob(node, {
+        bgcolor: "#f0f4f8",
+        width: node.offsetWidth * scale,
+        height: node.offsetHeight * scale,
+        style: {
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            width: node.offsetWidth + "px",
+            height: node.offsetHeight + "px"
+        }
+    });
+}
+
+async function downloadReceiptImage() {
+
+    if (!currentReceiptInvoice) return;
+
+    try {
+        showToast("⏳ جاري تجهيز الصورة...");
+        const blob = await captureReceiptBlob();
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `فاتورة-${currentReceiptInvoice.invoiceId}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+    } catch (err) {
+        console.error(err);
+        showToast("❌ تعذر إنشاء الصورة");
+    }
+
+}
+
+async function shareReceipt() {
+
+    if (!currentReceiptInvoice) return;
+
+    try {
+
+        showToast("⏳ جاري تجهيز الفاتورة...");
+        const blob = await captureReceiptBlob();
+
+        const file = new File(
+            [blob],
+            `فاتورة-${currentReceiptInvoice.invoiceId}.png`,
+            { type: 'image/png' }
+        );
+
+        // مشاركة الصورة مباشرة لو المتصفح بيدعم ذلك (واتساب، إلخ)
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+
+            await navigator.share({
+                files: [file],
+                title: 'فاتورة سجاد علياء',
+                text: `فاتورة رقم ${currentReceiptInvoice.invoiceId} - الإجمالي ${Number(currentReceiptInvoice.total).toLocaleString()} ج`
+            });
+
+        } else if (navigator.share) {
+
+            // fallback: مشاركة نص فقط لو المتصفح مش بيدعم مشاركة الصور
+            await navigator.share({
+                title: 'فاتورة سجاد علياء',
+                text: `فاتورة رقم ${currentReceiptInvoice.invoiceId} - الإجمالي ${Number(currentReceiptInvoice.total).toLocaleString()} ج`
+            });
+
+        } else {
+
+            // fallback أخير: تحميل الصورة يدويًا عشان يرفقها بنفسه
+            downloadReceiptImage();
+            showToast("📎 تم تحميل صورة الفاتورة، ممكن ترفقها يدويًا في واتساب");
+
+        }
+
+    } catch (err) {
+        // المستخدم لغى المشاركة، أو حصل خطأ
+        if (err.name !== 'AbortError') {
+            console.error(err);
+            showToast("❌ تعذرت المشاركة");
+        }
     }
 
 }
@@ -4638,6 +5068,32 @@ checkAuth();
 
 </div>
 
+<!-- ===================== مودال عرض الفاتورة ===================== -->
+
+<div class="receipt-overlay" id="receipt-overlay">
+
+    <div class="receipt-topbar">
+        <h3>الفاتورة</h3>
+        <button class="receipt-close" onclick="closeReceipt()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div class="receipt-wrap">
+
+        <div class="receipt-capture" id="receipt-capture">
+            <!-- بيتم تعبئتها من renderReceiptPaper() -->
+        </div>
+
+        <div class="receipt-actions">
+            <button onclick="shareReceipt()"><i class="ti ti-share"></i> مشاركة</button>
+            <button onclick="printReceipt()"><i class="ti ti-printer"></i> طباعة</button>
+            <button onclick="downloadReceiptImage()"><i class="ti ti-download"></i> تحميل</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.7.1/dom-to-image-more.min.js"></script>
 
 </body>
 </html>
