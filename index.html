@@ -995,6 +995,131 @@
     }
 
 }
+.custom-modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:99999;
+
+}
+
+.custom-modal.show{
+
+    display:flex;
+
+}
+
+.custom-modal-box{
+
+    width:360px;
+
+    max-width:90%;
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:26px;
+
+    text-align:center;
+
+    box-shadow:0 20px 60px rgba(0,0,0,.18);
+
+    animation:modalPop .25s ease;
+
+}
+
+@keyframes modalPop{
+
+    from{
+
+        transform:scale(.9);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:scale(1);
+
+        opacity:1;
+
+    }
+
+}
+
+.custom-modal-icon{
+
+    font-size:48px;
+
+    color:#f59e0b;
+
+    margin-bottom:10px;
+
+}
+
+.custom-modal-box h3{
+
+    margin:8px 0;
+
+}
+
+.custom-modal-box p{
+
+    color:#64748b;
+
+    line-height:1.7;
+
+    margin-bottom:22px;
+
+}
+
+.custom-modal-actions{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.custom-modal-actions button{
+
+    flex:1;
+
+}
+
+.btn-secondary{
+
+    background:#f1f5f9;
+
+    color:#334155;
+
+}
+
+.btn-danger{
+
+    background:#dc2626;
+
+    color:#fff;
+
+}
+
+.btn-danger:hover{
+
+    background:#b91c1c;
+
+}
 
 </style>
 </head>
@@ -2214,6 +2339,40 @@ function showMoreInvoices(){
 
 }
 
+function parseSaleDate(value) {
+
+    if (!value) return null;
+
+    if (value instanceof Date) return isNaN(value) ? null : value;
+
+    const str = String(value).trim();
+
+    // صيغة ISO القادمة من جوجل شيت أحياناً: 2026-07-02T12:05:00.000Z
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+        const iso = new Date(str);
+        return isNaN(iso) ? null : iso;
+    }
+
+    // الصيغة المصرية المستخدمة في التطبيق: D/M/YYYY H:MM
+    const [datePart, timePart] = str.split(" ");
+    if (!datePart) return null;
+
+    const dateBits = datePart.split("/").map(Number);
+    if (dateBits.length !== 3 || dateBits.some(n => !n && n !== 0)) return null;
+
+    const [day, month, year] = dateBits;
+
+    let hours = 0, minutes = 0;
+    if (timePart) {
+        const timeBits = timePart.split(":").map(Number);
+        hours = timeBits[0] || 0;
+        minutes = timeBits[1] || 0;
+    }
+
+    const d = new Date(year, month - 1, day, hours, minutes);
+    return isNaN(d) ? null : d;
+}
+
 function filterSalesByDate(sourceSales, filter, from = "", to = "") {
 
     const now = new Date();
@@ -2223,7 +2382,8 @@ function filterSalesByDate(sourceSales, filter, from = "", to = "") {
 
         if (!s.date) return false;
 
-        const d = new Date(s.date);
+        const d = parseSaleDate(s.date);
+        if (!d) return false;
 
         switch (filter) {
 
@@ -2382,8 +2542,6 @@ function renderHistory() {
     el.innerHTML = visible.map(inv=>{
 
         const rows = inv.items.map(it => {
-
-    console.log(sales.filter(s => Number(s.qty) < 0));
 
     return `
 
@@ -2780,6 +2938,203 @@ function exportReportExcel(){
 
 }
 
+function getReportFilterLabel(){
+
+    const labels = {
+        today: "اليوم",
+        week: "آخر 7 أيام",
+        month: "الشهر الحالي",
+        all: "كل الفترات",
+        custom: (reportFrom && reportTo) ? `من ${reportFrom} إلى ${reportTo}` : "فترة مخصصة"
+    };
+
+    return labels[reportFilter] || "كل الفترات";
+
+}
+
+function previewReport(){
+
+    const reportSales = getReportSales();
+
+    // تجميع الفواتير في الفترة المحددة
+    const invoicesMap = {};
+
+    reportSales.forEach(s => {
+
+        const key = s.invoiceId || s.date;
+
+        if (!invoicesMap[key]) {
+            invoicesMap[key] = {
+                invoiceId: s.invoiceId || "-",
+                date: s.date,
+                seller: s.seller || "-",
+                itemsCount: 0,
+                total: 0
+            };
+        }
+
+        invoicesMap[key].itemsCount += 1;
+        invoicesMap[key].total += Number(s.total || 0);
+
+    });
+
+    const invoicesList = Object.values(invoicesMap).sort((a, b) => {
+        const da = parseSaleDate(a.date);
+        const db = parseSaleDate(b.date);
+        return (db ? db.getTime() : 0) - (da ? da.getTime() : 0);
+    });
+
+    const invoicesRows = invoicesList.map(inv => `
+        <tr>
+            <td>${inv.invoiceId}</td>
+            <td>${inv.date}</td>
+            <td>${inv.seller}</td>
+            <td>${inv.itemsCount}</td>
+            <td>${Number(inv.total).toLocaleString()} ج</td>
+        </tr>
+    `).join("") || `<tr><td colspan="5" style="text-align:center;color:#8fa3bc;padding:20px;">لا توجد فواتير في هذه الفترة</td></tr>`;
+
+    const now = new Date();
+    const generatedAt = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+    const summaryHTML = document.getElementById("report-table").innerHTML;
+    const topListHTML = document.getElementById("report-top-list").innerHTML;
+    const topRevenueHTML = document.getElementById("report-top-revenue").innerHTML;
+
+    const totalSales = document.getElementById("report-total-sales").textContent;
+    const totalInvoices = document.getElementById("report-total-invoices").textContent;
+    const totalQty = document.getElementById("report-total-qty").textContent;
+    const averageInvoice = document.getElementById("report-average").textContent;
+
+    const html = `
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>تقرير المبيعات - سجاد علياء</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        font-family: 'Cairo','Segoe UI',Tahoma,Arial,sans-serif;
+        color:#0d1f35;
+        padding:24px;
+        direction:rtl;
+    }
+    .report-header {
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        border-bottom:3px solid #e8442a;
+        padding-bottom:14px;
+        margin-bottom:20px;
+    }
+    .report-header h1 { margin:0; font-size:22px; color:#0d1f35; }
+    .report-header p { margin:4px 0 0; font-size:13px; color:#4a6080; }
+    .meta-box { text-align:left; font-size:12px; color:#4a6080; }
+    .summary-grid {
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        gap:10px;
+        margin-bottom:24px;
+    }
+    .summary-card {
+        border:1px solid #e2eaf2;
+        border-radius:10px;
+        padding:12px;
+        text-align:center;
+    }
+    .summary-card .label { font-size:11px; color:#8fa3bc; margin-bottom:6px; }
+    .summary-card .value { font-size:17px; font-weight:800; color:#0d1f35; }
+    h2.section-title {
+        font-size:14px;
+        color:#0d1f35;
+        border-right:4px solid #e8442a;
+        padding-right:8px;
+        margin:26px 0 10px;
+    }
+    table { width:100%; border-collapse:collapse; font-size:12.5px; }
+    th, td { border:1px solid #e2eaf2; padding:8px; text-align:center; }
+    th { background:#0d1f35; color:#fff; }
+    tr:nth-child(even) td { background:#f8fafc; }
+    .report-item { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #e2eaf2; font-size:13px; }
+    .report-empty { text-align:center; color:#8fa3bc; padding:14px; }
+    .print-actions { margin-bottom:20px; }
+    .print-actions button {
+        background:#0d1f35; color:#fff; border:none; border-radius:8px;
+        padding:10px 18px; font-size:14px; cursor:pointer; font-family:inherit;
+    }
+    @media print {
+        .print-actions { display:none; }
+        body { padding:0; }
+    }
+    @page { size:A4; margin:14mm; }
+</style>
+</head>
+<body>
+
+    <div class="print-actions">
+        <button onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
+    </div>
+
+    <div class="report-header">
+        <div>
+            <h1>سجاد علياء - تقرير المبيعات</h1>
+            <p>الفترة: ${getReportFilterLabel()}</p>
+        </div>
+        <div class="meta-box">
+            تاريخ الإصدار: ${generatedAt}
+        </div>
+    </div>
+
+    <div class="summary-grid">
+        <div class="summary-card"><div class="label">إجمالي المبيعات</div><div class="value">${totalSales}</div></div>
+        <div class="summary-card"><div class="label">عدد الفواتير</div><div class="value">${totalInvoices}</div></div>
+        <div class="summary-card"><div class="label">الكمية المباعة</div><div class="value">${totalQty}</div></div>
+        <div class="summary-card"><div class="label">متوسط الفاتورة</div><div class="value">${averageInvoice}</div></div>
+    </div>
+
+    <h2 class="section-title">🔥 أكثر المنتجات مبيعاً</h2>
+    ${topListHTML}
+
+    <h2 class="section-title">💰 أعلى المنتجات إيراداً</h2>
+    ${topRevenueHTML}
+
+    <h2 class="section-title">📋 ملخص الأصناف</h2>
+    ${summaryHTML}
+
+    <h2 class="section-title">🧾 الفواتير خلال الفترة (${invoicesList.length})</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>رقم الفاتورة</th>
+                <th>التاريخ</th>
+                <th>البائع</th>
+                <th>عدد الأصناف</th>
+                <th>الإجمالي</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${invoicesRows}
+        </tbody>
+    </table>
+
+</body>
+</html>
+    `;
+
+    const win = window.open('', '_blank');
+
+    if (!win) {
+        showToast("❌ برجاء السماح بالنوافذ المنبثقة (Popups) لمعاينة التقرير");
+        return;
+    }
+
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+
+}
+
 
 
 async function addItem() {
@@ -3007,28 +3362,90 @@ async function deleteItem(i) {
         return;
     }
 
-    if (confirm(`هتحذف "${items[i].name}"؟`)) {
+    const item = items[i];
 
-        items.splice(i, 1);
+    if (!confirm(`هتحذف "${item.name}"؟`)) return;
 
-        await saveData();
+    // حذف المنتج
+    items.splice(i, 1);
 
-        renderStats();
-        renderItems();
-        checkLowStock();
+    await saveData();
+    await loadData();
 
-        showToast('🗑️ تم الحذف');
+    // هل لسه فيه منتجات من نفس النوع؟
+   const hasItems = items.some(p => p.type === item.type);
+
+    if (!hasItems) {
+        openDeleteTypeModal(item.type);
     }
+
+    renderStats();
+    renderItems();
+    checkLowStock();
+
+    showToast("🗑️ تم حذف المنتج");
+
 }
 
-let currentFilter = 'month';
+let pendingDeleteType = null;
 
-function setFilter(f) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach((b,i) => {
-    b.classList.toggle('active', ['day','week','month','all'][i] === f);
-  });
-  renderReports();
+function openDeleteTypeModal(typeName){
+
+    pendingDeleteType = typeName;
+
+    document.getElementById("delete-type-text").innerHTML =
+        `تم حذف آخر منتج من النوع <b>${typeName}</b><br><br>هل تريد حذف النوع أيضًا؟`;
+
+    document.getElementById("delete-type-modal").classList.add("show");
+
+}
+
+function closeDeleteTypeModal(){
+
+    pendingDeleteType = null;
+
+    document.getElementById("delete-type-modal").classList.remove("show");
+
+}
+
+async function confirmDeleteType(){
+
+    if(!pendingDeleteType) return;
+
+    try{
+
+        const res = await fetch(SCRIPT_URL,{
+            method:"POST",
+            body:JSON.stringify({
+                action:"deleteType",
+                name:pendingDeleteType
+            })
+        });
+
+        const data = await res.json();
+
+        if(data.status==="ok"){
+
+            showToast("🗑️ تم حذف النوع");
+
+            await loadData();
+
+        }else{
+
+            showToast("❌ "+data.message);
+
+        }
+
+    }catch(err){
+
+        console.error(err);
+
+        showToast("❌ حدث خطأ");
+
+    }
+
+    closeDeleteTypeModal();
+
 }
 
 function filterSalesByPeriod(f) {
@@ -3194,7 +3611,8 @@ function getReportSales() {
 
     return sales.filter(s => {
 
-        const d = new Date(s.date);
+        const d = parseSaleDate(s.date);
+        if (!d) return false;
 
         switch (reportFilter) {
 
@@ -4086,10 +4504,36 @@ checkAuth();
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js"></script>
+<div id="delete-type-modal" class="custom-modal">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/vfs_fonts.js"></script>
+    <div class="custom-modal-box">
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+        <div class="custom-modal-icon">
+            <i class="ti ti-alert-circle"></i>
+        </div>
+
+        <h3>النوع أصبح فارغًا</h3>
+
+        <p id="delete-type-text">
+            تم حذف آخر منتج من هذا النوع.
+        </p>
+
+        <div class="custom-modal-actions">
+
+            <button class="btn-secondary" onclick="closeDeleteTypeModal()">
+                الاحتفاظ بالنوع
+            </button>
+
+            <button class="btn-danger" onclick="confirmDeleteType()">
+                حذف النوع
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 </body>
 </html>
