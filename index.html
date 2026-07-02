@@ -1291,6 +1291,32 @@
 
 }
 
+/* ===== Button loading / spinner state ===== */
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
+.btn-spinner{
+    width:16px;
+    height:16px;
+    border:2px solid currentColor;
+    border-top-color:transparent;
+    opacity:.9;
+    border-radius:50%;
+    display:inline-block;
+    animation:btn-spin .7s linear infinite;
+    flex-shrink:0;
+    vertical-align:middle;
+}
+
+button.btn-loading{
+    opacity:.85;
+    cursor:not-allowed;
+    pointer-events:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+
 </style>
 </head>
 <body>
@@ -1322,7 +1348,7 @@
       </div>
     </div>
 
-    <button class="login-btn" onclick="login()">تسجيل الدخول</button>
+    <button class="login-btn" onclick="login(this)">تسجيل الدخول</button>
     <p id="loginError" class="login-error"></p>
 
   </div>
@@ -1589,7 +1615,7 @@
 
     <button
         class="btn-danger-outline admin-only"
-        onclick="clearSales()">
+        onclick="clearSales(this)">
 
         <i class="ti ti-trash"></i>
 
@@ -1898,7 +1924,7 @@
       </div>
       <div class="field">
     <label>الصلاحية</label><select id="new-role"><option value="cashier">Cashier</option><option value="admin">Admin</option></select></div>
-      <button class="btn-primary" onclick="addUser()"><i class="ti ti-user-plus"></i> إضافة موظف</button>
+      <button class="btn-primary" onclick="addUser(this)"><i class="ti ti-user-plus"></i> إضافة موظف</button>
     </div>
     <div class="section-title">المستخدمين الحاليين</div>
     <div id="users-list"></div>
@@ -1955,6 +1981,28 @@ function showToast(msg) {
   t.textContent = msg;
   t.style.display = 'block';
   setTimeout(() => t.style.display = 'none', 2500);
+}
+
+function setButtonLoading(btn, loading, loadingText){
+
+    if (!btn) return;
+
+    if (loading){
+        if (btn.dataset.originalHtml === undefined){
+            btn.dataset.originalHtml = btn.innerHTML;
+        }
+        btn.disabled = true;
+        btn.classList.add('btn-loading');
+        btn.innerHTML = `<span class="btn-spinner"></span>${loadingText ? `<span>${loadingText}</span>` : ''}`;
+    } else {
+        btn.disabled = false;
+        btn.classList.remove('btn-loading');
+        if (btn.dataset.originalHtml !== undefined){
+            btn.innerHTML = btn.dataset.originalHtml;
+            delete btn.dataset.originalHtml;
+        }
+    }
+
 }
 
 async function loadData() {
@@ -2284,7 +2332,7 @@ function renderItems() {
 
                     <button
                         class="type-edit-btn"
-                        onclick="editType('${type.replace(/'/g,"\\'")}')">
+                        onclick="editType('${type.replace(/'/g,"\\'")}', this)">
 
                         <i class="ti ti-pencil"></i>
 
@@ -2292,7 +2340,7 @@ function renderItems() {
 
                     <button
                         class="type-delete-btn"
-                        onclick="deleteTypeConfirm('${type.replace(/'/g,"\\'")}')">
+                        onclick="deleteTypeConfirm('${type.replace(/'/g,"\\'")}', this)">
 
                         <i class="ti ti-trash"></i>
 
@@ -2365,7 +2413,7 @@ function renderItems() {
                     ${
                         isAdmin
                         ? `<button class="edit-btn" onclick="openEdit(${index})"><i class="ti ti-pencil"></i></button>
-                           <button class="delete-btn" onclick="deleteItem(${index})"><i class="ti ti-trash"></i></button>`
+                           <button class="delete-btn" onclick="deleteItem(${index}, this)"><i class="ti ti-trash"></i></button>`
                         : ""
                     }
 
@@ -3003,12 +3051,13 @@ async function captureReceiptBlob() {
     });
 }
 
-async function downloadReceiptImage() {
+async function downloadReceiptImage(btn) {
 
     if (!currentReceiptInvoice) return;
 
+    setButtonLoading(btn, true);
+
     try {
-        showToast("⏳ جاري تجهيز الصورة...");
         const blob = await captureReceiptBlob();
 
         const url = URL.createObjectURL(blob);
@@ -3021,17 +3070,20 @@ async function downloadReceiptImage() {
     } catch (err) {
         console.error(err);
         showToast("❌ تعذر إنشاء الصورة");
+    } finally {
+        setButtonLoading(btn, false);
     }
 
 }
 
-async function shareReceipt() {
+async function shareReceipt(btn) {
 
     if (!currentReceiptInvoice) return;
 
+    setButtonLoading(btn, true);
+
     try {
 
-        showToast("⏳ جاري تجهيز الفاتورة...");
         const blob = await captureReceiptBlob();
 
         const file = new File(
@@ -3071,6 +3123,8 @@ async function shareReceipt() {
             console.error(err);
             showToast("❌ تعذرت المشاركة");
         }
+    } finally {
+        setButtonLoading(btn, false);
     }
 
 }
@@ -3579,44 +3633,79 @@ async function addItem() {
       alert("ليس لديك صلاحية لإضافة منتجات");
       return;
   }
+
   const type = document.getElementById('item-type').value;
   const unit = document.getElementById('add-unit').value;
   const unitText = unit === "متر" ? "متر" : "قطعة";
   const name = document.getElementById('add-name').value.trim();
-  const qty = unit === "متر"
-    ? (parseFloat(document.getElementById('add-qty').value) || 0)
-    : (parseInt(document.getElementById('add-qty').value) || 0);
-  const price = parseInt(document.getElementById('add-price').value) || 0;
-  const min = unit === "متر"
-    ? (parseFloat(document.getElementById('add-min').value) || 2)
-    : (parseInt(document.getElementById('add-min').value) || 2);
+
+  const qtyRaw = document.getElementById('add-qty').value;
+  const qty = unit === "متر" ? parseFloat(qtyRaw) : parseInt(qtyRaw);
+
+  const priceRaw = document.getElementById('add-price').value;
+  const price = parseFloat(priceRaw);
+
+  const minRaw = document.getElementById('add-min').value;
+  const min = minRaw === "" ? (unit === "متر" ? 2 : 2)
+    : (unit === "متر" ? parseFloat(minRaw) : parseInt(minRaw));
+
+  // ===== Validation =====
+
+  if (!type) { showToast('❌ اختر نوع الصنف'); return; }
+
   if (!name) { showToast('❌ ادخل اسم الصنف'); return; }
+
+  if (!Number.isFinite(qty) || qty <= 0) {
+    showToast('❌ الكمية يجب أن تكون رقمًا أكبر من صفر');
+    return;
+  }
+
   if (unit === "قطعة" && !Number.isInteger(qty)) {
     showToast("❌ عدد القطع يجب أن يكون رقمًا صحيحًا");
     return;
-}
-  const btn = document.getElementById('btn-add');
-  btn.disabled = true;
-  const imgData = null;
+  }
+
+  if (!Number.isFinite(price) || price <= 0) {
+    showToast('❌ السعر يجب أن يكون رقمًا أكبر من صفر');
+    return;
+  }
+
+  if (!Number.isFinite(min) || min < 0) {
+    showToast('❌ الحد الأدنى غير صحيح');
+    return;
+  }
+
   const existing = items.findIndex(i => i.name === name && i.unit === unit);
   if (existing >= 0) {
-    items[existing].qty = Number(items[existing].qty) + qty;
-    if (imgData) items[existing].img = imgData;
-    showToast(`✅ تمت إضافة ${qty} ${unitText} لـ ${name}`);
-  } else {
-    items.push({ type, name, unit, qty, price, min, img: imgData || null });
-    showToast(`✅ تمت إضافة ${name}`);
+    showToast(`❌ "${name}" (${unitText}) موجود بالفعل بالمخزون — لزيادة الكمية عدّله من صفحة المخزون`);
+    return;
   }
-  await saveData();
-  renderStats(); renderItems(); checkLowStock();
-  document.getElementById('add-name').value = '';
-  document.getElementById('add-qty').value = '';
-  document.getElementById('add-price').value = '';
-  const preview = document.getElementById('add-img-preview');
-  if (preview) { preview.src = ''; preview.style.display = 'none'; }
-  const imgInput = document.getElementById('add-img');
-  if (imgInput) imgInput.value = '';
-  btn.disabled = false;
+
+  const btn = document.getElementById('btn-add');
+  setButtonLoading(btn, true, 'جاري الإضافة...');
+
+  try {
+
+    items.push({ type, name, unit, qty, price, min, img: null });
+    showToast(`✅ تمت إضافة ${name}`);
+
+    await saveData();
+    renderStats(); renderItems(); checkLowStock();
+
+    document.getElementById('add-name').value = '';
+    document.getElementById('add-qty').value = '';
+    document.getElementById('add-price').value = '';
+    const preview = document.getElementById('add-img-preview');
+    if (preview) { preview.src = ''; preview.style.display = 'none'; }
+    const imgInput = document.getElementById('add-img');
+    if (imgInput) imgInput.value = '';
+
+  } finally {
+
+    setButtonLoading(btn, false);
+
+  }
+
 }
 
 let sellCart = [];
@@ -3722,7 +3811,6 @@ async function finalizeSale() {
   }
 
   const btn = document.getElementById('btn-sell');
-  btn.disabled = true;
 
   // التأكد إن الكميات لسه متاحة قبل التنفيذ النهائي (حماية من تغييرات لحظية)
   for (const c of sellCart) {
@@ -3732,67 +3820,75 @@ async function finalizeSale() {
           .reduce((s, x) => s + Number(x.qty), 0);
       if (!stockItem || sameItemQtyInCart > Number(stockItem.qty)) {
           showToast(`❌ الكمية المتاحة من "${c.name}" تغيرت، راجع الفاتورة`);
-          btn.disabled = false;
           return;
       }
   }
 
-  const now = new Date();
-  const date = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const invoiceId = `INV-${now.getTime()}`;
-  const invoiceNote = document.getElementById('invoice-note').value.trim();
+  // التأكد من صحة كل سطر في الفاتورة قبل التنفيذ (بدون كتابة أي بيانات)
+  for (const c of sellCart) {
+      if (!Number.isFinite(Number(c.qty)) || Number(c.qty) <= 0) {
+          showToast("❌ الكمية غير صحيحة");
+          return;
+      }
+      if (!Number.isFinite(Number(c.price)) || Number(c.price) < 0) {
+          showToast("❌ سعر الوحدة غير صحيح");
+          return;
+      }
+      if (!Number.isFinite(Number(c.total)) || Number(c.total) < 0) {
+          showToast("❌ إجمالي السعر غير صحيح");
+          return;
+      }
+  }
 
-  let invoiceTotal = 0;
-  const itemsSummary = [];
+  setButtonLoading(btn, true, 'جاري تسجيل الفاتورة...');
 
-  sellCart.forEach(c => {
-    if (!Number.isFinite(Number(c.qty)) || Number(c.qty) <= 0) {
-        showToast("❌ الكمية غير صحيحة");
-        btn.disabled = false;
-        return;
-    }
+  try {
 
-    if (!Number.isFinite(Number(c.price)) || Number(c.price) < 0) {
-        showToast("❌ سعر الوحدة غير صحيح");
-        btn.disabled = false;
-        return;
-    }
+    const now = new Date();
+    const date = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const invoiceId = `INV-${now.getTime()}`;
+    const invoiceNote = document.getElementById('invoice-note').value.trim();
 
-    if (!Number.isFinite(Number(c.total)) || Number(c.total) < 0) {
-        showToast("❌ إجمالي السعر غير صحيح");
-        btn.disabled = false;
-        return;
-    }
-      const stockItem = items[c.itemIndex];
-      stockItem.qty = Number(stockItem.qty) - c.qty;
-      sales.push({
-        invoiceId,
-        name: c.name,
-        type: c.type,
-        unit: c.unit,
-        qty: c.qty,
-        unitPrice: c.price,
-        total: c.total,
-        date,
-        seller: currentUser.username,
-        note: invoiceNote
+    let invoiceTotal = 0;
+    const itemsSummary = [];
+
+    sellCart.forEach(c => {
+        const stockItem = items[c.itemIndex];
+        stockItem.qty = Number(stockItem.qty) - c.qty;
+        sales.push({
+          invoiceId,
+          name: c.name,
+          type: c.type,
+          unit: c.unit,
+          qty: c.qty,
+          unitPrice: c.price,
+          total: c.total,
+          date,
+          seller: currentUser.username,
+          note: invoiceNote
+      });
+        invoiceTotal += c.total;
+        itemsSummary.push(`${c.qty} ${c.unit} ${c.name}`);
     });
-      invoiceTotal += c.total;
-      itemsSummary.push(`${c.qty} ${c.unit} ${c.name}`);
-  });
 
-  await saveData();
-  renderStats(); renderSellSelect();
-  showToast(`✅ تم تسجيل الفاتورة بإجمالي ${invoiceTotal.toLocaleString()} جنيه`);
+    await saveData();
+    renderStats(); renderSellSelect();
+    showToast(`✅ تم تسجيل الفاتورة بإجمالي ${invoiceTotal.toLocaleString()} جنيه`);
 
-  sellCart = [];
-  renderCart();
-  document.getElementById('invoice-note').value = '';
-  document.getElementById('sell-qty').value = '';
-  btn.disabled = false;
+    sellCart = [];
+    renderCart();
+    document.getElementById('invoice-note').value = '';
+    document.getElementById('sell-qty').value = '';
+
+  } finally {
+
+    setButtonLoading(btn, false);
+
+  }
+
 }
 
-async function deleteItem(i) {
+async function deleteItem(i, btn) {
 
     if (!isAdmin()) {
         alert("ليس لديك صلاحية لحذف المنتجات");
@@ -3803,24 +3899,34 @@ async function deleteItem(i) {
 
     if (!confirm(`هتحذف "${item.name}"؟`)) return;
 
-    // حذف المنتج
-    items.splice(i, 1);
+    setButtonLoading(btn, true);
 
-    await saveData();
-    await loadData();
+    try {
 
-    // هل لسه فيه منتجات من نفس النوع؟
-   const hasItems = items.some(p => p.type === item.type);
+        // حذف المنتج
+        items.splice(i, 1);
 
-    if (!hasItems) {
-        openDeleteTypeModal(item.type);
+        await saveData();
+        await loadData();
+
+        // هل لسه فيه منتجات من نفس النوع؟
+        const hasItems = items.some(p => p.type === item.type);
+
+        if (!hasItems) {
+            openDeleteTypeModal(item.type);
+        }
+
+        renderStats();
+        renderItems();
+        checkLowStock();
+
+        showToast("🗑️ تم حذف المنتج");
+
+    } finally {
+
+        setButtonLoading(btn, false);
+
     }
-
-    renderStats();
-    renderItems();
-    checkLowStock();
-
-    showToast("🗑️ تم حذف المنتج");
 
 }
 
@@ -3850,7 +3956,7 @@ async function confirmDeleteType(){
     if(!pendingDeleteType) return;
 
     const btn = document.getElementById('btn-confirm-delete-type');
-    if (btn) btn.disabled = true;
+    setButtonLoading(btn, true);
 
     try{
 
@@ -3889,7 +3995,7 @@ async function confirmDeleteType(){
 
     }
 
-    if (btn) btn.disabled = false;
+    setButtonLoading(btn, false);
 
 }
 
@@ -3906,13 +4012,18 @@ function filterSalesByPeriod(f) {
   });
 }
 
-async function clearSales() {
+async function clearSales(btn) {
   if (!confirm('هتمسح كل سجل المبيعات والإجمالي هيرجع صفر، متأكد؟')) return;
-  sales = [];
-  await saveData();
-  renderStats();
-  renderHistory();
-  showToast('🗑️ تم مسح سجل المبيعات');
+  setButtonLoading(btn, true, 'جاري الحذف...');
+  try {
+      sales = [];
+      await saveData();
+      renderStats();
+      renderHistory();
+      showToast('🗑️ تم مسح سجل المبيعات');
+  } finally {
+      setButtonLoading(btn, false);
+  }
 }
 
 let editIndex = -1;
@@ -4004,23 +4115,30 @@ async function saveEdit() {
   }
 
   const btn = document.getElementById('btn-save-edit');
-  btn.disabled = true;
+  setButtonLoading(btn, true, 'جاري الحفظ...');
 
-  items[editIndex] = {
-    ...items[editIndex],
-    type,
-    unit,
-    name,
-    qty,
-    price,
-    min,
-  };
+  try {
 
-  await saveData();
-  renderStats(); renderItems(); checkLowStock();
-  closeEdit();
-  showToast('✅ تم التعديل');
-  btn.disabled = false;
+    items[editIndex] = {
+      ...items[editIndex],
+      type,
+      unit,
+      name,
+      qty,
+      price,
+      min,
+    };
+
+    await saveData();
+    renderStats(); renderItems(); checkLowStock();
+    closeEdit();
+    showToast('✅ تم التعديل');
+
+  } finally {
+
+    setButtonLoading(btn, false);
+
+  }
 }
 
 function checkLowStock() {
@@ -4194,49 +4312,55 @@ function checkAuth() {
 
 }
 
-async function login(){
-  console.log("Login started");
+async function login(btn){
 
-    const username =
-        document.getElementById("loginUsername").value;
+    const username = document.getElementById("loginUsername").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
 
-    const password =
-        document.getElementById("loginPassword").value;
+    if (!username || !password) {
+        document.getElementById("loginError").innerHTML = "من فضلك ادخل اسم المستخدم وكلمة المرور";
+        return;
+    }
 
-        console.log("Username:", username);
-        console.log("Password:", password);
+    document.getElementById("loginError").innerHTML = "";
+    setButtonLoading(btn, true, "جاري الدخول...");
 
-    const res = await fetch(SCRIPT_URL,{
+    try {
 
-        method: "POST",
-        body: JSON.stringify({
-            action: "login",
-            username,
-            password
-        })
+        const res = await fetch(SCRIPT_URL,{
+            method: "POST",
+            body: JSON.stringify({
+                action: "login",
+                username,
+                password
+            })
+        });
 
-    });
-    
+        const data = await res.json();
 
-    const data = await res.json();
-    console.log(data);
+        if (data.status == "ok") {
 
-    if(data.status=="ok"){
+            currentUser = data.user;
+            localStorage.setItem("currentUser", JSON.stringify(currentUser));
+            applyPermissions();
+            showMainApp();
+            loadData();
 
-      currentUser = data.user;
+        } else {
 
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+            document.getElementById("loginError").innerHTML =
+                "اسم المستخدم أو كلمة المرور غير صحيحة";
 
-      applyPermissions();
+        }
 
-      showMainApp();
+    } catch (err) {
 
-      loadData();
+        console.error(err);
+        document.getElementById("loginError").innerHTML = "تعذر الاتصال، تحقق من الإنترنت";
 
-    }else{
+    } finally {
 
-        document.getElementById("loginError").innerHTML =
-            "اسم المستخدم أو كلمة المرور غير صحيحة";
+        setButtonLoading(btn, false);
 
     }
 
@@ -4260,7 +4384,7 @@ function applyPermissions() {
 
 }
 
-async function addUser() {
+async function addUser(btn) {
 
     if (!isAdmin()) {
         showToast("❌ ليس لديك صلاحية");
@@ -4276,6 +4400,8 @@ async function addUser() {
         showToast("❌ أكمل جميع البيانات");
         return;
     }
+
+    setButtonLoading(btn, true, 'جاري الإضافة...');
 
     try {
 
@@ -4315,6 +4441,10 @@ async function addUser() {
 
         showToast("❌ حدث خطأ");
 
+    } finally {
+
+        setButtonLoading(btn, false);
+
     }
 
 }
@@ -4352,10 +4482,12 @@ function closeTypesModal(){
     document.getElementById("types-modal").style.display="none";
 }
 
-async function addType() {
+async function addType(btn) {
     const input = document.getElementById("new-type-name");
     const name = input.value.trim();
     if (!name) { showToast("❌ ادخل اسم النوع"); return; }
+
+    setButtonLoading(btn, true, 'جاري الإضافة...');
 
     try {
         const res = await fetch(SCRIPT_URL, {
@@ -4374,10 +4506,12 @@ async function addType() {
     } catch (err) {
         console.error(err);
         showToast("❌ حدث خطأ");
+    } finally {
+        setButtonLoading(btn, false);
     }
 }
 
-async function editType(oldName) {
+async function editType(oldName, btn) {
 
     const newName = prompt("اسم النوع الجديد:", oldName);
 
@@ -4391,6 +4525,8 @@ async function editType(oldName) {
     }
 
     if (trimmedName === oldName) return;
+
+    setButtonLoading(btn, true);
 
     try {
         const res = await fetch(SCRIPT_URL, {
@@ -4414,11 +4550,15 @@ async function editType(oldName) {
     } catch (err) {
         console.error(err);
         showToast("❌ حدث خطأ");
+    } finally {
+        setButtonLoading(btn, false);
     }
 }
 
-async function deleteTypeConfirm(name) {
+async function deleteTypeConfirm(name, btn) {
     if (!confirm(`هتحذف النوع "${name}"؟`)) return;
+
+    setButtonLoading(btn, true);
 
     try {
         const res = await fetch(SCRIPT_URL, {
@@ -4435,10 +4575,12 @@ async function deleteTypeConfirm(name) {
     } catch (err) {
         console.error(err);
         showToast("❌ حدث خطأ");
+    } finally {
+        setButtonLoading(btn, false);
     }
 }
 
-async function saveUser() {
+async function saveUser(btn) {
 
     if (editingUserIndex < 0) return;
 
@@ -4452,39 +4594,59 @@ async function saveUser() {
         active: document.getElementById("edit-user-active").checked
     };
 
-    const res = await fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({
-            action: "updateUser",
-            oldUsername: user.username,
-            newData: updatedUser
-        })
-    });
+    if (!updatedUser.name || !updatedUser.username) {
+        showToast("❌ أكمل جميع البيانات");
+        return;
+    }
 
-    const data = await res.json();
+    setButtonLoading(btn, true, 'جاري الحفظ...');
 
-    if (data.status === "ok") {
+    try {
 
-        // تحديث محلي
-        users[editingUserIndex] = {
-            ...user,
-            ...updatedUser,
-            password: updatedUser.password || user.password
-        };
+        const res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "updateUser",
+                oldUsername: user.username,
+                newData: updatedUser
+            })
+        });
 
-        renderUsersList();
-        closeUserModal();
+        const data = await res.json();
 
-        showToast("✅ تم حفظ التعديلات");
+        if (data.status === "ok") {
 
-    } else {
+            // تحديث محلي
+            users[editingUserIndex] = {
+                ...user,
+                ...updatedUser,
+                password: updatedUser.password || user.password
+            };
 
-        showToast("❌ فشل في الحفظ");
+            renderUsersList();
+            closeUserModal();
+
+            showToast("✅ تم حفظ التعديلات");
+
+        } else {
+
+            showToast("❌ فشل في الحفظ");
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+        showToast("❌ حدث خطأ في الاتصال");
+
+    } finally {
+
+        setButtonLoading(btn, false);
 
     }
 }
 
-async function deleteUser() {
+async function deleteUser(btn) {
 
     if (editingUserIndex < 0) return;
 
@@ -4494,28 +4656,43 @@ async function deleteUser() {
         return;
     }
 
-    const res = await fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({
-            action: "deleteUser",
-            username: user.username
-        })
-    });
+    setButtonLoading(btn, true, 'جاري الحذف...');
 
-    const data = await res.json();
+    try {
 
-    if (data.status === "ok") {
+        const res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "deleteUser",
+                username: user.username
+            })
+        });
 
-        users.splice(editingUserIndex, 1);
+        const data = await res.json();
 
-        renderUsersList();
-        closeUserModal();
+        if (data.status === "ok") {
 
-        showToast("🗑️ تم حذف المستخدم");
+            users.splice(editingUserIndex, 1);
 
-    } else {
+            renderUsersList();
+            closeUserModal();
 
-        showToast("❌ فشل الحذف");
+            showToast("🗑️ تم حذف المستخدم");
+
+        } else {
+
+            showToast("❌ فشل الحذف");
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+        showToast("❌ حدث خطأ في الاتصال");
+
+    } finally {
+
+        setButtonLoading(btn, false);
 
     }
 }
@@ -4795,11 +4972,11 @@ function renderTypesManager() {
 
                 <div>
 
-                    <button onclick="editType('${type.name}')">
+                    <button onclick="editType('${type.name.replace(/'/g,"\\'")}', this)">
                         ✏️
                     </button>
 
-                    <button onclick="deleteTypeConfirm('${type.name}')">
+                    <button onclick="deleteTypeConfirm('${type.name.replace(/'/g,"\\'")}', this)">
                         🗑️
                     </button>
 
@@ -4967,11 +5144,11 @@ checkAuth();
 
         <div class="btn-row">
 
-            <button class="btn-primary" onclick="saveUser()">
+            <button class="btn-primary" onclick="saveUser(this)">
                 💾 حفظ
             </button>
 
-            <button class="btn-secondary" onclick="deleteUser()">
+            <button class="btn-secondary" onclick="deleteUser(this)">
                 🗑 حذف
             </button>
 
@@ -4996,7 +5173,7 @@ checkAuth();
 
         <div class="btn-row" style="margin-top:12px;">
             <button class="btn-secondary" onclick="closeTypesModal()">إلغاء</button>
-            <button class="btn-primary" onclick="addType()" style="margin-top:0;">
+            <button class="btn-primary" onclick="addType(this)" style="margin-top:0;">
                 <i class="ti ti-plus"></i> إضافة
             </button>
         </div>
@@ -5084,9 +5261,9 @@ checkAuth();
         </div>
 
         <div class="receipt-actions">
-            <button onclick="shareReceipt()"><i class="ti ti-share"></i> مشاركة</button>
+            <button onclick="shareReceipt(this)"><i class="ti ti-share"></i> مشاركة</button>
             <button onclick="printReceipt()"><i class="ti ti-printer"></i> طباعة</button>
-            <button onclick="downloadReceiptImage()"><i class="ti ti-download"></i> تحميل</button>
+            <button onclick="downloadReceiptImage(this)"><i class="ti ti-download"></i> تحميل</button>
         </div>
 
     </div>
