@@ -1741,9 +1741,16 @@
   <div class="modal">
     <div class="modal-title"><span>تعديل الصنف</span><button class="modal-close" onclick="closeEdit()"><i class="ti ti-x"></i></button></div>
     <div class="field"><label>نوع الصنف</label><select id="edit-type"></select></div>
+    <div class="field">
+        <label>وحدة القياس</label>
+        <select id="edit-unit" onchange="changeEditUnitLabels()">
+            <option value="قطعة">قطعة</option>
+            <option value="متر">متر</option>
+        </select>
+    </div>
     <div class="field"><label>اسم الصنف</label><input type="text" id="edit-name"></div>
-    <div class="row2"><div class="field"><label>الكمية</label><input type="number" id="edit-qty" min="0" inputmode="numeric"></div><div class="field"><label>سعر البيع (جنيه)</label><input type="number" id="edit-price" min="0" inputmode="numeric"></div></div>
-    <div class="field"><label>الحد الأدنى للتنبيه</label><input type="number" id="edit-min" min="1" inputmode="numeric"></div>
+    <div class="row2"><div class="field"><label id="edit-qty-label">الكمية</label><input type="number" id="edit-qty" min="0" step="1" inputmode="decimal"></div><div class="field"><label>سعر البيع (جنيه)</label><input type="number" id="edit-price" min="0" step="0.01" inputmode="decimal"></div></div>
+    <div class="field"><label id="edit-min-label">الحد الأدنى للتنبيه</label><input type="number" id="edit-min" min="0" step="1" inputmode="decimal"></div>
     <div class="btn-row"><button class="btn-secondary" onclick="closeEdit()">إلغاء</button><button class="btn-primary" id="btn-save-edit" onclick="saveEdit()" style="margin-top:0"><i class="ti ti-check"></i> حفظ</button></div>
   </div>
 </div>
@@ -3412,6 +3419,9 @@ async function confirmDeleteType(){
 
     if(!pendingDeleteType) return;
 
+    const btn = document.getElementById('btn-confirm-delete-type');
+    if (btn) btn.disabled = true;
+
     try{
 
         const res = await fetch(SCRIPT_URL,{
@@ -3430,9 +3440,14 @@ async function confirmDeleteType(){
 
             await loadData();
 
+            // يقفل بس لما الحذف ينجح فعليًا على السيرفر
+            closeDeleteTypeModal();
+
         }else{
 
-            showToast("❌ "+data.message);
+            // فشل الحذف (غالبًا لسه فيه صنف مرتبط بالنوع في الشيت)
+            // المودال بيفضل مفتوح عشان المستخدم ياخد باله من رسالة الخطأ الحقيقية
+            showToast("❌ " + (data.message || "تعذر حذف النوع"));
 
         }
 
@@ -3440,11 +3455,11 @@ async function confirmDeleteType(){
 
         console.error(err);
 
-        showToast("❌ حدث خطأ");
+        showToast("❌ حدث خطأ في الاتصال، حاول تاني");
 
     }
 
-    closeDeleteTypeModal();
+    if (btn) btn.disabled = false;
 
 }
 
@@ -3484,10 +3499,13 @@ function openEdit(i) {
     const item = items[i];
 
     document.getElementById('edit-type').value = item.type;
+    document.getElementById('edit-unit').value = item.unit || "قطعة";
     document.getElementById('edit-name').value = item.name;
     document.getElementById('edit-qty').value = item.qty;
     document.getElementById('edit-price').value = item.price;
     document.getElementById('edit-min').value = item.min;
+
+    changeEditUnitLabels();
 
     document.getElementById('edit-modal').classList.add('open');
 }
@@ -3503,15 +3521,71 @@ async function saveEdit() {
       return;
   }
   if (editIndex < 0) return;
+
+  const type = document.getElementById('edit-type').value;
+  const unit = document.getElementById('edit-unit').value;
+  const name = document.getElementById('edit-name').value.trim();
+
+  const qty = unit === "متر"
+    ? (parseFloat(document.getElementById('edit-qty').value) || 0)
+    : (parseInt(document.getElementById('edit-qty').value) || 0);
+
+  const price = parseFloat(document.getElementById('edit-price').value) || 0;
+
+  const min = unit === "متر"
+    ? (parseFloat(document.getElementById('edit-min').value) || 1.5)
+    : (parseInt(document.getElementById('edit-min').value) || 2);
+
+  // ===== Validation =====
+
+  if (!name) {
+    showToast('❌ ادخل اسم الصنف');
+    return;
+  }
+
+  if (unit === "قطعة" && !Number.isInteger(qty)) {
+    showToast("❌ عدد القطع يجب أن يكون رقمًا صحيحًا");
+    return;
+  }
+
+  if (qty < 0) {
+    showToast("❌ الكمية لا يمكن أن تكون بالسالب");
+    return;
+  }
+
+  if (price <= 0) {
+    showToast("❌ ادخل سعر بيع صحيح");
+    return;
+  }
+
+  if (min < 0) {
+    showToast("❌ الحد الأدنى لا يمكن أن يكون بالسالب");
+    return;
+  }
+
+  // منع وجود صنفين بنفس الاسم ونفس الوحدة بعد التعديل
+  const duplicate = items.some((it, idx) =>
+    idx !== editIndex && it.name === name && it.unit === unit
+  );
+
+  if (duplicate) {
+    showToast("❌ يوجد بالفعل صنف بنفس الاسم والوحدة");
+    return;
+  }
+
   const btn = document.getElementById('btn-save-edit');
   btn.disabled = true;
+
   items[editIndex] = {
-    type: document.getElementById('edit-type').value,
-    name: document.getElementById('edit-name').value.trim(),
-    qty: parseInt(document.getElementById('edit-qty').value) || 0,
-    price: parseInt(document.getElementById('edit-price').value) || 0,
-    min: parseInt(document.getElementById('edit-min').value) || 2,
+    ...items[editIndex],
+    type,
+    unit,
+    name,
+    qty,
+    price,
+    min,
   };
+
   await saveData();
   renderStats(); renderItems(); checkLowStock();
   closeEdit();
@@ -4165,6 +4239,36 @@ function changeUnitLabels() {
 
 }
 
+function changeEditUnitLabels() {
+
+    const unit = document.getElementById("edit-unit").value;
+
+    const qtyLabel = document.getElementById("edit-qty-label");
+    const minLabel = document.getElementById("edit-min-label");
+
+    const qtyInput = document.getElementById("edit-qty");
+    const minInput = document.getElementById("edit-min");
+
+    if (unit === "قطعة") {
+
+        qtyLabel.textContent = "عدد القطع";
+        minLabel.textContent = "الحد الأدنى (عدد القطع)";
+
+        qtyInput.step = "1";
+        minInput.step = "1";
+
+    } else {
+
+        qtyLabel.textContent = "عدد الأمتار";
+        minLabel.textContent = "الحد الأدنى (بالمتر)";
+
+        qtyInput.step = "0.01";
+        minInput.step = "0.01";
+
+    }
+
+}
+
 async function loadTypes() {
 
     try {
@@ -4524,7 +4628,7 @@ checkAuth();
                 الاحتفاظ بالنوع
             </button>
 
-            <button class="btn-danger" onclick="confirmDeleteType()">
+            <button class="btn-danger" id="btn-confirm-delete-type" onclick="confirmDeleteType()">
                 حذف النوع
             </button>
 
