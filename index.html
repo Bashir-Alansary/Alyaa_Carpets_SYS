@@ -36,6 +36,9 @@
     --radius: 12px;
     --shadow: 0 2px 12px rgba(13,31,53,0.08);
     --shadow-lg: 0 8px 32px rgba(13,31,53,0.14);
+    --primary: var(--navy);
+    --accent: var(--navy-light);
+    --accent-bg: #eef2f8;
   }
   body { font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif; background: var(--surface-0); color: var(--text-primary); min-height: 100vh; padding-bottom: 24px; }
   .app { max-width: 480px; margin: auto; padding: 14px; }
@@ -140,11 +143,11 @@
   .badge-out { background: var(--danger-bg); color: var(--danger); }
   .delete-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; padding: 6px; line-height: 1; }
   .delete-btn:active { color: var(--danger); }
-  .history-list { display: flex; flex-direction: column; gap: 8px; }
+  .history-list { display: flex; flex-direction: column; gap: 10px; }
   .history-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 13px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
-  .history-name { font-size: 14px; color: var(--text-primary); font-weight: 600; }
-  .history-meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-  .history-price { font-size: 15px; font-weight: 700; color: var(--success); white-space: nowrap; margin-right: 8px; }
+  .history-name { font-size: 13.5px; color: var(--text-primary); font-weight: 800; letter-spacing: -0.1px; font-variant-numeric: tabular-nums; }
+  .history-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 5px; }
+  .history-price { font-size: 16px; font-weight: 800; color: var(--success); white-space: nowrap; margin-right: 8px; }
   .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; line-height: 1.8; }
   .empty-state i { font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.4; }
 
@@ -154,9 +157,21 @@
   .cart-item-right { display: flex; align-items: center; gap: 10px; }
   .cart-item-total { font-size: 14px; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
   .cart-item-remove { width: 28px; height: 28px; border-radius: 50%; border: none; background: rgba(232,68,42,0.12); color: var(--red); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; flex-shrink: 0; }
-  .invoice-group { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 13px 15px; box-shadow: var(--shadow); margin-bottom: 0; }
-  .invoice-group-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .invoice-line { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); padding: 3px 0; }
+
+  /* ===================== كارت الفاتورة (شكل جديد) ===================== */
+  .invoice-group { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 14px 15px; box-shadow: var(--shadow); margin-bottom: 0; transition: box-shadow 0.15s ease; }
+  .invoice-group:active { box-shadow: 0 1px 6px rgba(13,31,53,0.10); }
+  .invoice-group-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .invoice-icon-chip { width: 38px; height: 38px; border-radius: 11px; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .invoice-head-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .invoice-head-texts { min-width: 0; }
+  .invoice-chevron { font-size: 13px; color: var(--text-muted); transition: transform 0.2s ease; flex-shrink: 0; }
+  .invoice-group-head.open .invoice-chevron { transform: rotate(180deg); }
+  .invoice-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-secondary); padding: 6px 0; border-bottom: 1px dashed var(--border); }
+  .invoice-line:last-of-type { border-bottom: none; }
+  .invoice-line .il-name { color: var(--text-primary); font-weight: 600; }
+  .invoice-line .il-sub { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+  .invoice-line .il-total { color: var(--text-primary); font-weight: 700; white-space: nowrap; }
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 11px 22px; border-radius: 22px; font-size: 14px; font-weight: 500; display: none; z-index: 9999; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.2); font-family: inherit; }
   .total-bar { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); border: none; border-radius: 16px; padding: 14px 18px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-lg); }
   .total-bar-label { font-size: 13px; color: rgba(255,255,255,0.75); font-weight: 600; }
@@ -507,11 +522,53 @@
 }
 
 .invoice-note{
-    margin-top:12px;
-    padding:10px;
-    background:#f7f7f7;
-    border-radius:8px;
+    margin-top:10px;
+    padding:10px 12px;
+    background:var(--warning-bg);
+    border-radius:10px;
+    font-size:13px;
+    color:#8a5a12;
+    border:1px solid #fde8c0;
+}
+
+/* ===================== عنوان صفحة الفواتير ===================== */
+
+.invoices-heading{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    text-transform:none;
+    letter-spacing:normal;
+    font-size:14.5px;
+    margin-bottom:12px;
+}
+.invoices-heading-left{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    color:var(--text-primary);
+    font-weight:800;
+}
+.invoices-icon-chip{
+    width:27px;
+    height:27px;
+    border-radius:9px;
+    background:var(--accent-bg);
+    color:var(--accent);
+    display:flex;
+    align-items:center;
+    justify-content:center;
     font-size:14px;
+    flex-shrink:0;
+}
+.invoices-count-badge{
+    color:var(--text-muted);
+    font-size:12.5px;
+    font-weight:700;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    padding:2px 10px;
+    border-radius:20px;
 }
 
 /* ===================== زرار عرض الفاتورة ===================== */
@@ -693,26 +750,26 @@
 
 .btn-filter{
     border:none;
-    background:#f5f7fb;
-    color:#555;
-    padding:6px 14px;
+    background:var(--surface-0);
+    color:var(--text-secondary);
+    padding:7px 15px;
     border-radius:999px;
     font-size:13px;
-    font-weight:600;
+    font-weight:700;
     cursor:pointer;
-    transition:all .25s ease;
-    box-shadow:0 2px 6px rgba(0,0,0,.05);
+    transition:all .2s ease;
+    border:1px solid var(--border);
 }
 
 .btn-filter:hover{
-    background:#e9eefc;
-    transform:translateY(-1px);
+    background:var(--accent-bg);
 }
 
 .btn-filter.active{
-    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
     color:#fff;
-    box-shadow:0 6px 16px rgba(37,99,235,.30);
+    border-color:transparent;
+    box-shadow:0 4px 14px rgba(13,31,53,.28);
 }
 
 .btn-filter:active{
@@ -1535,12 +1592,12 @@ button.btn-loading{
                 الشهر
             </button>
 
-            <button class="btn-filter"
+            <button class="btn-filter" id="history-filter-all"
                 onclick="setHistoryFilter('all',this)">
                 الكل
             </button>
 
-            <button class="btn-filter"
+            <button class="btn-filter" id="history-custom-btn"
                 onclick="toggleCustomDate()">
                 فترة
             </button>
@@ -1591,8 +1648,12 @@ button.btn-loading{
 
     </div>
 
-    <div class="section-title">
-        🧾 الفواتير
+    <div class="section-title invoices-heading">
+        <span class="invoices-heading-left">
+            <span class="invoices-icon-chip"><i class="ti ti-receipt-2"></i></span>
+            الفواتير
+        </span>
+        <span class="invoices-count-badge" id="invoices-count-badge">0</span>
     </div>
 
     <div
@@ -1658,7 +1719,7 @@ button.btn-loading{
                 الكل
             </button>
 
-            <button class="btn-filter"
+            <button class="btn-filter" id="report-custom-btn"
                 onclick="toggleReportCustomDate()">
                 فترة
             </button>
@@ -2518,12 +2579,12 @@ function setHistoryFilter(filter, btn) {
 
 function toggleCustomDate() {
 
-    customHistoryFilter = true;
-
     const div = document.getElementById("custom-date-filter");
 
+    // بنفتح/نقفل البانل بس من غير ما نلمس الفلتر الحالي خالص،
+    // عشان فتح البانل والتراجع عنه من غير "تطبيق" ميسيبش القايمة فاضية
     div.style.display =
-        div.style.display === "none"
+        (div.style.display === "none" || !div.style.display)
         ? "block"
         : "none";
 
@@ -2531,7 +2592,29 @@ function toggleCustomDate() {
 
 function applyCustomHistoryFilter() {
 
+    const from = document.getElementById("history-from").value;
+    const to = document.getElementById("history-to").value;
+
+    if (!from || !to) {
+        showToast("❌ اختر تاريخ البداية والنهاية");
+        return;
+    }
+
+    if (new Date(from) > new Date(to)) {
+        showToast("❌ تاريخ البداية بعد تاريخ النهاية");
+        return;
+    }
+
+    customHistoryFilter = true;
+    historyFilter = "custom";
     visibleInvoices = 5;
+
+    document
+        .querySelectorAll(".btn-filter")
+        .forEach(b => b.classList.remove("active"));
+
+    const customBtn = document.getElementById("history-custom-btn");
+    if (customBtn) customBtn.classList.add("active");
 
     renderHistory();
 
@@ -2552,6 +2635,13 @@ function resetHistoryFilter() {
     document.getElementById("history-to").value = "";
 
     document.getElementById("custom-date-filter").style.display = "none";
+
+    document
+        .querySelectorAll(".btn-filter")
+        .forEach(b => b.classList.remove("active"));
+
+    const allBtn = document.getElementById("history-filter-all");
+    if (allBtn) allBtn.classList.add("active");
 
     renderHistory();
 
@@ -2757,6 +2847,9 @@ function renderHistory() {
 
     historyInvoicesCache = invoices;
 
+    const countBadge = document.getElementById("invoices-count-badge");
+    if (countBadge) countBadge.textContent = invoices.length;
+
     const visible = invoices.slice(0,visibleInvoices);
 
     if(!visible.length){
@@ -2775,14 +2868,14 @@ function renderHistory() {
 
         <div class="invoice-line">
 
-            <span>
-                ${it.name}
-                (${it.qty} ${it.unit})
-            </span>
+            <div>
+                <div class="il-name">${it.name}</div>
+                <div class="il-sub">${it.qty} ${it.unit} × ${Number(it.unitPrice ?? (it.total / it.qty)).toLocaleString()} ج</div>
+            </div>
 
-            <span>
+            <div class="il-total">
                 ${Number(it.total).toLocaleString()} ج
-            </span>
+            </div>
 
         </div>
 
@@ -2795,27 +2888,33 @@ function renderHistory() {
 
             <div
                 class="invoice-group-head"
-                onclick="this.nextElementSibling.classList.toggle('open')">
+                onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open')">
 
-                <div>
+                <div class="invoice-head-info">
 
-                    <div class="history-name">
+                    <div class="invoice-icon-chip"><i class="ti ti-receipt"></i></div>
 
-                        🧾 ${inv.invoiceId}
+                    <div class="invoice-head-texts">
 
-                    </div>
+                        <div class="history-name">
 
-                    <div class="history-meta">
+                            ${inv.invoiceId}
 
-                        ${inv.date}
+                        </div>
 
-                        ${inv.seller ? " • "+inv.seller : ""}
+                        <div class="history-meta">
+
+                            <span>${formatReceiptDateTime(inv.date)}</span>
+
+                            ${inv.seller ? `<span>•</span><span>${inv.seller}</span>` : ""}
+
+                        </div>
 
                     </div>
 
                 </div>
 
-                <div style="display:flex; align-items:center; gap:8px;">
+                <div style="display:flex; align-items:center; gap:6px;">
 
                     <div class="history-price">
 
@@ -2829,6 +2928,8 @@ function renderHistory() {
                         onclick="event.stopPropagation(); openReceipt(${i})">
                         <i class="ti ti-receipt"></i>
                     </button>
+
+                    <i class="ti ti-chevron-down invoice-chevron"></i>
 
                 </div>
 
@@ -4180,7 +4281,7 @@ function toggleReportCustomDate(){
     const box=document.getElementById("report-custom-date");
 
     box.style.display=
-        box.style.display==="none"
+        (box.style.display==="none" || !box.style.display)
         ? "block"
         : "none";
 
@@ -4188,11 +4289,31 @@ function toggleReportCustomDate(){
 
 function applyReportFilter(){
 
+    const from = document.getElementById("report-from").value;
+    const to = document.getElementById("report-to").value;
+
+    if (!from || !to) {
+        showToast("❌ اختر تاريخ البداية والنهاية");
+        return;
+    }
+
+    if (new Date(from) > new Date(to)) {
+        showToast("❌ تاريخ البداية بعد تاريخ النهاية");
+        return;
+    }
+
     reportFilter="custom";
 
-    reportFrom=document.getElementById("report-from").value;
+    reportFrom=from;
 
-    reportTo=document.getElementById("report-to").value;
+    reportTo=to;
+
+    document
+        .querySelectorAll("#tab-reports .btn-filter")
+        .forEach(b=>b.classList.remove("active"));
+
+    const customBtn = document.getElementById("report-custom-btn");
+    if (customBtn) customBtn.classList.add("active");
 
     renderReports();
 
