@@ -39,6 +39,7 @@
     --primary: var(--navy);
     --accent: var(--navy-light);
     --accent-bg: #eef2f8;
+    --accent-text: var(--accent);
   }
   body { font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif; background: var(--surface-0); color: var(--text-primary); min-height: 100vh; padding-bottom: 24px; }
   .app { max-width: 480px; margin: auto; padding: 14px; }
@@ -809,51 +810,79 @@
 
     grid-template-columns:repeat(2,minmax(0,1fr));
 
-    gap:15px;
+    gap:12px;
 
-    margin-bottom:20px;
+    margin-bottom:16px;
 
 }
 
 .report-card{
 
-    background:#fff;
+    background:var(--surface-2);
 
-    border-radius:14px;
+    border:1px solid var(--border);
 
-    padding:18px;
+    border-radius:16px;
 
-    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    padding:15px;
 
-    text-align:center;
+    box-shadow:var(--shadow);
 
-    transition:.25s;
+    transition:transform .15s ease, box-shadow .15s ease;
 
 }
 
-.report-card:hover{
+.report-card:active{
 
-    transform:translateY(-2px);
+    transform:scale(.98);
+
+}
+
+.report-card-icon{
+
+    width:32px;
+
+    height:32px;
+
+    border-radius:10px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:15px;
+
+    margin-bottom:10px;
+
+    background:var(--accent-bg);
+
+    color:var(--accent);
 
 }
 
 .report-card-title{
 
-    color:#777;
+    color:var(--text-muted);
 
-    font-size:14px;
+    font-size:12px;
 
-    margin-bottom:10px;
+    font-weight:700;
+
+    margin-bottom:5px;
 
 }
 
 .report-card-value{
 
-    font-size:24px;
+    font-size:20px;
 
-    font-weight:bold;
+    font-weight:900;
 
-    color:var(--primary);
+    color:var(--text-primary);
+
+    font-variant-numeric:tabular-nums;
 
 }
 
@@ -863,23 +892,25 @@
 
     grid-template-columns:repeat(2,minmax(0,1fr));
 
-    gap:15px;
+    gap:12px;
 
-    margin-bottom:20px;
+    margin-bottom:16px;
 
 }
 
 .report-section{
 
-    background:#fff;
+    background:var(--surface-2);
 
-    border-radius:14px;
+    border:1px solid var(--border);
 
-    padding:18px;
+    border-radius:16px;
 
-    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    padding:16px;
 
-    margin-bottom:20px;
+    box-shadow:var(--shadow);
+
+    margin-bottom:16px;
 
 }
 
@@ -893,7 +924,7 @@
 
     padding:12px 0;
 
-    border-bottom:1px solid #eee;
+    border-bottom:1px solid var(--border);
 
 }
 
@@ -911,11 +942,23 @@
 
 .report-item-value{
 
-    color:var(--primary);
+    color:var(--text-primary);
 
     font-weight:bold;
 
 }
+
+/* قائمة أكثر المنتجات مبيعًا / أعلى إيرادًا (تعيد استخدام مكوّن top-item الموجود) */
+.top-item-name{ font-size:13.5px; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.top-item-value{ font-size:13.5px; font-weight:800; color:var(--text-primary); white-space:nowrap; flex-shrink:0; }
+
+/* قائمة ملخص الأصناف (بديل الجدول الخام - أنسب للموبايل) */
+.summary-list{ display:flex; flex-direction:column; }
+.summary-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:11px 0; border-bottom:1px dashed var(--border); }
+.summary-row:last-child{ border-bottom:none; }
+.summary-row-name{ font-size:13.5px; font-weight:700; color:var(--text-primary); }
+.summary-row-sub{ font-size:11.5px; color:var(--text-muted); margin-top:3px; }
+.summary-row-value{ font-size:14px; font-weight:800; color:var(--success); white-space:nowrap; }
 
 .report-table{
 
@@ -975,17 +1018,19 @@
 
 .report-empty{
 
-    color:#999;
+    color:var(--text-muted);
 
     text-align:center;
 
-    padding:20px;
+    padding:24px 10px;
+
+    font-size:13.5px;
 
 }
 
 .report-danger{
 
-    color:#dc2626;
+    color:var(--danger);
 
     font-weight:bold;
 
@@ -993,7 +1038,7 @@
 
 .report-warning{
 
-    color:#f59e0b;
+    color:var(--warning);
 
     font-weight:bold;
 
@@ -1001,7 +1046,7 @@
 
 .report-success{
 
-    color:#16a34a;
+    color:var(--success);
 
     font-weight:bold;
 
@@ -1011,13 +1056,13 @@
 
     .report-cards{
 
-        grid-template-columns:1fr;
+        grid-template-columns:1fr 1fr;
 
     }
 
     .report-grid{
 
-        grid-template-columns:1fr;
+        grid-template-columns:1fr 1fr;
 
     }
 
@@ -1033,35 +1078,33 @@
 
     cursor:pointer;
 
-    transition:.25s;
+    transition:.15s;
 
 }
 
-.report-clickable:hover{
+.report-clickable:active{
 
-    transform:translateY(-3px);
-
-    box-shadow:0 8px 20px rgba(0,0,0,.12);
+    transform:scale(.98);
 
 }
 
 .report-card-subtitle{
 
-    margin-top:8px;
+    margin-top:6px;
 
-    color:#888;
+    color:var(--text-muted);
 
-    font-size:14px;
+    font-size:12.5px;
 
 }
 
 .report-card-link{
 
-    margin-top:15px;
+    margin-top:13px;
 
-    color:var(--primary);
+    color:var(--accent);
 
-    font-size:13px;
+    font-size:12.5px;
 
     font-weight:bold;
 
@@ -1773,8 +1816,10 @@ button.btn-loading{
 
         <div class="report-card">
 
+            <div class="report-card-icon"><i class="ti ti-cash"></i></div>
+
             <div class="report-card-title">
-                💰 إجمالي المبيعات
+                إجمالي المبيعات
             </div>
 
             <div class="report-card-value"
@@ -1786,8 +1831,10 @@ button.btn-loading{
 
         <div class="report-card">
 
+            <div class="report-card-icon"><i class="ti ti-receipt"></i></div>
+
             <div class="report-card-title">
-                🧾 عدد الفواتير
+                عدد الفواتير
             </div>
 
             <div class="report-card-value"
@@ -1799,8 +1846,10 @@ button.btn-loading{
 
         <div class="report-card">
 
+            <div class="report-card-icon"><i class="ti ti-package"></i></div>
+
             <div class="report-card-title">
-                📦 الكمية المباعة
+                الكمية المباعة
             </div>
 
             <div class="report-card-value"
@@ -1812,8 +1861,10 @@ button.btn-loading{
 
         <div class="report-card">
 
+            <div class="report-card-icon"><i class="ti ti-chart-line"></i></div>
+
             <div class="report-card-title">
-                💵 متوسط الفاتورة
+                متوسط الفاتورة
             </div>
 
             <div class="report-card-value"
@@ -1832,9 +1883,11 @@ button.btn-loading{
         <div class="report-card report-clickable"
             onclick="openOutStockModal()">
 
+            <div class="report-card-icon" style="background:var(--danger-bg); color:var(--danger);"><i class="ti ti-alert-triangle"></i></div>
+
             <div class="report-card-title">
 
-                ❌ نفد بالكامل
+                نفد بالكامل
 
             </div>
 
@@ -1864,15 +1917,17 @@ button.btn-loading{
         <div class="report-card report-clickable"
             onclick="openLowStockModal()">
 
+            <div class="report-card-icon" style="background:var(--warning-bg); color:var(--warning);"><i class="ti ti-alert-circle"></i></div>
+
             <div class="report-card-title">
 
-                ⚠️ قرب النفاد
+                قرب النفاد
 
             </div>
 
             <div
                 class="report-card-value"
-                style="color:#f59e0b"
+                style="color:var(--warning)"
                 id="report-low-stock-count">
 
                 0
@@ -3326,7 +3381,7 @@ function renderReports() {
 
     .slice(0,5);
 
-    const medals=["🥇","🥈","🥉","4️⃣","5️⃣"];
+    const medals=["gold","silver","bronze","",""];
 
     document.getElementById("report-top-list").innerHTML=
 
@@ -3334,19 +3389,17 @@ function renderReports() {
 
     topList.map((p,i)=>`
 
-    <div class="report-item">
+    <div class="top-item">
 
-    <div>
+        <div class="top-rank ${medals[i]}">${i+1}</div>
 
-    <b>${medals[i]} ${p[0]}</b>
+        <div style="flex:1; min-width:0;">
+            <div class="top-item-name">${p[0]}</div>
+        </div>
 
-    </div>
-
-    <div class="report-item-value">
-
-    ${p[1].qty} ${p[1].unit}
-
-    </div>
+        <div class="top-item-value">
+            ${p[1].qty} ${p[1].unit}
+        </div>
 
     </div>
 
@@ -3392,19 +3445,17 @@ function renderReports() {
 
     revenueList.map((p,i)=>`
 
-    <div class="report-item">
+    <div class="top-item">
 
-    <div>
+        <div class="top-rank ${medals[i]}">${i+1}</div>
 
-    <b>${medals[i]} ${p[0]}</b>
+        <div style="flex:1; min-width:0;">
+            <div class="top-item-name">${p[0]}</div>
+        </div>
 
-    </div>
-
-    <div class="report-item-value">
-
-    ${p[1].total.toLocaleString()} ج
-
-    </div>
+        <div class="top-item-value">
+            ${p[1].total.toLocaleString()} ج
+        </div>
 
     </div>
 
@@ -3448,49 +3499,32 @@ function renderReports() {
 
     });
 
-    document.getElementById("report-table").innerHTML=`
+    document.getElementById("report-table").innerHTML =
 
-    <table class="report-table">
+    Object.keys(summary).length ?
 
-    <thead>
-
-    <tr>
-
-    <th>الصنف</th>
-
-    <th>المباع</th>
-
-    <th>المتبقي</th>
-
-    <th>الإيراد</th>
-
-    </tr>
-
-    </thead>
-
-    <tbody>
+    `<div class="summary-list">
 
     ${Object.entries(summary).map(([name,d])=>`
 
-    <tr>
+        <div class="summary-row">
 
-    <td>${name}</td>
+            <div>
+                <div class="summary-row-name">${name}</div>
+                <div class="summary-row-sub">مباع: ${d.sold} ${d.unit} • باقي: ${d.remain} ${d.unit}</div>
+            </div>
 
-    <td>${d.sold} ${d.unit}</td>
+            <div class="summary-row-value">${d.revenue.toLocaleString()} ج</div>
 
-    <td>${d.remain} ${d.unit}</td>
-
-    <td>${d.revenue.toLocaleString()} ج</td>
-
-    </tr>
+        </div>
 
     `).join("")}
 
-    </tbody>
+    </div>`
 
-    </table>
+    :
 
-    `;
+    "<div class='report-empty'>لا توجد بيانات</div>";
 
 }
 
@@ -3548,7 +3582,7 @@ function previewReport(){
 
     const reportSales = getReportSales();
 
-    // تجميع الفواتير في الفترة المحددة
+    // ===== تجميع الفواتير في الفترة المحددة =====
     const invoicesMap = {};
 
     reportSales.forEach(s => {
@@ -3579,24 +3613,74 @@ function previewReport(){
     const invoicesRows = invoicesList.map(inv => `
         <tr>
             <td>${inv.invoiceId}</td>
-            <td>${inv.date}</td>
+            <td>${formatReceiptDateTime(inv.date)}</td>
             <td>${inv.seller}</td>
             <td>${inv.itemsCount}</td>
             <td>${Number(inv.total).toLocaleString()} ج</td>
         </tr>
-    `).join("") || `<tr><td colspan="5" style="text-align:center;color:#8fa3bc;padding:20px;">لا توجد فواتير في هذه الفترة</td></tr>`;
+    `).join("") || `<tr><td colspan="5" class="empty-cell">لا توجد فواتير في هذه الفترة</td></tr>`;
+
+    // ===== أكثر المنتجات مبيعًا =====
+    const topProducts = {};
+    reportSales.forEach(s => {
+        if (!topProducts[s.name]) topProducts[s.name] = { qty: 0, unit: s.unit || "" };
+        topProducts[s.name].qty += Number(s.qty);
+    });
+    const topList = Object.entries(topProducts).sort((a,b)=>b[1].qty-a[1].qty).slice(0,5);
+
+    // ===== أعلى المنتجات إيرادًا =====
+    const revenueProducts = {};
+    reportSales.forEach(s => {
+        if (!revenueProducts[s.name]) revenueProducts[s.name] = { total: 0 };
+        revenueProducts[s.name].total += Number(s.total);
+    });
+    const revenueList = Object.entries(revenueProducts).sort((a,b)=>b[1].total-a[1].total).slice(0,5);
+
+    const medalClass = ["gold","silver","bronze","",""];
+
+    const renderRankedList = (list, valueFn) =>
+        list.length
+        ? list.map((p,i)=>`
+            <div class="rank-row">
+                <div class="rank-badge ${medalClass[i]}">${i+1}</div>
+                <div class="rank-name">${p[0]}</div>
+                <div class="rank-value">${valueFn(p[1])}</div>
+            </div>
+        `).join("")
+        : `<div class="empty-note">لا توجد بيانات</div>`;
+
+    const topListHTML = renderRankedList(topList, v => `${v.qty} ${v.unit}`);
+    const topRevenueHTML = renderRankedList(revenueList, v => `${Number(v.total).toLocaleString()} ج`);
+
+    // ===== ملخص الأصناف =====
+    const summary = {};
+    items.forEach(i => {
+        summary[i.name] = { sold:0, revenue:0, remain:Number(i.qty), unit:i.unit };
+    });
+    reportSales.forEach(s => {
+        if (summary[s.name]) {
+            summary[s.name].sold += Number(s.qty);
+            summary[s.name].revenue += Number(s.total);
+        }
+    });
+
+    const summaryRows = Object.entries(summary).map(([name,d]) => `
+        <tr>
+            <td class="cell-name">${name}</td>
+            <td>${d.sold} ${d.unit}</td>
+            <td>${d.remain} ${d.unit}</td>
+            <td>${d.revenue.toLocaleString()} ج</td>
+        </tr>
+    `).join("") || `<tr><td colspan="4" class="empty-cell">لا توجد بيانات</td></tr>`;
+
+    // ===== أرقام الملخص العلوي =====
+    const totalSales = reportSales.reduce((sum,s)=>sum+Number(s.total||0),0);
+    const totalQty = reportSales.reduce((sum,s)=>sum+Number(s.qty||0),0);
+    const totalInvoices = invoicesList.length;
+    const averageInvoice = totalInvoices ? totalSales/totalInvoices : 0;
 
     const now = new Date();
-    const generatedAt = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-
-    const summaryHTML = document.getElementById("report-table").innerHTML;
-    const topListHTML = document.getElementById("report-top-list").innerHTML;
-    const topRevenueHTML = document.getElementById("report-top-revenue").innerHTML;
-
-    const totalSales = document.getElementById("report-total-sales").textContent;
-    const totalInvoices = document.getElementById("report-total-invoices").textContent;
-    const totalQty = document.getElementById("report-total-qty").textContent;
-    const averageInvoice = document.getElementById("report-average").textContent;
+    const generatedAt = formatReceiptDateTime(now);
 
     const html = `
 <!DOCTYPE html>
@@ -3609,55 +3693,116 @@ function previewReport(){
     body {
         font-family: 'Cairo','Segoe UI',Tahoma,Arial,sans-serif;
         color:#0d1f35;
-        padding:24px;
+        background:#eef2f8;
+        padding:26px;
         direction:rtl;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
+    .sheet{
+        max-width:900px;
+        margin:0 auto;
+        background:#fff;
+        border-radius:16px;
+        padding:32px 34px;
+        box-shadow:0 10px 40px rgba(13,31,53,0.12);
+    }
+    .print-actions { max-width:900px; margin:0 auto 16px; }
+    .print-actions button {
+        background:#0d1f35; color:#fff; border:none; border-radius:10px;
+        padding:11px 20px; font-size:14px; cursor:pointer; font-family:inherit;
+        font-weight:700; box-shadow:0 4px 14px rgba(13,31,53,.25);
+    }
+
     .report-header {
         display:flex;
         justify-content:space-between;
-        align-items:center;
+        align-items:flex-start;
         border-bottom:3px solid #e8442a;
-        padding-bottom:14px;
-        margin-bottom:20px;
+        padding-bottom:16px;
+        margin-bottom:22px;
     }
-    .report-header h1 { margin:0; font-size:22px; color:#0d1f35; }
-    .report-header p { margin:4px 0 0; font-size:13px; color:#4a6080; }
-    .meta-box { text-align:left; font-size:12px; color:#4a6080; }
+    .report-header .brand{ display:flex; align-items:center; gap:12px; }
+    .report-header .logo-dot{
+        width:44px; height:44px; border-radius:12px;
+        background:linear-gradient(135deg,#0d1f35,#162d4a);
+        color:#fff; display:flex; align-items:center; justify-content:center;
+        font-size:20px; flex-shrink:0;
+    }
+    .report-header h1 { margin:0; font-size:19px; color:#0d1f35; }
+    .report-header p { margin:4px 0 0; font-size:12.5px; color:#4a6080; }
+    .meta-box { text-align:left; font-size:11.5px; color:#8fa3bc; white-space:nowrap; }
+    .meta-box b{ color:#4a6080; }
+
     .summary-grid {
         display:grid;
         grid-template-columns:repeat(4,1fr);
-        gap:10px;
-        margin-bottom:24px;
+        gap:12px;
+        margin-bottom:28px;
     }
     .summary-card {
         border:1px solid #e2eaf2;
-        border-radius:10px;
-        padding:12px;
+        background:#f8fafc;
+        border-radius:12px;
+        padding:14px 10px;
         text-align:center;
     }
-    .summary-card .label { font-size:11px; color:#8fa3bc; margin-bottom:6px; }
-    .summary-card .value { font-size:17px; font-weight:800; color:#0d1f35; }
-    h2.section-title {
+    .summary-card .label { font-size:11px; color:#8fa3bc; margin-bottom:7px; font-weight:600; }
+    .summary-card .value { font-size:17px; font-weight:900; color:#0d1f35; }
+
+    .section-title {
         font-size:14px;
+        font-weight:800;
         color:#0d1f35;
         border-right:4px solid #e8442a;
-        padding-right:8px;
-        margin:26px 0 10px;
+        padding-right:10px;
+        margin:30px 0 12px;
+        page-break-after: avoid;
     }
-    table { width:100%; border-collapse:collapse; font-size:12.5px; }
-    th, td { border:1px solid #e2eaf2; padding:8px; text-align:center; }
-    th { background:#0d1f35; color:#fff; }
+    .section-title:first-of-type{ margin-top:0; }
+
+    .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    @media (max-width:640px){ .two-col{ grid-template-columns:1fr; } }
+
+    .rank-row{
+        display:flex; align-items:center; gap:10px;
+        padding:9px 0; border-bottom:1px solid #f0f4f8;
+        font-size:13px;
+    }
+    .rank-row:last-child{ border-bottom:none; }
+    .rank-badge{
+        width:24px; height:24px; border-radius:50%;
+        background:#eef2f8; color:#0d1f35;
+        font-size:11.5px; font-weight:800;
+        display:flex; align-items:center; justify-content:center;
+        flex-shrink:0;
+    }
+    .rank-badge.gold{ background:#fef3c7; color:#92400e; }
+    .rank-badge.silver{ background:#f3f4f6; color:#374151; }
+    .rank-badge.bronze{ background:#fde8e8; color:#9b1c1c; }
+    .rank-name{ flex:1; font-weight:700; color:#0d1f35; }
+    .rank-value{ font-weight:800; color:#0d1f35; white-space:nowrap; }
+
+    table { width:100%; border-collapse:collapse; font-size:12px; }
+    th, td { border:1px solid #e2eaf2; padding:9px 8px; text-align:center; }
+    th { background:#0d1f35; color:#fff; font-weight:700; }
     tr:nth-child(even) td { background:#f8fafc; }
-    .report-item { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #e2eaf2; font-size:13px; }
-    .report-empty { text-align:center; color:#8fa3bc; padding:14px; }
-    .print-actions { margin-bottom:20px; }
-    .print-actions button {
-        background:#0d1f35; color:#fff; border:none; border-radius:8px;
-        padding:10px 18px; font-size:14px; cursor:pointer; font-family:inherit;
+    td.cell-name{ text-align:right; font-weight:700; }
+    .empty-cell, .empty-note{ text-align:center; color:#8fa3bc; padding:16px; font-size:13px; }
+
+    .report-table-wrap{ overflow-x:auto; }
+
+    .print-footer{
+        margin-top:26px; padding-top:14px; border-top:1px dashed #e2eaf2;
+        text-align:center; font-size:11px; color:#8fa3bc;
     }
+
     @media print {
+        body{ background:#fff; padding:0; }
+        .sheet{ box-shadow:none; border-radius:0; padding:0; max-width:100%; }
         .print-actions { display:none; }
-        body { padding:0; }
+        .section-title{ page-break-after: avoid; }
+        tr, .rank-row{ page-break-inside: avoid; }
     }
     @page { size:A4; margin:14mm; }
 </style>
@@ -3668,47 +3813,70 @@ function previewReport(){
         <button onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
     </div>
 
-    <div class="report-header">
-        <div>
-            <h1>سجاد علياء - تقرير المبيعات</h1>
-            <p>الفترة: ${getReportFilterLabel()}</p>
+    <div class="sheet">
+
+        <div class="report-header">
+            <div class="brand">
+                <div class="logo-dot"><i class="ti ti-carpet"></i></div>
+                <div>
+                    <h1>سجاد علياء - تقرير المبيعات</h1>
+                    <p>الفترة: ${getReportFilterLabel()}</p>
+                </div>
+            </div>
+            <div class="meta-box">
+                تاريخ الإصدار<br><b>${generatedAt}</b>
+            </div>
         </div>
-        <div class="meta-box">
-            تاريخ الإصدار: ${generatedAt}
+
+        <div class="summary-grid">
+            <div class="summary-card"><div class="label">إجمالي المبيعات</div><div class="value">${totalSales.toLocaleString()} جنيه</div></div>
+            <div class="summary-card"><div class="label">عدد الفواتير</div><div class="value">${totalInvoices}</div></div>
+            <div class="summary-card"><div class="label">الكمية المباعة</div><div class="value">${totalQty}</div></div>
+            <div class="summary-card"><div class="label">متوسط الفاتورة</div><div class="value">${averageInvoice.toLocaleString(undefined,{maximumFractionDigits:0})} جنيه</div></div>
         </div>
+
+        <div class="two-col">
+            <div>
+                <div class="section-title">🔥 أكثر المنتجات مبيعاً</div>
+                ${topListHTML}
+            </div>
+            <div>
+                <div class="section-title">💰 أعلى المنتجات إيراداً</div>
+                ${topRevenueHTML}
+            </div>
+        </div>
+
+        <div class="section-title">📋 ملخص الأصناف</div>
+        <div class="report-table-wrap">
+            <table>
+                <thead>
+                    <tr><th>الصنف</th><th>المباع</th><th>المتبقي</th><th>الإيراد</th></tr>
+                </thead>
+                <tbody>${summaryRows}</tbody>
+            </table>
+        </div>
+
+        <div class="section-title">🧾 الفواتير خلال الفترة (${invoicesList.length})</div>
+        <div class="report-table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>رقم الفاتورة</th>
+                        <th>التاريخ والوقت</th>
+                        <th>البائع</th>
+                        <th>عدد الأصناف</th>
+                        <th>الإجمالي</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${invoicesRows}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="print-footer">تم إنشاء هذا التقرير آليًا من نظام إدارة مخزون سجاد علياء</div>
+
     </div>
-
-    <div class="summary-grid">
-        <div class="summary-card"><div class="label">إجمالي المبيعات</div><div class="value">${totalSales}</div></div>
-        <div class="summary-card"><div class="label">عدد الفواتير</div><div class="value">${totalInvoices}</div></div>
-        <div class="summary-card"><div class="label">الكمية المباعة</div><div class="value">${totalQty}</div></div>
-        <div class="summary-card"><div class="label">متوسط الفاتورة</div><div class="value">${averageInvoice}</div></div>
-    </div>
-
-    <h2 class="section-title">🔥 أكثر المنتجات مبيعاً</h2>
-    ${topListHTML}
-
-    <h2 class="section-title">💰 أعلى المنتجات إيراداً</h2>
-    ${topRevenueHTML}
-
-    <h2 class="section-title">📋 ملخص الأصناف</h2>
-    ${summaryHTML}
-
-    <h2 class="section-title">🧾 الفواتير خلال الفترة (${invoicesList.length})</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>رقم الفاتورة</th>
-                <th>التاريخ</th>
-                <th>البائع</th>
-                <th>عدد الأصناف</th>
-                <th>الإجمالي</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${invoicesRows}
-        </tbody>
-    </table>
 
 </body>
 </html>
