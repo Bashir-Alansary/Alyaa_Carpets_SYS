@@ -47,8 +47,11 @@
   .app { max-width: 480px; margin: auto; padding: 14px; }
   .header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); border: none; box-shadow: var(--shadow-lg); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
   .header-logo { display: block; width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(232,68,42,0.4);}
-  .header-title { font-size: 19px; font-weight: 900; color: #fff; letter-spacing: 0.3px; }
-  .header-sub { font-size: 12px; color: var(--red-light); opacity: 0.9; margin-top: 2px; font-weight: 600; }
+  .header-title { font-size: 19px; font-weight: 900; color: #fff; letter-spacing: 0.3px; flex: 1; min-width: 0; }
+  .user-chip { background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow); }
+  .user-chip-avatar { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--navy), var(--navy-light)); color: #fff; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .user-chip-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .logout-label { font-size: 12px; font-weight: 700; }
   .sync-bar { background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 9px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow); }
   .sync-status { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
   .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
@@ -378,6 +381,7 @@
   .admin-tool-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
   .admin-tool-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
   .role-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; margin-right:8px; }
+  .user-chip .role-badge { margin-right:0; flex-shrink:0; }
   .role-admin { background:#fde8e8; color:#9b1c1c; }
   .role-staff { background:#def7ec; color:#057a55; }
   .edit-btn { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 18px; padding: 6px; line-height: 1; }
@@ -700,16 +704,26 @@
 
 .receipt-paper{
     background:#fff;
-    border-radius:14px 14px 0 0;
+    border-radius:16px 16px 0 0;
     box-shadow:var(--shadow-lg);
-    padding:26px 22px 22px;
+    padding:24px 22px 22px;
     position:relative;
+}
+
+.receipt-logo{
+    display:block;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    margin:0 auto 10px;
+    object-fit:cover;
+    border:2px solid var(--surface-2);
 }
 
 .receipt-roller{
     width:56px; height:8px; border-radius:6px;
     background:var(--navy);
-    margin:0 auto 18px;
+    margin:0 auto 16px;
 }
 
 .receipt-shop{
@@ -731,12 +745,11 @@
 
 .receipt-meta{
     margin-top:16px;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
     font-size:12.5px;
     color:var(--text-secondary);
 }
+.receipt-meta > div{ margin-top:5px; }
+.receipt-meta > div:first-child{ margin-top:0; }
 .receipt-meta b{ color:var(--text-primary); }
 
 .receipt-count-line{
@@ -759,10 +772,10 @@
     display:flex;
     justify-content:space-between;
     align-items:flex-start;
-    gap:8px;
     padding:7px 0;
     font-size:13px;
 }
+.receipt-row > div:first-child{ flex:1; min-width:0; margin-left:10px; }
 .receipt-row .r-idx{ color:var(--text-muted); font-weight:700; margin-left:6px; }
 .receipt-row .r-name{ color:var(--text-primary); font-weight:600; }
 .receipt-row .r-sub{ color:var(--text-muted); font-size:11.5px; margin-top:2px; }
@@ -782,14 +795,16 @@
 
 .receipt-barcode{
     margin-top:16px;
+    padding-top:14px;
+    border-top:1.5px dashed var(--border);
     text-align:center;
 }
-.receipt-barcode svg{ width:100%; max-width:260px; height:auto; }
+.receipt-barcode svg{ width:100%; max-width:240px; height:auto; }
 .receipt-barcode-id{
     font-size:11px;
     letter-spacing:1px;
     color:var(--text-muted);
-    margin-top:2px;
+    margin-top:4px;
     font-weight:600;
 }
 
@@ -837,7 +852,7 @@
 
 .filter-buttons{
     display:flex;
-    gap:8px;
+    gap:10px;
     flex-wrap:wrap;
     margin-top:15px;
 }
@@ -846,7 +861,7 @@
     border:none;
     background:var(--surface-0);
     color:var(--text-secondary);
-    padding:5px 12px;
+    padding:7px 15px;
     border-radius:999px;
     font-size:13px;
     font-weight:700;
@@ -1549,13 +1564,17 @@ button.btn-loading{
 <div class="app" id="app">
   <div class="header">
     <div class="logo-bx"><img class="header-logo" src="images/logo.jpg" alt="logo"></div>
-    <div>
-      <div class="header-title">سجاد علياء</div>
-      <div class="header-sub">نظام إدارة المخزون</div>
-    </div>
-    <button class="logout-btn" onclick="logout()">
+    <div class="header-title">سجاد علياء</div>
+    <button class="logout-btn" onclick="logout()" title="تسجيل خروج">
       <i class="ti ti-logout"></i>
+      <span class="logout-label">خروج</span>
     </button>
+  </div>
+
+  <div class="user-chip" id="user-chip">
+    <div class="user-chip-avatar" id="header-user-avatar"></div>
+    <div class="user-chip-name" id="header-user-name"></div>
+    <span class="role-badge" id="header-user-role-badge"></span>
   </div>
 
   <div class="sync-bar">
@@ -1837,9 +1856,12 @@ button.btn-loading{
 
   <div id="tab-reports" style="display:none;">
 
-    <div class="section-title">
-        <i class="ti ti-chart-bar"></i>
-        التقارير
+    <div class="section-title invoices-heading">
+        <span class="invoices-heading-left">
+            <span class="invoices-icon-chip"><i class="ti ti-chart-bar"></i></span>
+            التقارير
+        </span>
+        <span class="invoices-count-badge" id="report-period-badge">اليوم</span>
     </div>
 
     <div class="form-card">
@@ -2105,8 +2127,6 @@ button.btn-loading{
 
     <div class="report-buttons">
 
-        <div class="report-buttons">
-
         <button
             class="btn-primary admin-only"
             onclick="previewReport()">
@@ -2119,15 +2139,14 @@ button.btn-loading{
 
         <button
             class="btn-secondary admin-only"
-            onclick="exportReportExcel()">
+            id="btn-export-report"
+            onclick="exportReportExcel(this)">
 
             <i class="ti ti-table-export"></i>
 
             تصدير Excel
 
         </button>
-
-</div>
 
     </div>
 
@@ -2136,35 +2155,9 @@ button.btn-loading{
   <!-- ADMIN TAB -->
   <div id="tab-admin" style="display:none">
 
-    <!-- معلومات النظام -->
-    <div class="section-title">معلومات النظام</div>
-    <div class="stats" style="margin-bottom:14px">
-      <div class="stat-card">
-        <div class="stat-icon c-navy"><i class="ti ti-package"></i></div>
-        <div class="stat-label">عدد المنتجات</div>
-        <div class="stat-val" id="admin-stat-products">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon c-success"><i class="ti ti-category-plus"></i></div>
-        <div class="stat-label">عدد الأنواع</div>
-        <div class="stat-val" id="admin-stat-types">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon c-warning"><i class="ti ti-receipt-2"></i></div>
-        <div class="stat-label">عدد الفواتير</div>
-        <div class="stat-val" id="admin-stat-invoices">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon c-danger"><i class="ti ti-users"></i></div>
-        <div class="stat-label">عدد المستخدمين</div>
-        <div class="stat-val" id="admin-stat-users">0</div>
-      </div>
-    </div>
-
     <!-- إدارة المستخدمين -->
     <div class="section-title">إدارة المستخدمين</div>
     <div class="form-card">
-      <div class="section-title" style="margin-bottom:14px">إضافة موظف جديد</div>
       <div class="field"><label>الاسم</label><input type="text" id="new-name" placeholder="اسم الموظف"></div>
       <div class="row2">
         <div class="field"><label>يوزر</label><input type="text" id="new-user" placeholder="username" dir="ltr"></div>
@@ -2174,7 +2167,7 @@ button.btn-loading{
     <label>الصلاحية</label><select id="new-role"><option value="cashier">Cashier</option><option value="admin">Admin</option></select></div>
       <button class="btn-primary" onclick="addUser(this)"><i class="ti ti-user-plus"></i> إضافة موظف</button>
     </div>
-    <div class="section-title">المستخدمين الحاليين</div>
+    <div class="section-title">👥 الموظفون الحاليون</div>
     <div id="users-list"></div>
 
     <!-- النسخ الاحتياطي -->
@@ -2253,6 +2246,7 @@ let customHistoryFilter = false;
 let reportFilter = "today";
 let reportFrom = "";
 let reportTo = "";
+let visibleSummaryItems = 8;
 
 
 function setSyncStatus(status, text) {
@@ -2419,7 +2413,7 @@ function renderUsersList(list = users) {
                             : "role-staff"
                     }">
 
-                        ${user.role}
+                        ${user.role === "admin" ? "Admin" : "Cashier"}
 
                     </span>
 
@@ -2441,9 +2435,10 @@ function renderUsersList(list = users) {
 
             <button
                 class="edit-btn"
+                title="تعديل"
                 onclick="openUserModal(${index})">
 
-                ✏️
+                <i class="ti ti-pencil"></i>
 
             </button>
 
@@ -2453,20 +2448,6 @@ function renderUsersList(list = users) {
 
     });
 
-}
-
-function renderAdminStats() {
-  const productsCount = items.length;
-  const typesCount = types.length;
-  const invoiceIds = [...new Set(sales.map(s => s.invoiceId || s.date))];
-  const invoicesCount = invoiceIds.length;
-  const usersCount = users.length;
-
-  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = Number(val).toLocaleString(); };
-  set('admin-stat-products', productsCount);
-  set('admin-stat-types', typesCount);
-  set('admin-stat-invoices', invoicesCount);
-  set('admin-stat-users', usersCount);
 }
 
 function downloadBackup(btn) {
@@ -2662,7 +2643,7 @@ async function restoreBackup(backupId) {
 
 function switchTab(tab) {
   const isAdmin = currentUser && currentUser.role === "admin";
-  const staffOnly = ['inventory', 'sell'];
+  const staffOnly = ['inventory', 'sell', 'history'];
   if (!isAdmin && !staffOnly.includes(tab)) return;
   const tabs = ['inventory','add','sell','history','reports','admin','audit'];
   tabs.forEach((t, i) => {
@@ -2677,7 +2658,6 @@ function switchTab(tab) {
   if (tab === 'reports') renderReports();
   if (tab === 'admin') {
     loadUsers();
-    renderAdminStats();
     loadAutoBackups();
   }
 }
@@ -3109,6 +3089,14 @@ function showMoreInvoices(){
 
 }
 
+function showMoreSummaryItems(){
+
+    visibleSummaryItems += 8;
+
+    renderReports();
+
+}
+
 function parseSaleDate(value) {
 
     if (!value) return null;
@@ -3478,6 +3466,7 @@ function renderReceiptPaperHTML(inv) {
 
             <div class="receipt-roller"></div>
 
+            <img class="receipt-logo" src="images/logo.jpg" alt="سجاد علياء">
             <div class="receipt-shop">سجاد علياء</div>
             <div class="receipt-tagline">فاتورة بيع</div>
 
@@ -3575,6 +3564,7 @@ function printReceipt() {
         <html lang="ar" dir="rtl">
         <head>
         <meta charset="UTF-8">
+        <base href="${document.baseURI}">
         <title>فاتورة ${inv.invoiceId} - سجاد علياء</title>
         <style>
             * { box-sizing:border-box; }
@@ -3599,14 +3589,18 @@ function printReceipt() {
                 .receipt-zigzag{ display:none; }
             }
             .receipt-wrap{ max-width:360px; margin:0 auto; }
-            .receipt-paper{ background:#fff; border-radius:14px 14px 0 0; box-shadow:0 8px 32px rgba(13,31,53,0.14); padding:26px 22px 22px; }
-            .receipt-roller{ width:56px; height:8px; border-radius:6px; background:#0d1f35; margin:0 auto 18px; }
+            .receipt-paper{ background:#fff; border-radius:16px 16px 0 0; box-shadow:0 8px 32px rgba(13,31,53,0.14); padding:24px 22px 22px; }
+            .receipt-logo{ display:block; width:44px; height:44px; border-radius:50%; margin:0 auto 10px; object-fit:cover; border:2px solid #f0f4f8; }
+            .receipt-roller{ width:56px; height:8px; border-radius:6px; background:#0d1f35; margin:0 auto 16px; }
             .receipt-shop{ text-align:center; font-size:19px; font-weight:900; color:#0d1f35; }
             .receipt-tagline{ text-align:center; font-size:11px; color:#8fa3bc; margin-top:3px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; }
-            .receipt-meta{ margin-top:16px; display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:#4a6080; }
+            .receipt-meta{ margin-top:16px; font-size:12.5px; color:#4a6080; }
+            .receipt-meta > div{ margin-top:5px; }
+            .receipt-meta > div:first-child{ margin-top:0; }
             .receipt-meta b{ color:#0d1f35; }
             .receipt-dashed{ border-top:1.5px dashed #e2eaf2; margin:16px 0; }
-            .receipt-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; padding:7px 0; font-size:13px; }
+            .receipt-row{ display:flex; justify-content:space-between; align-items:flex-start; padding:7px 0; font-size:13px; }
+            .receipt-row > div:first-child{ flex:1; min-width:0; margin-left:10px; }
             .receipt-row .r-idx{ color:#8fa3bc; font-weight:700; margin-left:6px; }
             .receipt-row .r-name{ color:#0d1f35; font-weight:600; }
             .receipt-row .r-sub{ color:#8fa3bc; font-size:11.5px; margin-top:2px; }
@@ -3616,9 +3610,9 @@ function printReceipt() {
             .receipt-total-band{ margin-top:14px; background:#fff1ee; border-radius:12px; padding:14px 16px; display:flex; justify-content:space-between; align-items:center; }
             .receipt-total-band .t-label{ font-size:12px; color:#e8442a; font-weight:700; }
             .receipt-total-band .t-value{ font-size:24px; color:#e8442a; font-weight:900; }
-            .receipt-barcode{ margin-top:16px; text-align:center; }
-            .receipt-barcode svg{ width:100%; max-width:260px; height:auto; }
-            .receipt-barcode-id{ font-size:11px; letter-spacing:1px; color:#8fa3bc; margin-top:2px; font-weight:600; }
+            .receipt-barcode{ margin-top:16px; padding-top:14px; border-top:1.5px dashed #e2eaf2; text-align:center; }
+            .receipt-barcode svg{ width:100%; max-width:240px; height:auto; }
+            .receipt-barcode-id{ font-size:11px; letter-spacing:1px; color:#8fa3bc; margin-top:4px; font-weight:600; }
             .receipt-thanks{ text-align:center; font-size:11.5px; color:#8fa3bc; margin-top:16px; line-height:1.7; }
             .receipt-zigzag{ height:16px; width:100%; background-image:radial-gradient(circle at 10px 0, transparent 9px, #fff 9.5px); background-size:20px 16px; background-repeat:repeat-x; background-position:-10px -1px; }
         </style>
@@ -3660,6 +3654,21 @@ function printReceipt() {
 async function captureReceiptBlob() {
     const node = document.getElementById("receipt-capture");
     const scale = 2;
+
+    // لازم نستنى الخط والصورة يخلصوا تحميل الأول، وإلا النص ممكن
+    // يتزحلق أو يتراكب وقت التصوير لأن قياسات الخط بتتغير بعد التحميل
+    if (document.fonts && document.fonts.ready) {
+        try { await document.fonts.ready; } catch (e) {}
+    }
+    const logoImg = node.querySelector("img");
+    if (logoImg && !logoImg.complete) {
+        await new Promise(resolve => {
+            logoImg.onload = resolve;
+            logoImg.onerror = resolve;
+        });
+    }
+    // نستنى فريمين عشان نتأكد إن الـ layout استقر تمامًا قبل التصوير
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
     return await domtoimage.toBlob(node, {
         bgcolor: "#f0f4f8",
@@ -3754,6 +3763,9 @@ async function shareReceipt(btn) {
 
 function renderReports() {
 
+    const periodBadge = document.getElementById("report-period-badge");
+    if (periodBadge) periodBadge.textContent = getReportFilterLabel();
+
     const reportSales = getReportSales();
 
     // إجمالي المبيعات
@@ -3805,13 +3817,12 @@ function renderReports() {
         // الأصناف القريبة من النفاد
         //--------------------------------
 
-        const LOW_STOCK_LIMIT = 5;
-
         const lowStock = items.filter(item => {
 
             const qty = Number(item.qty);
+            const min = Number(item.min);
 
-            return qty > 0 && qty <= LOW_STOCK_LIMIT;
+            return qty > 0 && qty <= min;
 
         });
 
@@ -3972,7 +3983,7 @@ function renderReports() {
 
     `<div class="summary-list">
 
-    ${Object.entries(summary).map(([name,d])=>`
+    ${Object.entries(summary).slice(0, visibleSummaryItems).map(([name,d])=>`
 
         <div class="summary-row">
 
@@ -3987,7 +3998,12 @@ function renderReports() {
 
     `).join("")}
 
-    </div>`
+    </div>
+    ${
+        visibleSummaryItems < Object.keys(summary).length
+        ? `<button class="btn-secondary" style="width:100%;margin-top:15px" onclick="showMoreSummaryItems()">عرض المزيد</button>`
+        : ""
+    }`
 
     :
 
@@ -3995,39 +4011,90 @@ function renderReports() {
 
 }
 
-function exportReportExcel(){
+function exportReportExcel(btn){
+
+    if (!isAdmin()) {
+        showToast("❌ ليس لديك صلاحية");
+        return;
+    }
 
     const reportSales = getReportSales();
 
-    const rows = reportSales.map(s=>({
+    if (!reportSales.length) {
+        showToast("❌ لا توجد بيانات في هذه الفترة للتصدير");
+        return;
+    }
 
-        التاريخ:s.date,
+    if (btn) setButtonLoading(btn, true, 'جاري التصدير...');
 
-        الفاتورة:s.invoiceId,
+    try {
 
-        الصنف:s.name,
+        // ورقة 1: تفاصيل المبيعات
+        const salesRows = reportSales.map(s => ({
+            "التاريخ": s.date,
+            "رقم الفاتورة": s.invoiceId,
+            "الصنف": s.name,
+            "النوع": s.type,
+            "الكمية": s.qty,
+            "الوحدة": s.unit,
+            "سعر الوحدة": s.unitPrice,
+            "الإجمالي": s.total,
+            "البائع": s.seller
+        }));
 
-        النوع:s.type,
+        const salesSheet = XLSX.utils.json_to_sheet(salesRows);
+        salesSheet["!cols"] = [
+            { wch: 12 }, { wch: 14 }, { wch: 22 }, { wch: 14 },
+            { wch: 8 }, { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 14 }
+        ];
 
-        الكمية:s.qty,
+        // ورقة 2: ملخص الأصناف (نفس ملخص الشاشة)
+        const summary = {};
+        items.forEach(i => {
+            summary[i.name] = { sold: 0, revenue: 0, remain: Number(i.qty), unit: i.unit };
+        });
+        reportSales.forEach(s => {
+            if (summary[s.name]) {
+                summary[s.name].sold += Number(s.qty);
+                summary[s.name].revenue += Number(s.total);
+            }
+        });
 
-        الوحدة:s.unit,
+        const summaryRows = Object.entries(summary)
+            .filter(([, d]) => d.sold > 0)
+            .map(([name, d]) => ({
+                "الصنف": name,
+                "المباع": d.sold,
+                "الوحدة": d.unit,
+                "المتبقي بالمخزون": d.remain,
+                "الإيراد": d.revenue
+            }));
 
-        السعر:s.unitPrice,
+        const summarySheet = XLSX.utils.json_to_sheet(summaryRows);
+        summarySheet["!cols"] = [
+            { wch: 22 }, { wch: 10 }, { wch: 10 }, { wch: 16 }, { wch: 12 }
+        ];
 
-        الإجمالي:s.total,
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, salesSheet, "تفاصيل المبيعات");
+        XLSX.utils.book_append_sheet(wb, summarySheet, "ملخص الأصناف");
 
-        البائع:s.seller
+        const stamp = new Date().toISOString().slice(0, 10);
+        const periodLabel = getReportFilterLabel().replace(/[\/\\?%*:|"<>]/g, "-");
+        XLSX.writeFile(wb, `تقرير_${periodLabel}_${stamp}.xlsx`);
 
-    }));
+        showToast("✅ تم تصدير التقرير بنجاح");
 
-    const ws = XLSX.utils.json_to_sheet(rows);
+    } catch (err) {
 
-    const wb = XLSX.utils.book_new();
+        console.error(err);
+        showToast("❌ تعذر تصدير التقرير");
 
-    XLSX.utils.book_append_sheet(wb,ws,"المبيعات");
+    } finally {
 
-    XLSX.writeFile(wb,"تقرير_المبيعات.xlsx");
+        if (btn) setButtonLoading(btn, false);
+
+    }
 
 }
 
@@ -4895,7 +4962,7 @@ function renderHeaderUser() {
     if (!currentUser) return;
 
     const name = currentUser.name || currentUser.username || "مستخدم";
-    const roleLabel = currentUser.role === "admin" ? "مدير النظام" : "كاشير";
+    const roleLabel = currentUser.role === "admin" ? "Admin" : "Cashier";
 
     const nameEl = document.getElementById("header-user-name");
     const roleEl = document.getElementById("header-user-role-badge");
@@ -4904,7 +4971,8 @@ function renderHeaderUser() {
     if (nameEl) nameEl.textContent = name;
     if (roleEl) {
         roleEl.textContent = roleLabel;
-        roleEl.classList.toggle("is-admin", currentUser.role === "admin");
+        roleEl.classList.remove("role-admin", "role-staff");
+        roleEl.classList.add(currentUser.role === "admin" ? "role-admin" : "role-staff");
     }
     if (avatarEl) avatarEl.textContent = name.trim().charAt(0).toUpperCase();
 
@@ -4919,6 +4987,7 @@ function showMainApp() {
 function setReportFilter(filter, btn){
 
     reportFilter = filter;
+    visibleSummaryItems = 8;
 
     document
         .querySelectorAll("#tab-reports .btn-filter")
@@ -4964,6 +5033,8 @@ function applyReportFilter(){
 
     reportTo=to;
 
+    visibleSummaryItems = 8;
+
     document
         .querySelectorAll("#tab-reports .btn-filter")
         .forEach(b=>b.classList.remove("active"));
@@ -4982,6 +5053,8 @@ function resetReportFilter(){
     reportFrom="";
 
     reportTo="";
+
+    visibleSummaryItems = 8;
 
     document.getElementById("report-from").value="";
 
@@ -5175,6 +5248,21 @@ async function addUser(btn) {
 
     if (!name || !username || !password) {
         showToast("❌ أكمل جميع البيانات");
+        return;
+    }
+
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+        showToast("❌ اليوزر لازم يكون حروف/أرقام إنجليزي بس (3 حروف على الأقل) بدون مسافات");
+        return;
+    }
+
+    if (password.length < 4) {
+        showToast("❌ الباسورد لازم يكون 4 حروف على الأقل");
+        return;
+    }
+
+    if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+        showToast("❌ اليوزر ده مستخدم بالفعل، اختار يوزر تاني");
         return;
     }
 
@@ -5376,6 +5464,24 @@ async function saveUser(btn) {
         return;
     }
 
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(updatedUser.username)) {
+        showToast("❌ اليوزر لازم يكون حروف/أرقام إنجليزي بس (3 حروف على الأقل) بدون مسافات");
+        return;
+    }
+
+    if (updatedUser.password && updatedUser.password.length < 4) {
+        showToast("❌ الباسورد لازم يكون 4 حروف على الأقل");
+        return;
+    }
+
+    const usernameTaken = users.some((u, i) =>
+        i !== editingUserIndex && u.username.toLowerCase() === updatedUser.username.toLowerCase()
+    );
+    if (usernameTaken) {
+        showToast("❌ اليوزر ده مستخدم بالفعل، اختار يوزر تاني");
+        return;
+    }
+
     setButtonLoading(btn, true, 'جاري الحفظ...');
 
     try {
@@ -5530,7 +5636,7 @@ function openLowStockModal(){
 
     document.getElementById("stock-alert-title").textContent="⚠️ الأصناف القريبة من النفاد";
 
-    const low=items.filter(i=>Number(i.qty)>0&&Number(i.qty)<=5);
+    const low=items.filter(i=>Number(i.qty)>0&&Number(i.qty)<=Number(i.min));
 
     if(!low.length){
 
@@ -6080,6 +6186,7 @@ checkAuth();
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.7.1/dom-to-image-more.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
 if ('serviceWorker' in navigator) {
