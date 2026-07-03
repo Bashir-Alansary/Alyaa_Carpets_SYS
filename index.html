@@ -79,9 +79,11 @@
   .field input:focus, .field select:focus { outline: none; border-color: var(--red); background: #fff; box-shadow: 0 0 0 3px rgba(232,68,42,0.1); }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .btn-primary { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(13,31,53,0.25); transition: opacity 0.2s; }
+  .btn-sm { width: auto; padding: 13px 21px; font-size: 13px; margin-top: 0; white-space: nowrap; box-shadow: 0 2px 8px rgba(13,31,53,0.2); }
   .btn-primary:active { opacity: 0.85; }
   .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
   .item-list { display: flex; flex-direction: column; gap: 8px; }
+  .type-body { transition: max-height .3s ease; }
 .item-row{
 
     background:var(--surface-2);
@@ -370,6 +372,8 @@
   .role-staff { background:#def7ec; color:#057a55; }
   .edit-btn { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 18px; padding: 6px; line-height: 1; }
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: flex-end; justify-content: center; }
+  .modal-overlay.centered { align-items: center; padding: 20px; }
+  .modal-overlay.centered .modal { border-radius: 20px; animation: modalPop .22s ease; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface-2); border-radius: 20px 20px 0 0; padding: 20px 16px 32px; width: 100%; max-width: 480px; }
   .modal-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
@@ -402,7 +406,7 @@
 
     margin:18px 0 10px;
 
-    background:linear-gradient(135deg,#374151,#4B5563);
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
 
     color:#fff;
 
@@ -412,7 +416,7 @@
 
     transition:.25s;
 
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    box-shadow:0 4px 14px rgba(13,31,53,.22);
 
 }
 
@@ -444,11 +448,21 @@
 
     color:#fff;
 
-    font-size:15px;
+    font-size:14px;
 
     width:20px;
 
     text-align:center;
+
+    display:inline-block;
+
+    transition:transform .3s ease;
+
+}
+
+.type-arrow.open{
+
+    transform:rotate(90deg);
 
 }
 
@@ -469,17 +483,17 @@
     line-height:1;
 }
 
-.type-edit-btn{ color:var(--primary); }
-.type-edit-btn:hover{ background:rgba(13,31,53,.12); }
-.type-delete-btn{ color:var(--danger); }
-.type-delete-btn:hover{ background:var(--danger-bg); }
+.type-edit-btn{ color:#fff; }
+.type-edit-btn:hover{ background:rgba(255,255,255,.18); }
+.type-delete-btn{ color:#ffd7d0; }
+.type-delete-btn:hover{ background:rgba(255,255,255,.18); color:#fff; }
 
 .type-row{
     display:flex;
     justify-content:space-between;
     align-items:center;
     padding:12px;
-    border-bottom:1px solid #eee;
+    border-bottom:1px solid var(--border);
 }
 
 .type-row button{
@@ -493,27 +507,64 @@
     gap: 10px;
     margin: 16px 0;
     padding: 12px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: var(--surface-1);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color .2s, box-shadow .2s;
+    position: sticky;
+    top: 8px;
+    z-index: 30;
+    box-shadow: var(--shadow);
+}
+
+.search-box:focus-within {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(13,31,53,.08);
+    background: var(--surface-2);
 }
 
 .search-box i {
-    font-size: 20px;
+    font-size: 19px;
     color: var(--text-muted);
+    flex-shrink: 0;
 }
 
 .search-box input {
     flex: 1;
+    min-width: 0;
     border: none;
     background: transparent;
-    color: var(--text);
+    color: var(--text-primary);
     font-size: 15px;
     outline: none;
 }
 
 .search-box input::placeholder {
     color: var(--text-muted);
+}
+
+.search-clear-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    background: var(--surface-0);
+    color: var(--text-secondary);
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.search-clear-btn.visible {
+    display: flex;
+}
+
+.search-clear-btn:active {
+    background: var(--border);
 }
 
 .invoice-details{
@@ -1496,10 +1547,13 @@ button.btn-loading{
 </div>
 
   <div id="tab-inventory">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
-    <h3 style="margin:0;">المخزون الحالي</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;gap:10px;">
+    <div class="section-title" style="margin:0;">
+        <i class="ti ti-package"></i>
+        المخزون الحالي
+    </div>
     <button
-        class="btn-primary admin-only"
+        class="btn-primary btn-sm admin-only"
         onclick="openTypesModal()">
 
         <i class="ti ti-category-plus"></i>
@@ -1515,6 +1569,14 @@ button.btn-loading{
                 id="item-search"
                 placeholder="ابحث باسم المنتج أو النوع..."
                 oninput="searchItems(this.value)">
+            <button
+                type="button"
+                class="search-clear-btn"
+                id="item-search-clear"
+                onclick="clearItemSearch()"
+                aria-label="مسح البحث">
+                <i class="ti ti-x"></i>
+            </button>
         </div>
 
         <div id="item-list">
@@ -2428,14 +2490,17 @@ function renderItems() {
 
         const isOpen = openedTypes[type] !== false;
 
+        const typeAttr = String(type).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+
         html += `
         <div class="type-header"
+            data-type="${typeAttr}"
             onclick="toggleType('${type.replace(/'/g,"\\'")}')">
 
             <div class="type-left">
 
-                <span class="type-arrow">
-                    ${isOpen ? "▼" : "▶"}
+                <span class="type-arrow ${isOpen ? "open" : ""}">
+                    ▶
                 </span>
 
                 <span class="type-title">
@@ -2478,8 +2543,9 @@ function renderItems() {
 
         </div>
 
-        <div class="item-list"
-            style="${isOpen ? "" : "display:none"}">
+        <div class="item-list type-body ${isOpen ? "open" : ""}"
+            data-type="${typeAttr}"
+            style="${isOpen ? "max-height:none;overflow:visible;" : "max-height:0;overflow:hidden;"}">
         `;
 
         grouped[type].sort((a, b) =>
@@ -2556,7 +2622,18 @@ function renderItems() {
 
 function searchItems(value) {
     itemSearch = value.trim().toLowerCase();
+
+    const clearBtn = document.getElementById('item-search-clear');
+    if (clearBtn) clearBtn.classList.toggle('visible', itemSearch.length > 0);
+
     renderItems();
+}
+
+function clearItemSearch() {
+    const input = document.getElementById('item-search');
+    if (input) input.value = '';
+    searchItems('');
+    if (input) input.focus();
 }
 
 function renderSellSelect() {
@@ -5310,10 +5387,41 @@ function renderTypesManager() {
 
 function toggleType(type){
 
-    window.openedTypes[type] =
-        !(window.openedTypes[type] !== false);
+    const wasOpen = window.openedTypes[type] !== false;
+    window.openedTypes[type] = !wasOpen;
 
-    renderItems();
+    const header = [...document.querySelectorAll('.type-header')].find(h => h.dataset.type === type);
+    const body = [...document.querySelectorAll('.type-body')].find(b => b.dataset.type === type);
+
+    if (!header || !body) { renderItems(); return; }
+
+    const arrow = header.querySelector('.type-arrow');
+
+    if (wasOpen) {
+        // مفتوح حاليًا -> اقفله
+        body.style.overflow = 'hidden';
+        body.style.maxHeight = body.scrollHeight + 'px';
+        // إجبار الترايض على تسجيل الارتفاع الحالي قبل ما نقفل
+        body.offsetHeight;
+        body.classList.remove('open');
+        body.style.maxHeight = '0px';
+        if (arrow) arrow.classList.remove('open');
+    } else {
+        // مقفول حاليًا -> افتحه
+        body.classList.add('open');
+        body.style.overflow = 'hidden';
+        body.style.maxHeight = body.scrollHeight + 'px';
+        if (arrow) arrow.classList.add('open');
+
+        body.addEventListener('transitionend', function handler(e){
+            if (e.propertyName !== 'max-height') return;
+            if (window.openedTypes[type] !== false) {
+                body.style.maxHeight = 'none';
+                body.style.overflow = 'visible';
+            }
+            body.removeEventListener('transitionend', handler);
+        });
+    }
 
 }
 
@@ -5477,7 +5585,7 @@ checkAuth();
 
 </div>
 
-<div id="types-modal" class="modal-overlay" style="display:none;">
+<div id="types-modal" class="modal-overlay centered" style="display:none;">
 
     <div class="modal" style="max-width:340px;">
 
