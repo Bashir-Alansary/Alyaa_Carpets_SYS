@@ -2,7 +2,7 @@
   "name": "سجاد علياء - إدارة المخزون",
   "short_name": "علياء",
   "description": "نظام إدارة مخزون سجاد علياء",
-  "start_url": "/index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0d1f35",
