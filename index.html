@@ -2149,7 +2149,7 @@ let editingUserIndex = -1;
 let itemSearch = "";
 let visibleInvoices = 5;
 let historyInvoicesCache = [];
-let historyFilter = "all";
+let historyFilter = "today";
 let customHistoryFilter = false;
 let reportFilter = "today";
 let reportFrom = "";
@@ -2394,6 +2394,9 @@ function renderStats() {
             d.getFullYear() === now.getFullYear();
     });
     const totalToday = todaySales.reduce((s, i) => s + Number(i.total), 0);
+    const todayInvoicesCount = new Set(
+        todaySales.map(s => s.invoiceId || s.date)
+    ).size;
 
     const lowStock = items.filter(i =>
         Number(i.qty) > 0 &&
@@ -2417,7 +2420,7 @@ function renderStats() {
             <div class="stat-icon c-success"><i class="ti ti-cash-banknote"></i></div>
             <div class="stat-label">مبيعات اليوم</div>
             <div class="stat-val">${Number(totalToday).toLocaleString()} <span class="stat-unit">ج</span></div>
-            <div class="stat-val-sub">${todaySales.length} فاتورة</div>
+            <div class="stat-val-sub">${todayInvoicesCount} فاتورة</div>
         </div>
 
         <div class="stat-card">
