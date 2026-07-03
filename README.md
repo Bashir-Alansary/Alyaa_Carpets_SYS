@@ -115,5 +115,4 @@ project
 ---
 
 ## 👨‍💻 Author
-
 **Bashir Alansary**
