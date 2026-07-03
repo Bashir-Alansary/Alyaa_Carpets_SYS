@@ -370,6 +370,13 @@
 .logout-btn:active {
   background: rgba(255,255,255,0.15);
 }
+  .admin-tool-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .admin-tool-icon { width: 40px; height: 40px; min-width: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .admin-tool-icon.c-navy { background: var(--accent-bg); color: var(--accent); }
+  .admin-tool-icon.c-success { background: var(--success-bg); color: var(--success); }
+  .admin-tool-text { flex: 1; }
+  .admin-tool-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
+  .admin-tool-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
   .role-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; margin-right:8px; }
   .role-admin { background:#fde8e8; color:#9b1c1c; }
   .role-staff { background:#def7ec; color:#057a55; }
@@ -1571,7 +1578,7 @@ button.btn-loading{
     <div class="tab" onclick="switchTab('sell')"><i class="ti ti-shopping-cart"></i>بيع</div>
     <div class="tab" onclick="switchTab('history')"><i class="ti ti-history"></i>الفواتير</div>
     <div class="tab admin-only" onclick="switchTab('reports')"><i class="ti ti-chart-bar"></i>تقارير</div>
-    <div class="tab admin-only" onclick="switchTab('users')"><i class="ti ti-users"></i>موظفين</div>
+    <div class="tab admin-only" onclick="switchTab('admin')"><i class="ti ti-settings"></i>الإدارة</div>
 </div>
 
   <div id="tab-inventory">
@@ -2126,8 +2133,36 @@ button.btn-loading{
 
 </div>
 
-  <!-- USERS TAB -->
-  <div id="tab-users" style="display:none">
+  <!-- ADMIN TAB -->
+  <div id="tab-admin" style="display:none">
+
+    <!-- معلومات النظام -->
+    <div class="section-title">معلومات النظام</div>
+    <div class="stats" style="margin-bottom:14px">
+      <div class="stat-card">
+        <div class="stat-icon c-navy"><i class="ti ti-package"></i></div>
+        <div class="stat-label">عدد المنتجات</div>
+        <div class="stat-val" id="admin-stat-products">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon c-success"><i class="ti ti-category-plus"></i></div>
+        <div class="stat-label">عدد الأنواع</div>
+        <div class="stat-val" id="admin-stat-types">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon c-warning"><i class="ti ti-receipt-2"></i></div>
+        <div class="stat-label">عدد الفواتير</div>
+        <div class="stat-val" id="admin-stat-invoices">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon c-danger"><i class="ti ti-users"></i></div>
+        <div class="stat-label">عدد المستخدمين</div>
+        <div class="stat-val" id="admin-stat-users">0</div>
+      </div>
+    </div>
+
+    <!-- إدارة المستخدمين -->
+    <div class="section-title">إدارة المستخدمين</div>
     <div class="form-card">
       <div class="section-title" style="margin-bottom:14px">إضافة موظف جديد</div>
       <div class="field"><label>الاسم</label><input type="text" id="new-name" placeholder="اسم الموظف"></div>
@@ -2141,6 +2176,44 @@ button.btn-loading{
     </div>
     <div class="section-title">المستخدمين الحاليين</div>
     <div id="users-list"></div>
+
+    <!-- النسخ الاحتياطي -->
+    <div class="section-title">النسخ الاحتياطي</div>
+    <div class="form-card">
+      <div class="admin-tool-head">
+        <div class="admin-tool-icon c-navy"><i class="ti ti-download"></i></div>
+        <div class="admin-tool-text">
+          <div class="admin-tool-title">نسخة احتياطية يدوية</div>
+          <div class="admin-tool-desc">تنزيل نسخة كاملة من بيانات النظام (المنتجات، الأنواع، الفواتير، المستخدمين) بصيغة JSON</div>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-download-backup" onclick="downloadBackup(this)"><i class="ti ti-download"></i> تنزيل نسخة احتياطية</button>
+    </div>
+    <div class="form-card">
+      <div class="admin-tool-head" style="margin-bottom:12px">
+        <div class="admin-tool-icon c-success"><i class="ti ti-history"></i></div>
+        <div class="admin-tool-text">
+          <div class="admin-tool-title">النسخ الاحتياطي التلقائي</div>
+          <div class="admin-tool-desc">نسخة يومية تلقائية تُحفظ على Google Drive، مع الاحتفاظ بآخر 30 نسخة وإمكانية الاسترجاع</div>
+        </div>
+      </div>
+      <div id="auto-backup-list">
+        <div class="empty-state" style="padding:24px 10px">
+          <i class="ti ti-history"></i>
+          سيتم عرض النسخ الاحتياطية التلقائية هنا بمجرد ربط خدمة Google Drive من الخادم
+        </div>
+      </div>
+    </div>
+
+    <!-- أدوات النظام -->
+    <div class="section-title">أدوات النظام</div>
+    <div class="form-card">
+      <div class="row2">
+        <button class="btn-secondary" id="btn-resync" onclick="resyncSystem(this)"><i class="ti ti-refresh"></i> إعادة المزامنة</button>
+        <button class="btn-secondary" id="btn-export-all" onclick="exportAllData(this)"><i class="ti ti-table-export"></i> تصدير جميع البيانات</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -2382,11 +2455,216 @@ function renderUsersList(list = users) {
 
 }
 
+function renderAdminStats() {
+  const productsCount = items.length;
+  const typesCount = types.length;
+  const invoiceIds = [...new Set(sales.map(s => s.invoiceId || s.date))];
+  const invoicesCount = invoiceIds.length;
+  const usersCount = users.length;
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = Number(val).toLocaleString(); };
+  set('admin-stat-products', productsCount);
+  set('admin-stat-types', typesCount);
+  set('admin-stat-invoices', invoicesCount);
+  set('admin-stat-users', usersCount);
+}
+
+function downloadBackup(btn) {
+  if (!isAdmin()) {
+    showToast("❌ ليس لديك صلاحية");
+    return;
+  }
+
+  setButtonLoading(btn, true, 'جاري التجهيز...');
+
+  try {
+    const backup = {
+      type: "manual-backup",
+      createdAt: new Date().toISOString(),
+      createdBy: currentUser ? currentUser.username : "unknown",
+      items,
+      types,
+      sales,
+      users
+    };
+
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `backup-سجاد-علياء-${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    showToast("✅ تم تنزيل النسخة الاحتياطية");
+  } catch (err) {
+    console.error(err);
+    showToast("❌ تعذر إنشاء النسخة الاحتياطية");
+  } finally {
+    setButtonLoading(btn, false);
+  }
+}
+
+async function resyncSystem(btn) {
+  if (!isAdmin()) {
+    showToast("❌ ليس لديك صلاحية");
+    return;
+  }
+
+  setButtonLoading(btn, true, 'جاري المزامنة...');
+  try {
+    await loadData();
+    await loadUsers();
+    renderAdminStats();
+    showToast("✅ تمت إعادة المزامنة بنجاح");
+  } catch (err) {
+    console.error(err);
+    showToast("❌ فشلت إعادة المزامنة");
+  } finally {
+    setButtonLoading(btn, false);
+  }
+}
+
+function exportAllData(btn) {
+  if (!isAdmin()) {
+    showToast("❌ ليس لديك صلاحية");
+    return;
+  }
+
+  setButtonLoading(btn, true, 'جاري التصدير...');
+
+  try {
+    const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    let csv = "\uFEFF";
+
+    csv += "المنتجات\r\n";
+    csv += ["النوع", "الاسم", "الوحدة", "الكمية", "سعر البيع", "الحد الأدنى"].map(esc).join(",") + "\r\n";
+    items.forEach(i => {
+      csv += [i.type, i.name, i.unit || "قطعة", i.qty, i.price, i.min].map(esc).join(",") + "\r\n";
+    });
+
+    csv += "\r\nالأنواع\r\n";
+    csv += ["اسم النوع"].map(esc).join(",") + "\r\n";
+    types.forEach(t => {
+      csv += [typeof t === "string" ? t : t.name].map(esc).join(",") + "\r\n";
+    });
+
+    csv += "\r\nالفواتير\r\n";
+    csv += ["رقم الفاتورة", "التاريخ", "الصنف", "الكمية", "السعر", "الإجمالي"].map(esc).join(",") + "\r\n";
+    sales.forEach(s => {
+      csv += [s.invoiceId, s.date, s.name, s.qty, s.price, s.total].map(esc).join(",") + "\r\n";
+    });
+
+    csv += "\r\nالمستخدمين\r\n";
+    csv += ["الاسم", "يوزر", "الصلاحية", "الحالة"].map(esc).join(",") + "\r\n";
+    users.forEach(u => {
+      csv += [u.name, u.username, u.role, u.active ? "مفعل" : "معطل"].map(esc).join(",") + "\r\n";
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `بيانات-النظام-${stamp}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    showToast("✅ تم تصدير جميع البيانات");
+  } catch (err) {
+    console.error(err);
+    showToast("❌ تعذر تصدير البيانات");
+  } finally {
+    setButtonLoading(btn, false);
+  }
+}
+
+async function loadAutoBackups() {
+  const container = document.getElementById("auto-backup-list");
+  if (!container || !isAdmin()) return;
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ action: "listBackups" })
+    });
+    const data = await res.json();
+
+    if (data.status === "ok" && Array.isArray(data.backups) && data.backups.length) {
+      container.innerHTML = "";
+      data.backups.forEach(bk => {
+        const row = document.createElement("div");
+        row.className = "user-row";
+        row.innerHTML = `
+          <div class="user-avatar"><i class="ti ti-history"></i></div>
+          <div class="user-info">
+            <div class="user-name">${bk.name || bk.date || "نسخة احتياطية"}</div>
+            <div class="user-meta">${bk.date || ""}</div>
+          </div>
+          <button class="edit-btn" title="استرجاع"><i class="ti ti-download"></i></button>
+        `;
+        row.querySelector(".edit-btn").onclick = () => restoreBackup(bk.id);
+        container.appendChild(row);
+      });
+    } else {
+      container.innerHTML = `
+        <div class="empty-state" style="padding:24px 10px">
+          <i class="ti ti-history"></i>
+          لا توجد نسخ احتياطية تلقائية بعد. سيتم عرضها هنا فور تفعيل النسخ اليومي على Google Drive من الخادم
+        </div>
+      `;
+    }
+  } catch (err) {
+    // الخدمة غير مفعّلة بعد على الخادم - نعرض حالة فارغة بدل الخطأ
+    container.innerHTML = `
+      <div class="empty-state" style="padding:24px 10px">
+        <i class="ti ti-history"></i>
+        سيتم عرض النسخ الاحتياطية التلقائية هنا بمجرد ربط خدمة Google Drive من الخادم
+      </div>
+    `;
+  }
+}
+
+async function restoreBackup(backupId) {
+  if (!isAdmin()) {
+    showToast("❌ ليس لديك صلاحية");
+    return;
+  }
+
+  if (!confirm("سيتم استبدال البيانات الحالية بهذه النسخة الاحتياطية. هل أنت متأكد؟")) return;
+
+  try {
+    showToast("⏳ جاري الاسترجاع...");
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ action: "restoreBackup", backupId })
+    });
+    const data = await res.json();
+
+    if (data.status === "ok") {
+      showToast("✅ تم استرجاع النسخة الاحتياطية");
+      await loadData();
+      await loadUsers();
+      renderAdminStats();
+    } else {
+      showToast("❌ " + (data.message || "فشل الاسترجاع"));
+    }
+  } catch (err) {
+    console.error(err);
+    showToast("❌ تعذر الاتصال بالخادم للاسترجاع");
+  }
+}
+
 function switchTab(tab) {
   const isAdmin = currentUser && currentUser.role === "admin";
   const staffOnly = ['inventory', 'sell'];
   if (!isAdmin && !staffOnly.includes(tab)) return;
-  const tabs = ['inventory','add','sell','history','reports','users','audit'];
+  const tabs = ['inventory','add','sell','history','reports','admin','audit'];
   tabs.forEach((t, i) => {
     const el = document.getElementById('tab-'+t);
     if (el) el.style.display = t === tab ? 'block' : 'none';
@@ -2397,7 +2675,11 @@ function switchTab(tab) {
   if (tab === 'history') renderHistory();
   if (tab === 'inventory') renderItems();
   if (tab === 'reports') renderReports();
-  if (tab === 'users') loadUsers();
+  if (tab === 'admin') {
+    loadUsers();
+    renderAdminStats();
+    loadAutoBackups();
+  }
 }
 
 function renderStats() {
