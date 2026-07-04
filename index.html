@@ -224,9 +224,6 @@
   /* ITEM IMAGE */
   .item-img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
   .item-img-placeholder { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #f0f4f8, #e2eaf2); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-  .img-upload-label { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1.5px dashed var(--border); border-radius: 10px; cursor: pointer; color: var(--text-muted); font-size: 13px; background: var(--surface-0); }
-  .img-upload-label:hover { border-color: var(--red); color: var(--red); }
-  .img-preview { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; margin-top: 8px; display: none; }
 
   /* REPORT CARD */
   .report-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
@@ -377,6 +374,7 @@
   .admin-tool-icon { width: 40px; height: 40px; min-width: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
   .admin-tool-icon.c-navy { background: var(--accent-bg); color: var(--accent); }
   .admin-tool-icon.c-success { background: var(--success-bg); color: var(--success); }
+  .admin-tool-icon.c-warning { background: var(--warning-bg); color: var(--warning); }
   .admin-tool-text { flex: 1; }
   .admin-tool-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
   .admin-tool-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
@@ -704,9 +702,8 @@
 
 .receipt-paper{
     background:#fff;
-    border-radius:16px 16px 0 0;
     box-shadow:var(--shadow-lg);
-    padding:24px 22px 22px;
+    padding:26px 22px 24px;
     position:relative;
 }
 
@@ -720,31 +717,35 @@
     border:2px solid var(--surface-2);
 }
 
-.receipt-roller{
-    width:56px; height:8px; border-radius:6px;
-    background:var(--navy);
-    margin:0 auto 16px;
-}
-
 .receipt-shop{
     text-align:center;
-    font-size:19px;
+    font-size:21px;
     font-weight:900;
     color:var(--text-primary);
-    letter-spacing:-0.2px;
+    letter-spacing:1px;
 }
 .receipt-tagline{
     text-align:center;
     font-size:11px;
     color:var(--text-muted);
-    margin-top:3px;
+    margin-top:4px;
     font-weight:600;
     text-transform:uppercase;
-    letter-spacing:0.6px;
+    letter-spacing:1px;
+}
+
+.receipt-stars{
+    text-align:center;
+    color:var(--border);
+    font-weight:700;
+    letter-spacing:4px;
+    margin:14px 0;
+    overflow:hidden;
+    white-space:nowrap;
+    font-size:13px;
 }
 
 .receipt-meta{
-    margin-top:16px;
     font-size:12.5px;
     color:var(--text-secondary);
 }
@@ -781,25 +782,28 @@
 .receipt-row .r-sub{ color:var(--text-muted); font-size:11.5px; margin-top:2px; }
 .receipt-row .r-total{ color:var(--text-primary); font-weight:700; white-space:nowrap; }
 
-.receipt-total-band{
-    margin-top:14px;
-    background:var(--red-bg);
-    border-radius:12px;
-    padding:14px 16px;
+.receipt-total-row{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    margin-top:14px;
 }
-.receipt-total-band .t-label{ font-size:12px; color:var(--red); font-weight:700; }
-.receipt-total-band .t-value{ font-size:24px; color:var(--red); font-weight:900; }
+.receipt-total-row .total-label{ font-size:15px; font-weight:800; color:var(--text-primary); }
+.receipt-total-row .total-value{ font-size:27px; font-weight:900; color:var(--red); }
+
+.receipt-bars{
+    display:flex;
+    gap:6px;
+    margin-top:10px;
+}
+.receipt-bars .bar-dark{ flex:2; height:7px; border-radius:4px; background:var(--navy); }
+.receipt-bars .bar-light{ flex:1; height:7px; border-radius:4px; background:var(--border); }
 
 .receipt-barcode{
-    margin-top:16px;
-    padding-top:14px;
-    border-top:1.5px dashed var(--border);
+    margin-top:18px;
     text-align:center;
 }
-.receipt-barcode svg{ width:100%; max-width:240px; height:auto; }
+.receipt-barcode svg{ width:100%; max-width:260px; height:auto; }
 .receipt-barcode-id{
     font-size:11px;
     letter-spacing:1px;
@@ -824,6 +828,7 @@
     background-repeat: repeat-x;
     background-position: -10px -1px;
 }
+.receipt-zigzag-top{ transform:scaleY(-1); }
 
 .receipt-actions{
     display:flex;
@@ -892,6 +897,83 @@
     margin-top:20px;
     flex-wrap:wrap;
 }
+
+.clear-sales-box{
+    width:100%;
+    margin-top:14px;
+    padding:14px;
+    border:1.5px dashed var(--border);
+    border-radius:12px;
+    background:var(--surface-0);
+}
+.clear-sales-box label{
+    display:block;
+    font-size:12px;
+    color:var(--text-muted);
+    font-weight:600;
+    margin-bottom:8px;
+}
+.clear-sales-box .clear-sales-row{
+    display:flex;
+    gap:8px;
+}
+.clear-sales-box input[type="date"]{
+    flex:1;
+    padding:10px 12px;
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    font-family:inherit;
+    font-size:14px;
+    background:#fff;
+    color:var(--text-primary);
+}
+.clear-sales-box .btn-danger-outline{
+    white-space:nowrap;
+    padding:10px 16px;
+}
+
+.edit-invoice-line{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 0;
+    border-bottom:1px solid var(--border);
+}
+.edit-invoice-line:first-child{ padding-top:0; }
+.edit-invoice-line .eil-name{
+    flex:1;
+    min-width:0;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--text-primary);
+}
+.edit-invoice-line .eil-name .eil-unit{
+    display:block;
+    font-size:11.5px;
+    color:var(--text-muted);
+    font-weight:500;
+    margin-top:2px;
+}
+.edit-invoice-line input{
+    width:72px;
+    padding:8px 10px;
+    border:1.5px solid var(--border);
+    border-radius:8px;
+    font-family:inherit;
+    font-size:13px;
+    text-align:center;
+    background:var(--surface-0);
+}
+.edit-invoice-line .eil-remove{
+    background:none;
+    border:none;
+    color:var(--text-muted);
+    font-size:18px;
+    cursor:pointer;
+    padding:4px;
+    line-height:1;
+}
+.edit-invoice-line .eil-remove:hover{ color:#dc2626; }
 
 .btn-danger-outline{
     background:#fff;
@@ -1673,12 +1755,6 @@ button.btn-loading{
         <label id="min-label">الحد الأدنى (عدد القطع)</label>
         <input type="number" id="add-min" placeholder="2" min="1" inputmode="numeric">
       </div>
-      <div class="field">
-        <label>صورة الصنف <span style="color:var(--text-muted);font-weight:400">(اختياري)</span></label>
-        <label class="img-upload-label" for="add-img"><i class="ti ti-camera"></i> اضغط لاختيار صورة</label>
-        <input type="file" id="add-img" accept="image/*" style="display:none" onchange="previewImg(this,'add-img-preview')">
-        <img id="add-img-preview" class="img-preview">
-      </div>
       <button class="btn-primary" id="btn-add" onclick="addItem()"><i class="ti ti-plus"></i> إضافة للمخزون</button>
     </div>
   </div>
@@ -1840,15 +1916,15 @@ button.btn-loading{
 
     </button>
 
-    <button
-        class="btn-danger-outline admin-only"
-        onclick="clearSales(this)">
-
-        <i class="ti ti-trash"></i>
-
-        حذف جميع الفواتير
-
-    </button>
+    <div class="clear-sales-box admin-only">
+        <label>حذف الفواتير الأقدم من تاريخ معيّن (سيب الحقل فاضي لو عايز تمسح كل السجل)</label>
+        <div class="clear-sales-row">
+            <input type="date" id="clear-sales-before">
+            <button class="btn-danger-outline" onclick="clearSales(this)">
+                <i class="ti ti-trash"></i> حذف
+            </button>
+        </div>
+    </div>
 
 </div>
 
@@ -2177,10 +2253,23 @@ button.btn-loading{
         <div class="admin-tool-icon c-navy"><i class="ti ti-download"></i></div>
         <div class="admin-tool-text">
           <div class="admin-tool-title">نسخة احتياطية يدوية</div>
-          <div class="admin-tool-desc">تنزيل نسخة كاملة من بيانات النظام (المنتجات، الأنواع، الفواتير، المستخدمين) بصيغة JSON</div>
+          <div class="admin-tool-desc">تنزيل نسخة كاملة من بيانات النظام (المنتجات، الأنواع، الفواتير، المستخدمين) في ملف Excel واضح وسهل القراءة</div>
         </div>
       </div>
       <button class="btn-primary" id="btn-download-backup" onclick="downloadBackup(this)"><i class="ti ti-download"></i> تنزيل نسخة احتياطية</button>
+    </div>
+    <div class="form-card">
+      <div class="admin-tool-head">
+        <div class="admin-tool-icon c-warning"><i class="ti ti-folder-open"></i></div>
+        <div class="admin-tool-text">
+          <div class="admin-tool-title">استيراد نسخة احتياطية</div>
+          <div class="admin-tool-desc">بيرجّع المخزون والفواتير للحالة اللي كانت عليها وقت أخذ النسخة. ⚠️ ده هيمسح المخزون والفواتير الحالية ويستبدلها بالكامل — لا يمكن التراجع عن العملية دي. (المستخدمين وكلمات السر مش بيتغيروا)</div>
+        </div>
+      </div>
+      <input type="file" id="restore-backup-file" accept=".xlsx,.json" style="display:none" onchange="importBackup(this)">
+      <button class="btn-danger-outline" id="btn-restore-backup" style="width:100%" onclick="document.getElementById('restore-backup-file').click()">
+        <i class="ti ti-folder-open"></i> استيراد نسخة احتياطية
+      </button>
     </div>
     <div class="form-card">
       <div class="admin-tool-head" style="margin-bottom:12px">
@@ -2230,6 +2319,33 @@ button.btn-loading{
   </div>
 </div>
 
+<div class="modal-overlay" id="edit-invoice-modal">
+  <div class="modal">
+    <div class="modal-title"><span>تعديل الفاتورة <span id="edit-invoice-id" style="color:var(--text-muted);font-weight:600;font-size:13px;"></span></span><button class="modal-close" onclick="closeEditInvoice()"><i class="ti ti-x"></i></button></div>
+
+    <div id="edit-invoice-lines"></div>
+
+    <div class="field" style="margin-top:10px;">
+        <label>ملاحظات</label>
+        <textarea id="edit-invoice-note" rows="2"></textarea>
+    </div>
+
+    <div class="total-bar" style="margin-top:14px;">
+        <div class="total-bar-label">الإجمالي بعد التعديل</div>
+        <div class="total-bar-val" id="edit-invoice-total-val">0 جنيه</div>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn-secondary" onclick="closeEditInvoice()">إلغاء</button>
+        <button class="btn-primary" id="btn-save-invoice-edit" onclick="saveInvoiceEdit()" style="margin-top:0"><i class="ti ti-check"></i> حفظ التعديلات</button>
+    </div>
+
+    <button class="btn-danger-outline" style="width:100%;margin-top:12px" id="btn-cancel-whole-invoice" onclick="cancelWholeInvoice()">
+        <i class="ti ti-trash"></i> حذف الفاتورة بالكامل
+    </button>
+  </div>
+</div>
+
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZWnBH3miNKwOqQlbAtWeIiLdQMIjwLOuoJ2tyRgwAy0v2cO_JnredBD0wUF-X0xu2/exec';
 
@@ -2241,6 +2357,7 @@ let editingUserIndex = -1;
 let itemSearch = "";
 let visibleInvoices = 5;
 let historyInvoicesCache = [];
+let editingInvoiceLines = [];
 let historyFilter = "today";
 let customHistoryFilter = false;
 let reportFilter = "today";
@@ -2328,10 +2445,12 @@ async function saveData() {
     });
     if (!res.ok) throw new Error('save failed');
     setSyncStatus('ok', 'تم الحفظ في السحابة ✓');
+    return true;
   } catch (err) {
     console.error('saveData error:', err);
     setSyncStatus('error', 'خطأ في الحفظ');
-    showToast('❌ تعذر الحفظ، تحقق من الإنترنت');
+    showToast('❌ تعذر الحفظ، تحقق من الإنترنت وحاول تاني. لسه محصلش حفظ');
+    return false;
   }
 }
 
@@ -2456,29 +2575,64 @@ function downloadBackup(btn) {
     return;
   }
 
+  if (typeof XLSX === "undefined") {
+    showToast("❌ تعذر تجهيز ملف Excel، تحقق من الإنترنت وحاول تاني");
+    return;
+  }
+
   setButtonLoading(btn, true, 'جاري التجهيز...');
 
   try {
-    const backup = {
-      type: "manual-backup",
-      createdAt: new Date().toISOString(),
-      createdBy: currentUser ? currentUser.username : "unknown",
-      items,
-      types,
-      sales,
-      users
-    };
 
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const wb = XLSX.utils.book_new();
+
+    // ===== شيت المخزون =====
+    const itemsRows = items.map(it => ({
+      "النوع": it.type || "",
+      "اسم الصنف": it.name || "",
+      "الوحدة": it.unit || "",
+      "الكمية المتاحة": it.qty,
+      "السعر": it.price,
+      "الحد الأدنى": it.min
+    }));
+    const itemsSheet = XLSX.utils.json_to_sheet(itemsRows);
+    itemsSheet["!cols"] = [{wch:14},{wch:28},{wch:10},{wch:14},{wch:10},{wch:12}];
+    XLSX.utils.book_append_sheet(wb, itemsSheet, "المخزون");
+
+    // ===== شيت الفواتير (كل صنف في سطر مستقل) =====
+    const salesRows = sales.map(s => ({
+      "رقم الفاتورة": s.invoiceId || "",
+      "التاريخ": s.date || "",
+      "الصنف": s.name || "",
+      "النوع": s.type || "",
+      "الكمية": s.qty,
+      "الوحدة": s.unit || "",
+      "سعر الوحدة": s.unitPrice,
+      "الإجمالي": s.total,
+      "البائع": s.seller || "",
+      "ملاحظات": s.note || ""
+    }));
+    const salesSheet = XLSX.utils.json_to_sheet(salesRows);
+    salesSheet["!cols"] = [{wch:20},{wch:18},{wch:26},{wch:12},{wch:10},{wch:10},{wch:12},{wch:12},{wch:14},{wch:30}];
+    XLSX.utils.book_append_sheet(wb, salesSheet, "الفواتير");
+
+    // ===== شيت المستخدمين (من غير كلمات السر) =====
+    const usersRows = (users || []).map(u => ({
+      "اسم المستخدم": u.username || "",
+      "الصلاحية": u.role === "admin" ? "مدير" : "موظف"
+    }));
+    const usersSheet = XLSX.utils.json_to_sheet(usersRows);
+    usersSheet["!cols"] = [{wch:20},{wch:14}];
+    XLSX.utils.book_append_sheet(wb, usersSheet, "المستخدمين");
+
+    // ===== شيت الأنواع =====
+    const typesRows = (types || []).map(t => ({ "النوع": typeof t === "string" ? t : (t.name || "") }));
+    const typesSheet = XLSX.utils.json_to_sheet(typesRows);
+    typesSheet["!cols"] = [{wch:20}];
+    XLSX.utils.book_append_sheet(wb, typesSheet, "الأنواع");
+
     const stamp = new Date().toISOString().slice(0, 10);
-    a.href = url;
-    a.download = `backup-سجاد-علياء-${stamp}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    XLSX.writeFile(wb, `نسخة-احتياطية-سجاد-علياء-${stamp}.xlsx`);
 
     showToast("✅ تم تنزيل النسخة الاحتياطية");
   } catch (err) {
@@ -2487,6 +2641,119 @@ function downloadBackup(btn) {
   } finally {
     setButtonLoading(btn, false);
   }
+}
+
+// استيراد نسخة احتياطية (Excel من الأداة دي، أو JSON قديم) وإرجاع المخزون والفواتير لحالتها وقتها
+// ملحوظة: المستخدمين وكلمات السر مش بيتغيروا خالص، عشان النسخة الاحتياطية أصلاً بتتنزل من غيرهم لأسباب أمان
+async function importBackup(input) {
+
+  if (!isAdmin()) {
+    showToast("❌ ليس لديك صلاحية");
+    input.value = '';
+    return;
+  }
+
+  const file = input.files[0];
+  if (!file) return;
+
+  try {
+
+    let parsedItems, parsedSales;
+
+    if (file.name.toLowerCase().endsWith('.json')) {
+
+        const text = await file.text();
+        const data = JSON.parse(text);
+        parsedItems = data.items;
+        parsedSales = data.sales;
+
+    } else {
+
+        if (typeof XLSX === "undefined") {
+            throw new Error("مكتبة قراءة الإكسل مش متاحة، تحقق من الإنترنت");
+        }
+
+        const buf = await file.arrayBuffer();
+        const wb = XLSX.read(buf, { type: 'array' });
+
+        const itemsSheet = wb.Sheets["المخزون"];
+        const salesSheet = wb.Sheets["الفواتير"];
+
+        if (!itemsSheet || !salesSheet) {
+            throw new Error("الملف ده مش نسخة احتياطية متعرف عليها");
+        }
+
+        parsedItems = XLSX.utils.sheet_to_json(itemsSheet).map(r => ({
+            type: r["النوع"] || "",
+            name: r["اسم الصنف"] || "",
+            unit: r["الوحدة"] || "قطعة",
+            qty: Number(r["الكمية المتاحة"]) || 0,
+            price: Number(r["السعر"]) || 0,
+            min: Number(r["الحد الأدنى"]) || 0,
+            img: null
+        }));
+
+        parsedSales = XLSX.utils.sheet_to_json(salesSheet).map(r => ({
+            invoiceId: r["رقم الفاتورة"] || "",
+            date: r["التاريخ"] || "",
+            name: r["الصنف"] || "",
+            type: r["النوع"] || "",
+            qty: Number(r["الكمية"]) || 0,
+            unit: r["الوحدة"] || "",
+            unitPrice: Number(r["سعر الوحدة"]) || 0,
+            total: Number(r["الإجمالي"]) || 0,
+            seller: r["البائع"] || "",
+            note: r["ملاحظات"] || ""
+        }));
+
+    }
+
+    if (!Array.isArray(parsedItems) || !Array.isArray(parsedSales)) {
+        throw new Error("تنسيق الملف غير صحيح");
+    }
+
+    const currentInvoicesCount = new Set(sales.map(s => s.invoiceId)).size;
+    const newInvoicesCount = new Set(parsedSales.map(s => s.invoiceId)).size;
+
+    const typed = prompt(
+        `هيتم استبدال المخزون الحالي (${items.length} صنف) والفواتير الحالية (${currentInvoicesCount} فاتورة) بالبيانات الموجودة في الملف ده (${parsedItems.length} صنف، ${newInvoicesCount} فاتورة).\n\nمفيش رجوع بعد كده. اكتب كلمة "استبدال" بالظبط للتأكيد:`
+    );
+
+    if (typed !== "استبدال") {
+        showToast("❌ تم الإلغاء");
+        return;
+    }
+
+    const itemsBackup = items;
+    const salesBackup = sales;
+
+    items = parsedItems;
+    sales = parsedSales;
+
+    const saved = await saveData();
+
+    if (!saved) {
+        items = itemsBackup;
+        sales = salesBackup;
+        showToast("❌ ما اتستوردش، حاول تاني لما النت يرجع");
+        return;
+    }
+
+    renderStats();
+    renderItems();
+    renderHistory();
+    renderSellSelect();
+    checkLowStock();
+
+    showToast("✅ تم استيراد النسخة الاحتياطية بنجاح");
+
+  } catch (err) {
+    console.error(err);
+    showToast("❌ تعذر قراءة الملف: " + (err.message || "تنسيق غير معروف"));
+  } finally {
+    input.value = '';
+  }
+
 }
 
 async function resyncSystem(btn) {
@@ -3371,6 +3638,13 @@ function renderHistory() {
                         <i class="ti ti-receipt"></i>
                     </button>
 
+                    <button
+                        class="receipt-view-btn admin-only"
+                        title="تعديل الفاتورة"
+                        onclick="event.stopPropagation(); openEditInvoice(${i})">
+                        <i class="ti ti-pencil"></i>
+                    </button>
+
                     <i class="ti ti-chevron-down invoice-chevron"></i>
 
                 </div>
@@ -3462,13 +3736,14 @@ function renderReceiptPaperHTML(inv) {
     const barcodeId = `bc-${(inv.invoiceId||"").replace(/[^a-zA-Z0-9]/g,"")}`;
 
     return `
+        <div class="receipt-zigzag receipt-zigzag-top"></div>
         <div class="receipt-paper">
-
-            <div class="receipt-roller"></div>
 
             <img class="receipt-logo" src="images/logo.jpg" alt="سجاد علياء">
             <div class="receipt-shop">سجاد علياء</div>
-            <div class="receipt-tagline">فاتورة بيع</div>
+            <div class="receipt-tagline">فاتورة بيع رسمية</div>
+
+            <div class="receipt-stars">* * * * * * * * * * * * * * * * * * * * * * *</div>
 
             <div class="receipt-meta">
                 <div>رقم الفاتورة: <b>${inv.invoiceId}</b></div>
@@ -3476,7 +3751,7 @@ function renderReceiptPaperHTML(inv) {
                 ${inv.seller ? `<div>البائع: <b>${inv.seller}</b></div>` : ""}
             </div>
 
-            <div class="receipt-dashed"></div>
+            <div class="receipt-stars">* * * * * * * * * * * * * * * * * * * * * * *</div>
 
             ${rowsHTML}
 
@@ -3487,9 +3762,16 @@ function renderReceiptPaperHTML(inv) {
 
             ${inv.note ? `<div class="invoice-note">📝 ${inv.note}</div>` : ""}
 
-            <div class="receipt-total-band">
-                <span class="t-label">الإجمالي</span>
-                <span class="t-value">${Number(inv.total).toLocaleString()} ج</span>
+            <div class="receipt-dashed"></div>
+
+            <div class="receipt-total-row">
+                <span class="total-label">الإجمالي</span>
+                <span class="total-value">${Number(inv.total).toLocaleString()} ج</span>
+            </div>
+
+            <div class="receipt-bars">
+                <span class="bar-dark"></span>
+                <span class="bar-light"></span>
             </div>
 
             <div class="receipt-barcode">
@@ -3502,7 +3784,7 @@ function renderReceiptPaperHTML(inv) {
             </div>
 
         </div>
-        <div class="receipt-zigzag"></div>
+        <div class="receipt-zigzag receipt-zigzag-bottom"></div>
     `;
 
 }
@@ -3549,6 +3831,194 @@ function closeReceipt() {
     currentReceiptInvoice = null;
 }
 
+// =========================================================
+// تعديل / حذف فاتورة واحدة
+// =========================================================
+
+function openEditInvoice(i) {
+
+    if (!isAdmin()) {
+        alert("ليس لديك صلاحية لتعديل الفواتير");
+        return;
+    }
+
+    const inv = historyInvoicesCache[i];
+    if (!inv) return;
+
+    editingInvoiceLines = inv.items.map(s => ({
+        ref: s,
+        name: s.name,
+        unit: s.unit,
+        type: s.type,
+        originalQty: Number(s.qty),
+        qty: Number(s.qty),
+        unitPrice: Number(s.unitPrice),
+        removed: false
+    }));
+
+    document.getElementById("edit-invoice-id").textContent = inv.invoiceId;
+    document.getElementById("edit-invoice-note").value = inv.note || "";
+    document.getElementById("edit-invoice-modal").classList.add("open");
+
+    renderEditInvoiceLines();
+
+}
+
+function closeEditInvoice() {
+    document.getElementById("edit-invoice-modal").classList.remove("open");
+    editingInvoiceLines = [];
+}
+
+function renderEditInvoiceLines() {
+
+    const el = document.getElementById("edit-invoice-lines");
+
+    const visibleLines = editingInvoiceLines.filter(l => !l.removed);
+
+    if (!visibleLines.length) {
+        el.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:16px 0;">مفيش أصناف متبقية في الفاتورة، لو حفظت هيتم حذفها بالكامل</div>`;
+    } else {
+        el.innerHTML = editingInvoiceLines.map((l, idx) => {
+            if (l.removed) return "";
+            return `
+                <div class="edit-invoice-line">
+                    <div class="eil-name">
+                        ${l.name}
+                        <span class="eil-unit">${l.unit}</span>
+                    </div>
+                    <input type="number" min="0" step="${l.unit === 'متر' ? '0.1' : '1'}" value="${l.qty}"
+                        oninput="updateInvoiceLine(${idx}, 'qty', this.value)" title="الكمية">
+                    <input type="number" min="0" step="0.01" value="${l.unitPrice}"
+                        oninput="updateInvoiceLine(${idx}, 'unitPrice', this.value)" title="سعر الوحدة">
+                    <button class="eil-remove" title="حذف الصنف من الفاتورة" onclick="removeInvoiceLine(${idx})">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </div>
+            `;
+        }).join("");
+    }
+
+    const total = visibleLines.reduce((s, l) => s + (Number(l.qty) * Number(l.unitPrice)), 0);
+    document.getElementById("edit-invoice-total-val").textContent = total.toLocaleString() + " جنيه";
+
+}
+
+function updateInvoiceLine(idx, field, value) {
+    editingInvoiceLines[idx][field] = Number(value) || 0;
+    renderEditInvoiceLines();
+}
+
+function removeInvoiceLine(idx) {
+    editingInvoiceLines[idx].removed = true;
+    renderEditInvoiceLines();
+}
+
+// بيطبق التعديلات على items و sales الحقيقية، بيحفظ، ولو الحفظ فشل بيرجع كل حاجة زي ما كانت
+async function applyInvoiceChangesAndSave(successMsg) {
+
+    const itemsBackup = JSON.parse(JSON.stringify(items));
+    const salesBackup = JSON.parse(JSON.stringify(sales));
+
+    const newNote = document.getElementById("edit-invoice-note").value.trim();
+
+    editingInvoiceLines.forEach(l => {
+
+        const stockItem = items.find(it => it.name === l.name && it.unit === l.unit);
+
+        if (l.removed) {
+
+            if (stockItem) stockItem.qty = Number(stockItem.qty) + l.originalQty;
+
+            const idx = sales.indexOf(l.ref);
+            if (idx >= 0) sales.splice(idx, 1);
+
+        } else {
+
+            const delta = l.qty - l.originalQty;
+            if (stockItem) stockItem.qty = Number(stockItem.qty) - delta;
+
+            l.ref.qty = l.qty;
+            l.ref.unitPrice = l.unitPrice;
+            l.ref.total = l.qty * l.unitPrice;
+            l.ref.note = newNote;
+
+        }
+
+    });
+
+    const saved = await saveData();
+
+    if (!saved) {
+        items = itemsBackup;
+        sales = salesBackup;
+        showToast("❌ ما اتحفظش التعديل، حاول تاني لما النت يرجع");
+        return false;
+    }
+
+    renderStats();
+    renderItems();
+    renderHistory();
+    renderSellSelect();
+    checkLowStock();
+    closeEditInvoice();
+    showToast(successMsg);
+
+    return true;
+
+}
+
+async function saveInvoiceEdit() {
+
+    const remaining = editingInvoiceLines.filter(l => !l.removed);
+
+    for (const l of remaining) {
+        if (!Number.isFinite(l.qty) || l.qty <= 0) {
+            showToast(`❌ الكمية غير صحيحة لصنف "${l.name}"`);
+            return;
+        }
+        if (!Number.isFinite(l.unitPrice) || l.unitPrice < 0) {
+            showToast(`❌ السعر غير صحيح لصنف "${l.name}"`);
+            return;
+        }
+    }
+
+    const btn = document.getElementById("btn-save-invoice-edit");
+    setButtonLoading(btn, true, "جاري الحفظ...");
+
+    try {
+        await applyInvoiceChangesAndSave("✅ تم تعديل الفاتورة");
+    } finally {
+        setButtonLoading(btn, false);
+    }
+
+}
+
+async function cancelWholeInvoice() {
+
+    const invoiceId = document.getElementById("edit-invoice-id").textContent;
+
+    const typed = prompt(
+        `هيتم حذف الفاتورة ${invoiceId} بالكامل، والكميات هترجع تلقائيًا للمخزون. مفيش رجوع بعد كده.\n\nاكتب كلمة "حذف" بالظبط للتأكيد:`
+    );
+
+    if (typed !== "حذف") {
+        showToast("❌ تم الإلغاء");
+        return;
+    }
+
+    editingInvoiceLines.forEach(l => { l.removed = true; });
+
+    const btn = document.getElementById("btn-cancel-whole-invoice");
+    setButtonLoading(btn, true, "جاري الحذف...");
+
+    try {
+        await applyInvoiceChangesAndSave("🗑️ تم حذف الفاتورة بالكامل");
+    } finally {
+        setButtonLoading(btn, false);
+    }
+
+}
+
 // طباعة الفاتورة في نافذة منفصلة (نفس أسلوب طباعة التقرير المستخدم في التطبيق)
 function printReceipt() {
 
@@ -3584,17 +4054,16 @@ function printReceipt() {
             @page{ margin:8mm; }
             @media print{
                 .print-actions{ display:none; }
-                body{ background:#fff; padding:0; }
+                body{ background:#eef2f6; padding:10px 0; }
                 .receipt-paper{ box-shadow:none !important; }
-                .receipt-zigzag{ display:none; }
             }
             .receipt-wrap{ max-width:360px; margin:0 auto; }
-            .receipt-paper{ background:#fff; border-radius:16px 16px 0 0; box-shadow:0 8px 32px rgba(13,31,53,0.14); padding:24px 22px 22px; }
+            .receipt-paper{ background:#fff; box-shadow:0 8px 32px rgba(13,31,53,0.14); padding:26px 22px 24px; }
             .receipt-logo{ display:block; width:44px; height:44px; border-radius:50%; margin:0 auto 10px; object-fit:cover; border:2px solid #f0f4f8; }
-            .receipt-roller{ width:56px; height:8px; border-radius:6px; background:#0d1f35; margin:0 auto 16px; }
-            .receipt-shop{ text-align:center; font-size:19px; font-weight:900; color:#0d1f35; }
-            .receipt-tagline{ text-align:center; font-size:11px; color:#8fa3bc; margin-top:3px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; }
-            .receipt-meta{ margin-top:16px; font-size:12.5px; color:#4a6080; }
+            .receipt-shop{ text-align:center; font-size:21px; font-weight:900; color:#0d1f35; letter-spacing:1px; }
+            .receipt-tagline{ text-align:center; font-size:11px; color:#8fa3bc; margin-top:4px; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
+            .receipt-stars{ text-align:center; color:#e2eaf2; font-weight:700; letter-spacing:4px; margin:14px 0; overflow:hidden; white-space:nowrap; font-size:13px; }
+            .receipt-meta{ font-size:12.5px; color:#4a6080; }
             .receipt-meta > div{ margin-top:5px; }
             .receipt-meta > div:first-child{ margin-top:0; }
             .receipt-meta b{ color:#0d1f35; }
@@ -3607,14 +4076,18 @@ function printReceipt() {
             .receipt-row .r-total{ color:#0d1f35; font-weight:700; white-space:nowrap; }
             .receipt-count-line{ display:flex; justify-content:space-between; margin-top:10px; padding-top:10px; border-top:1px dashed #e2eaf2; font-size:12px; color:#8fa3bc; font-weight:700; }
             .invoice-note{ margin-top:12px; padding:10px 12px; background:#fff8ec; border:1px solid #fde8c0; border-radius:8px; font-size:13px; color:#8a5a12; }
-            .receipt-total-band{ margin-top:14px; background:#fff1ee; border-radius:12px; padding:14px 16px; display:flex; justify-content:space-between; align-items:center; }
-            .receipt-total-band .t-label{ font-size:12px; color:#e8442a; font-weight:700; }
-            .receipt-total-band .t-value{ font-size:24px; color:#e8442a; font-weight:900; }
-            .receipt-barcode{ margin-top:16px; padding-top:14px; border-top:1.5px dashed #e2eaf2; text-align:center; }
-            .receipt-barcode svg{ width:100%; max-width:240px; height:auto; }
+            .receipt-total-row{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; }
+            .receipt-total-row .total-label{ font-size:15px; font-weight:800; color:#0d1f35; }
+            .receipt-total-row .total-value{ font-size:27px; font-weight:900; color:#e8442a; }
+            .receipt-bars{ display:flex; gap:6px; margin-top:10px; }
+            .receipt-bars .bar-dark{ flex:2; height:7px; border-radius:4px; background:#0d1f35; }
+            .receipt-bars .bar-light{ flex:1; height:7px; border-radius:4px; background:#e2eaf2; }
+            .receipt-barcode{ margin-top:18px; text-align:center; }
+            .receipt-barcode svg{ width:100%; max-width:260px; height:auto; }
             .receipt-barcode-id{ font-size:11px; letter-spacing:1px; color:#8fa3bc; margin-top:4px; font-weight:600; }
             .receipt-thanks{ text-align:center; font-size:11.5px; color:#8fa3bc; margin-top:16px; line-height:1.7; }
             .receipt-zigzag{ height:16px; width:100%; background-image:radial-gradient(circle at 10px 0, transparent 9px, #fff 9.5px); background-size:20px 16px; background-repeat:repeat-x; background-position:-10px -1px; }
+            .receipt-zigzag-top{ transform:scaleY(-1); }
         </style>
         </head>
         <body>
@@ -4490,18 +4963,21 @@ async function addItem() {
   try {
 
     items.push({ type, name, unit, qty, price, min, img: null });
-    showToast(`✅ تمت إضافة ${name}`);
 
-    await saveData();
+    const saved = await saveData();
+
+    if (!saved) {
+        items.pop();
+        showToast('❌ ما اتضافش الصنف، حاول تاني لما النت يرجع');
+        return;
+    }
+
+    showToast(`✅ تمت إضافة ${name}`);
     renderStats(); renderItems(); checkLowStock();
 
     document.getElementById('add-name').value = '';
     document.getElementById('add-qty').value = '';
     document.getElementById('add-price').value = '';
-    const preview = document.getElementById('add-img-preview');
-    if (preview) { preview.src = ''; preview.style.display = 'none'; }
-    const imgInput = document.getElementById('add-img');
-    if (imgInput) imgInput.value = '';
 
   } finally {
 
@@ -4652,8 +5128,11 @@ async function finalizeSale() {
     const invoiceId = `INV-${now.getTime()}`;
     const invoiceNote = document.getElementById('invoice-note').value.trim();
 
+    // نحتفظ بنسخة من الكميات الحالية عشان نرجعها لو فشل الحفظ على السيرفر
+    const qtyBackup = sellCart.map(c => ({ itemIndex: c.itemIndex, qty: items[c.itemIndex].qty }));
+    const salesLengthBefore = sales.length;
+
     let invoiceTotal = 0;
-    const itemsSummary = [];
 
     sellCart.forEach(c => {
         const stockItem = items[c.itemIndex];
@@ -4671,10 +5150,18 @@ async function finalizeSale() {
           note: invoiceNote
       });
         invoiceTotal += c.total;
-        itemsSummary.push(`${c.qty} ${c.unit} ${c.name}`);
     });
 
-    await saveData();
+    const saved = await saveData();
+
+    if (!saved) {
+        // فشل الحفظ: نرجع الكميات والفواتير زي ما كانت، ونسيب الفاتورة في السلة عشان يقدر يعيد المحاولة
+        qtyBackup.forEach(b => { items[b.itemIndex].qty = b.qty; });
+        sales.length = salesLengthBefore;
+        showToast('❌ الفاتورة ما اتسجلتش، حاول تاني لما النت يرجع');
+        return;
+    }
+
     renderStats(); renderSellSelect();
     showToast(`✅ تم تسجيل الفاتورة بإجمالي ${invoiceTotal.toLocaleString()} جنيه`);
 
@@ -4709,7 +5196,14 @@ async function deleteItem(i, btn) {
         // حذف المنتج
         items.splice(i, 1);
 
-        await saveData();
+        const saved = await saveData();
+
+        if (!saved) {
+            items.splice(i, 0, item);
+            showToast('❌ ما اتحذفش، حاول تاني لما النت يرجع');
+            return;
+        }
+
         await loadData();
 
         // هل لسه فيه منتجات من نفس النوع؟
@@ -4816,17 +5310,74 @@ function filterSalesByPeriod(f) {
 }
 
 async function clearSales(btn) {
-  if (!confirm('هتمسح كل سجل المبيعات والإجمالي هيرجع صفر، متأكد؟')) return;
+
+  const beforeStr = document.getElementById('clear-sales-before').value; // "YYYY-MM-DD" أو فاضي
+
+  let toKeep, deletedInvoicesCount, confirmMsg;
+
+  if (beforeStr) {
+
+      const cutoff = new Date(beforeStr + "T00:00:00");
+
+      const toDelete = sales.filter(s => {
+          const d = parseSaleDate(s.date);
+          return d && d < cutoff;
+      });
+
+      if (!toDelete.length) {
+          showToast("ℹ️ لا توجد فواتير أقدم من التاريخ ده");
+          return;
+      }
+
+      toKeep = sales.filter(s => !toDelete.includes(s));
+      deletedInvoicesCount = new Set(toDelete.map(s => s.invoiceId)).size;
+      confirmMsg = `هيتم حذف ${deletedInvoicesCount} فاتورة (الأقدم من ${beforeStr}) نهائيًا، والباقي هيفضل زي ما هو. متأكد؟`;
+
+      if (!confirm(confirmMsg)) return;
+
+  } else {
+
+      if (!sales.length) {
+          showToast("ℹ️ لا توجد فواتير أصلاً");
+          return;
+      }
+
+      deletedInvoicesCount = new Set(sales.map(s => s.invoiceId)).size;
+      toKeep = [];
+
+      const typed = prompt(
+          `هتمسح كل سجل الفواتير نهائيًا (${deletedInvoicesCount} فاتورة) ومفيش رجوع بعد كده.\n\nاكتب كلمة "حذف" بالظبط للتأكيد:`
+      );
+
+      if (typed !== "حذف") {
+          showToast("❌ تم الإلغاء");
+          return;
+      }
+
+  }
+
   setButtonLoading(btn, true, 'جاري الحذف...');
+
   try {
-      sales = [];
-      await saveData();
+      const salesBackup = sales;
+      sales = toKeep;
+
+      const saved = await saveData();
+
+      if (!saved) {
+          sales = salesBackup;
+          showToast('❌ ما اتحذفش، حاول تاني لما النت يرجع');
+          return;
+      }
+
       renderStats();
       renderHistory();
-      showToast('🗑️ تم مسح سجل المبيعات');
+      document.getElementById('clear-sales-before').value = '';
+      showToast(`🗑️ تم حذف ${deletedInvoicesCount} فاتورة`);
   } finally {
       setButtonLoading(btn, false);
   }
+
 }
 
 let editIndex = -1;
@@ -4922,6 +5473,8 @@ async function saveEdit() {
 
   try {
 
+    const originalItem = items[editIndex];
+
     items[editIndex] = {
       ...items[editIndex],
       type,
@@ -4932,7 +5485,14 @@ async function saveEdit() {
       min,
     };
 
-    await saveData();
+    const saved = await saveData();
+
+    if (!saved) {
+        items[editIndex] = originalItem;
+        showToast('❌ ما اتحفظش التعديل، حاول تاني لما النت يرجع');
+        return;
+    }
+
     renderStats(); renderItems(); checkLowStock();
     closeEdit();
     showToast('✅ تم التعديل');
@@ -5162,17 +5722,23 @@ function checkAuth() {
 
 }
 
+function setLoginError(msg) {
+    const el = document.getElementById("loginError");
+    el.innerHTML = msg;
+    el.style.display = msg ? "block" : "none";
+}
+
 async function login(btn){
 
     const username = document.getElementById("loginUsername").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
 
     if (!username || !password) {
-        document.getElementById("loginError").innerHTML = "من فضلك ادخل اسم المستخدم وكلمة المرور";
+        setLoginError("من فضلك ادخل اسم المستخدم وكلمة المرور");
         return;
     }
 
-    document.getElementById("loginError").innerHTML = "";
+    setLoginError("");
     setButtonLoading(btn, true, "جاري الدخول...");
 
     try {
@@ -5198,15 +5764,14 @@ async function login(btn){
 
         } else {
 
-            document.getElementById("loginError").innerHTML =
-                "اسم المستخدم أو كلمة المرور غير صحيحة";
+            setLoginError("اسم المستخدم أو كلمة المرور غير صحيحة");
 
         }
 
     } catch (err) {
 
         console.error(err);
-        document.getElementById("loginError").innerHTML = "تعذر الاتصال، تحقق من الإنترنت";
+        setLoginError("تعذر الاتصال، تحقق من الإنترنت");
 
     } finally {
 
@@ -5922,18 +6487,6 @@ function logout() {
 
 }
 
-function downloadBackup() {
-
-    showToast("🚧 سيتم تنفيذ النسخة الاحتياطية في الخطوة القادمة");
-
-}
-
-function deleteAllSales() {
-
-    showToast("🚧 سنضيف نظام التأكيد أولاً");
-
-}
-
 function exportSales() {
 
     if (!sales.length) {
@@ -5941,75 +6494,55 @@ function exportSales() {
         return;
     }
 
-    const rows = [];
-
-    rows.push([
-        "رقم الفاتورة",
-        "التاريخ",
-        "البائع",
-        "الصنف",
-        "النوع",
-        "الوحدة",
-        "الكمية",
-        "سعر الوحدة",
-        "الإجمالي",
-        "ملاحظات"
-    ]);
+    if (typeof XLSX === "undefined") {
+        showToast("❌ تعذر تجهيز ملف Excel، تحقق من الإنترنت وحاول تاني");
+        return;
+    }
 
     const filteredSales = getFilteredSales();
 
-    filteredSales.forEach(s => {
+    if (!filteredSales.length) {
+        showToast("❌ لا توجد فواتير مطابقة للفلتر الحالي");
+        return;
+    }
 
-        rows.push([
-            s.invoiceId || "",
-            s.date || "",
-            s.seller || "",
-            s.name || "",
-            s.type || "",
-            s.unit || "",
-            s.qty || 0,
-            s.unitPrice || 0,
-            s.total || 0,
-            s.note || ""
-        ]);
+    const rows = filteredSales.map(s => ({
+        "رقم الفاتورة": s.invoiceId || "",
+        "التاريخ": s.date || "",
+        "البائع": s.seller || "",
+        "الصنف": s.name || "",
+        "النوع": s.type || "",
+        "الوحدة": s.unit || "",
+        "الكمية": s.qty || 0,
+        "سعر الوحدة": s.unitPrice || 0,
+        "الإجمالي": s.total || 0,
+        "ملاحظات": s.note || ""
+    }));
 
-    });
+    const sheet = XLSX.utils.json_to_sheet(rows);
+    sheet["!cols"] = [
+        {wch:20}, {wch:18}, {wch:14}, {wch:26}, {wch:12},
+        {wch:10}, {wch:10}, {wch:12}, {wch:12}, {wch:30}
+    ];
 
-    const csv = rows
-        .map(r =>
-            r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")
-        )
-        .join("\n");
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, sheet, "الفواتير");
 
-    const blob = new Blob(
-        ["\uFEFF" + csv],
-        { type: "text/csv;charset=utf-8;" }
-    );
-
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-
-    a.href = url;
-
-    a.download =
-        "فواتير_" +
-        new Date().toISOString().slice(0,10) +
-        ".csv";
-
-    document.body.appendChild(a);
-
-    a.click();
-
-    document.body.removeChild(a);
-
-    URL.revokeObjectURL(url);
+    XLSX.writeFile(wb, "فواتير_" + new Date().toISOString().slice(0,10) + ".xlsx");
 
     showToast("✅ تم تصدير الفواتير");
 
 }
 
 checkAuth();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered'))
+      .catch(err => console.log('SW registration failed', err));
+  });
+}
 </script>
 
 <div id="user-modal" class="modal-overlay">
@@ -6188,14 +6721,5 @@ checkAuth();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered'))
-      .catch(err => console.log('SW registration failed', err));
-  });
-}
-</script>
 </body>
 </html>
