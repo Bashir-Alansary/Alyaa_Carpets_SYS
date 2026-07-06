@@ -176,6 +176,17 @@
 
   /* ===================== كارت الفاتورة (شكل جديد) ===================== */
   .invoice-group { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 14px 15px; box-shadow: var(--shadow); margin-bottom: 0; transition: box-shadow 0.15s ease; }
+  .invoice-group-return { border-color: #fecaca; background: var(--danger-bg); }
+  .invoice-group-cancelled { opacity: 0.85; }
+  .badge-return { background: var(--danger-bg); color: var(--danger); border: 1px solid #fecaca; display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; margin-right:6px; }
+  .badge-return-warning { background: var(--warning-bg); color: var(--warning); border-color: #fde8c0; }
+  .price-strike { text-decoration: line-through; color: var(--text-muted); font-size: 11px; font-weight: 600; }
+  .linked-returns-note { display:inline-flex; align-items:center; gap:4px; font-size:11.5px; color:var(--danger); font-weight:700; text-decoration:underline; cursor:pointer; margin-top:4px; }
+  .linked-returns-list { margin-top: 10px; padding: 10px 12px; background: var(--danger-bg); border: 1px solid #fecaca; border-radius: 10px; }
+  .linked-returns-title { font-size: 12px; font-weight: 700; color: var(--danger); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+  .linked-return-chip { display: inline-block; background: #fff; border: 1px solid #fecaca; color: var(--danger); font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px; margin: 2px 4px 2px 0; cursor: pointer; text-decoration: underline; }
+  .return-sold-info { display:flex; align-items:center; gap:6px; background:var(--accent-bg); color:var(--text-secondary); border-radius:10px; padding:9px 12px; font-size:12.5px; font-weight:600; margin:-6px 0 12px; }
+  .return-sold-info b { color: var(--text-primary); }
   .invoice-group:active { box-shadow: 0 1px 6px rgba(13,31,53,0.10); }
   .invoice-group-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .invoice-icon-chip { width: 38px; height: 38px; border-radius: 11px; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
@@ -641,6 +652,58 @@
     padding:2px 10px;
     border-radius:20px;
 }
+.invoices-return-btn{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    background:linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+    color:#fff;
+    border:none;
+    padding:5px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+    box-shadow:0 2px 8px rgba(220,38,38,.28);
+}
+.invoices-return-btn i{ font-size:13px; }
+.invoices-return-btn:active{ opacity:.85; transform:scale(.97); }
+
+.return-action-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:100%;
+    background:var(--surface-2);
+    color:var(--danger);
+    border:1.5px solid #fecaca;
+    padding:12px 16px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+    margin-bottom:14px;
+    box-shadow:var(--shadow);
+    transition:all .2s ease;
+}
+.return-action-icon{
+    width:26px;
+    height:26px;
+    border-radius:9px;
+    background:var(--danger-bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+    flex-shrink:0;
+}
+.return-action-btn:active{
+    background:var(--danger-bg);
+    transform:scale(.98);
+}
 
 /* ===================== زرار عرض الفاتورة ===================== */
 
@@ -693,142 +756,224 @@
 }
 
 .receipt-wrap{
-    max-width:360px;
+    max-width:420px;
     margin:22px auto 0;
     padding:0 16px;
 }
 
 .receipt-capture{ position:relative; }
 
-.receipt-paper{
+.inv-doc{
     background:#fff;
+    border-radius:16px;
     box-shadow:var(--shadow-lg);
-    padding:26px 22px 24px;
-    position:relative;
-}
-
-.receipt-logo{
-    display:block;
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    margin:0 auto 10px;
-    object-fit:cover;
-    border:2px solid var(--surface-2);
-}
-
-.receipt-shop{
-    text-align:center;
-    font-size:21px;
-    font-weight:900;
-    color:var(--text-primary);
-    letter-spacing:1px;
-}
-.receipt-tagline{
-    text-align:center;
-    font-size:11px;
-    color:var(--text-muted);
-    margin-top:4px;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:1px;
-}
-
-.receipt-stars{
-    text-align:center;
-    color:var(--border);
-    font-weight:700;
-    letter-spacing:4px;
-    margin:14px 0;
     overflow:hidden;
-    white-space:nowrap;
-    font-size:13px;
 }
 
-.receipt-meta{
+.inv-header{
+    background:linear-gradient(135deg, #1a3a5e 0%, #2c5686 100%);
+    padding:20px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+.inv-header.is-return{
+    background:linear-gradient(135deg, #c23636 0%, #dd5252 100%);
+}
+.inv-header-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+}
+.inv-logo{
+    width:46px;
+    height:46px;
+    border-radius:12px;
+    object-fit:cover;
+    border:2px solid rgba(255,255,255,0.25);
+    flex-shrink:0;
+}
+.inv-shop-name{
+    color:#fff;
+    font-size:17px;
+    font-weight:900;
+    white-space:nowrap;
+}
+.inv-shop-sub{
+    color:rgba(255,255,255,0.75);
+    font-size:11px;
+    font-weight:600;
+    margin-top:2px;
+}
+.inv-header-right{
+    text-align:left;
+    flex-shrink:0;
+}
+.inv-badge{
+    display:inline-block;
+    background:rgba(255,255,255,0.16);
+    color:#fff;
+    font-size:11px;
+    font-weight:700;
+    padding:3px 10px;
+    border-radius:999px;
+}
+.inv-number{
+    color:#fff;
+    font-size:13px;
+    font-weight:800;
+    margin-top:6px;
+    direction:ltr;
+    text-align:left;
+}
+
+.inv-contact-bar{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:6px 14px;
+    padding:9px 22px;
+    background:var(--surface-1);
+    border-bottom:1px solid var(--border);
+    font-size:11.5px;
+    color:var(--text-secondary);
+    font-weight:700;
+}
+.inv-contact-bar span{ display:flex; align-items:center; gap:5px; }
+.inv-contact-bar span:not(:last-child)::after{
+    content:"";
+    display:inline-block;
+    width:3px;
+    height:3px;
+    border-radius:50%;
+    background:var(--text-muted);
+    margin-right:14px;
+}
+
+.inv-body{
+    padding:20px 22px 22px;
+}
+
+.inv-meta-row{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:16px;
+}
+.inv-meta-row .lbl{
+    display:block;
+    font-size:10.5px;
+    color:var(--text-muted);
+    font-weight:600;
+    margin-bottom:2px;
+}
+.inv-meta-row .val{
+    font-size:13px;
+    color:var(--text-primary);
+    font-weight:800;
+}
+
+.inv-table{
+    width:100%;
+    border-collapse:collapse;
     font-size:12.5px;
+}
+.inv-table thead th{
+    background:var(--surface-2);
+    color:var(--text-muted);
+    font-size:11px;
+    font-weight:700;
+    padding:9px 8px;
+    text-align:center;
+    border-bottom:1.5px solid var(--border);
+}
+.inv-table thead th:first-child{ border-radius:8px 0 0 0; }
+.inv-table thead th:last-child{ border-radius:0 8px 0 0; }
+.inv-table thead th.inv-th-name{ text-align:right; }
+.inv-table tbody td{
+    padding:9px 8px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+    color:var(--text-primary);
+}
+.inv-table tbody tr:last-child td{ border-bottom:none; }
+.inv-table tbody td.inv-td-name{
+    text-align:right;
+    font-weight:700;
+}
+.inv-table tbody td.inv-td-name .inv-idx{ color:var(--text-muted); font-weight:700; margin-left:4px; }
+.inv-table tbody td.inv-td-total{ font-weight:800; white-space:nowrap; }
+.inv-table tbody tr.is-return td.inv-td-total{ color:var(--danger); }
+
+.inv-summary{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:12px;
+}
+.inv-summary-box{
+    min-width:180px;
+    font-size:12px;
     color:var(--text-secondary);
 }
-.receipt-meta > div{ margin-top:5px; }
-.receipt-meta > div:first-child{ margin-top:0; }
-.receipt-meta b{ color:var(--text-primary); }
-
-.receipt-count-line{
+.inv-summary-box .row{
     display:flex;
     justify-content:space-between;
-    margin-top:10px;
+    padding:4px 0;
+}
+.inv-summary-box .row.total{
+    margin-top:6px;
     padding-top:10px;
-    border-top:1px dashed var(--border);
+    border-top:1.5px solid var(--border);
+    font-size:16px;
+    font-weight:900;
+    color:var(--text-primary);
+}
+.inv-summary-box .row.total .val{ color:var(--red); }
+.inv-summary-box .row.total.is-return .val{ color:var(--danger); }
+
+.inv-note-box{
+    margin-top:14px;
+    padding:10px 12px;
+    background:#fff8ec;
+    border:1px solid #fde8c0;
+    border-radius:8px;
+    font-size:12.5px;
+    color:#8a5a12;
+}
+
+.inv-return-flag{
+    margin-top:14px;
+    padding:10px 12px;
+    background:var(--danger-bg);
+    color:var(--danger);
+    border-radius:8px;
+    font-size:12px;
+    font-weight:600;
+    line-height:1.6;
+}
+
+.inv-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1.5px dashed var(--border);
+}
+.inv-footer-thanks{
     font-size:12px;
     color:var(--text-muted);
-    font-weight:700;
-}
-
-.receipt-dashed{
-    border-top:1.5px dashed var(--border);
-    margin:16px 0;
-}
-
-.receipt-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    padding:7px 0;
-    font-size:13px;
-}
-.receipt-row > div:first-child{ flex:1; min-width:0; margin-left:10px; }
-.receipt-row .r-idx{ color:var(--text-muted); font-weight:700; margin-left:6px; }
-.receipt-row .r-name{ color:var(--text-primary); font-weight:600; }
-.receipt-row .r-sub{ color:var(--text-muted); font-size:11.5px; margin-top:2px; }
-.receipt-row .r-total{ color:var(--text-primary); font-weight:700; white-space:nowrap; }
-
-.receipt-total-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:14px;
-}
-.receipt-total-row .total-label{ font-size:15px; font-weight:800; color:var(--text-primary); }
-.receipt-total-row .total-value{ font-size:27px; font-weight:900; color:var(--red); }
-
-.receipt-bars{
-    display:flex;
-    gap:6px;
-    margin-top:10px;
-}
-.receipt-bars .bar-dark{ flex:2; height:7px; border-radius:4px; background:var(--navy); }
-.receipt-bars .bar-light{ flex:1; height:7px; border-radius:4px; background:var(--border); }
-
-.receipt-barcode{
-    margin-top:18px;
-    text-align:center;
-}
-.receipt-barcode svg{ width:100%; max-width:260px; height:auto; }
-.receipt-barcode-id{
-    font-size:11px;
-    letter-spacing:1px;
-    color:var(--text-muted);
-    margin-top:4px;
-    font-weight:600;
-}
-
-.receipt-thanks{
-    text-align:center;
-    font-size:11.5px;
-    color:var(--text-muted);
-    margin-top:16px;
     line-height:1.7;
 }
-
-.receipt-zigzag{
-    height:16px;
-    width:100%;
-    background-image: radial-gradient(circle at 10px 0, transparent 9px, #fff 9.5px);
-    background-size: 20px 16px;
-    background-repeat: repeat-x;
-    background-position: -10px -1px;
-}
-.receipt-zigzag-top{ transform:scaleY(-1); }
+.inv-footer-thanks b{ color:var(--text-primary); }
+.inv-qr{ display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; }
+.inv-qr .receipt-qr{ display:inline-block; padding:6px; background:#fff; border:1px solid var(--border); border-radius:10px; }
+.inv-qr .receipt-qr img, .inv-qr .receipt-qr canvas{ display:block; width:84px; height:84px; }
+.inv-qr-id{ font-size:9.5px; color:var(--text-muted); font-weight:600; }
 
 .receipt-actions{
     display:flex;
@@ -863,8 +1008,7 @@
 }
 
 .btn-filter{
-    border:none;
-    background:var(--surface-0);
+    background:#e7edf6;
     color:var(--text-secondary);
     padding:7px 15px;
     border-radius:999px;
@@ -872,7 +1016,7 @@
     font-weight:700;
     cursor:pointer;
     transition:all .2s ease;
-    border:1px solid var(--border);
+    border:1px solid #d3e0ee;
 }
 
 .btn-filter:hover{
@@ -880,13 +1024,58 @@
 }
 
 .btn-filter.active{
-    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    background:linear-gradient(135deg, #0d1f35 0%, #162d4a 100%);
     color:#fff;
     border-color:transparent;
     box-shadow:0 4px 14px rgba(13,31,53,.28);
+    transform:translateZ(0);
 }
 
 .btn-filter:active{
+    transform:scale(.97);
+}
+
+.type-filter-card{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:10px 10px 6px;
+    margin-bottom:14px;
+    box-shadow:var(--shadow);
+}
+
+.type-filter-buttons{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:4px;
+}
+
+.btn-type-filter{
+    border:1px solid #d3e0ee;
+    background:#e7edf6;
+    color:var(--text-secondary);
+    padding:7px 14px;
+    border-radius:999px;
+    font-size:12.5px;
+    font-weight:700;
+    cursor:pointer;
+    transition:all .2s ease;
+}
+
+.btn-type-filter:hover{
+    background:var(--accent-bg);
+}
+
+.btn-type-filter.active{
+    background:linear-gradient(135deg, #0d1f35 0%, #162d4a 100%);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 4px 14px rgba(13,31,53,.28);
+    transform:translateZ(0);
+}
+
+.btn-type-filter:active{
     transform:scale(.97);
 }
 
@@ -974,6 +1163,129 @@
     line-height:1;
 }
 .edit-invoice-line .eil-remove:hover{ color:#dc2626; }
+
+.eim-header{
+    background:var(--surface-0);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px 14px;
+    margin-bottom:14px;
+}
+.eim-header-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+}
+.eim-invoice-id{
+    font-size:15px;
+    font-weight:800;
+    color:var(--text-primary);
+    font-variant-numeric:tabular-nums;
+}
+.eim-header-meta{
+    font-size:12px;
+    color:var(--text-muted);
+    margin-top:5px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+.eim-returns-panel{
+    background:var(--danger-bg);
+    border:1px solid #fecaca;
+    border-radius:12px;
+    padding:12px 14px;
+    margin-bottom:14px;
+}
+.eim-returns-title{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--danger);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:8px;
+}
+.eim-returns-chips{
+    margin-bottom:8px;
+}
+.eim-net-table{
+    background:#fff;
+    border-radius:10px;
+    padding:8px 10px;
+}
+.eim-net-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:6px 0;
+    border-bottom:1px dashed var(--border);
+    font-size:12px;
+    color:var(--text-secondary);
+}
+.eim-net-row:last-child{ border-bottom:none; }
+.eim-net-row b{ color:var(--text-primary); }
+
+.eil-add-box{
+    width:100%;
+    margin-top:10px;
+    padding:14px;
+    border:1.5px dashed var(--border);
+    border-radius:12px;
+    background:var(--surface-0);
+}
+.eil-add-box label{
+    display:block;
+    font-size:12px;
+    color:var(--text-muted);
+    font-weight:600;
+    margin-bottom:8px;
+}
+.eil-add-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+.eil-add-row select{
+    flex:5;
+    min-width:0;
+    padding:11px 10px;
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    font-family:inherit;
+    font-size:13px;
+    background:#fff;
+    color:var(--text-primary);
+}
+.eil-add-row input{
+    flex:2;
+    min-width:0;
+    padding:11px 8px;
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    font-family:inherit;
+    font-size:13px;
+    text-align:center;
+    background:#fff;
+}
+.eil-add-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    width:42px;
+    height:42px;
+    background:linear-gradient(135deg, #0d1f35 0%, #162d4a 100%);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    cursor:pointer;
+    box-shadow:0 3px 10px rgba(13,31,53,.22);
+}
+.eil-add-btn:active{ opacity:.85; transform:scale(.96); }
 
 .btn-danger-outline{
     background:#fff;
@@ -1890,6 +2202,23 @@ button.btn-loading{
 
     </div>
 
+    <div class="type-filter-card">
+        <div class="type-filter-buttons" id="history-type-filters">
+
+            <button class="btn-type-filter active" onclick="setHistoryTypeFilter('all', this)">الكل</button>
+            <button class="btn-type-filter" onclick="setHistoryTypeFilter('sale', this)">المبيعات</button>
+            <button class="btn-type-filter" onclick="setHistoryTypeFilter('has_return', this)">بها مرتجع</button>
+            <button class="btn-type-filter" onclick="setHistoryTypeFilter('return', this)">المرتجعات</button>
+            <button class="btn-type-filter" onclick="setHistoryTypeFilter('cancelled', this)">الملغاة</button>
+
+        </div>
+    </div>
+
+    <button class="return-action-btn" onclick="openReturnModal()">
+        <span class="return-action-icon"><i class="ti ti-rotate"></i></span>
+        تسجيل مرتجع
+    </button>
+
     <div class="section-title invoices-heading">
         <span class="invoices-heading-left">
             <span class="invoices-icon-chip"><i class="ti ti-receipt-2"></i></span>
@@ -2321,11 +2650,36 @@ button.btn-loading{
 
 <div class="modal-overlay" id="edit-invoice-modal">
   <div class="modal">
-    <div class="modal-title"><span>تعديل الفاتورة <span id="edit-invoice-id" style="color:var(--text-muted);font-weight:600;font-size:13px;"></span></span><button class="modal-close" onclick="closeEditInvoice()"><i class="ti ti-x"></i></button></div>
+    <div class="modal-title"><span>تعديل الفاتورة</span><button class="modal-close" onclick="closeEditInvoice()"><i class="ti ti-x"></i></button></div>
 
+    <div class="eim-header">
+        <div class="eim-header-top">
+            <span class="eim-invoice-id" id="edit-invoice-id"></span>
+            <span id="edit-invoice-status-badge"></span>
+        </div>
+        <div class="eim-header-meta" id="edit-invoice-meta"></div>
+    </div>
+
+    <div id="edit-invoice-return-notice" style="display:none; background:var(--danger-bg); color:var(--danger); border-radius:10px; padding:10px 12px; font-size:12.5px; font-weight:600; margin-bottom:12px;">
+        <i class="ti ti-alert-circle"></i>
+        دي فاتورة مرتجع — تقدر تعدّل الكميات أو تضيف صنف من نفس الفاتورة الأصلية بس
+    </div>
+
+    <div id="edit-invoice-linked-returns" style="display:none"></div>
+
+    <div class="section-title" style="margin-top:14px;margin-bottom:8px">الأصناف</div>
     <div id="edit-invoice-lines"></div>
 
-    <div class="field" style="margin-top:10px;">
+    <div class="eil-add-box" id="eil-add-box">
+        <label id="eil-add-label">إضافة صنف للفاتورة</label>
+        <div class="eil-add-row">
+            <select id="eil-add-select"></select>
+            <input type="number" id="eil-add-qty" min="0" step="1" value="1" placeholder="الكمية">
+            <button class="eil-add-btn" onclick="addInvoiceLine()"><i class="ti ti-plus"></i></button>
+        </div>
+    </div>
+
+    <div class="field" style="margin-top:14px;">
         <label>ملاحظات</label>
         <textarea id="edit-invoice-note" rows="2"></textarea>
     </div>
@@ -2335,19 +2689,71 @@ button.btn-loading{
         <div class="total-bar-val" id="edit-invoice-total-val">0 جنيه</div>
     </div>
 
-    <div class="btn-row">
+    <div class="btn-row" id="edit-invoice-save-row">
         <button class="btn-secondary" onclick="closeEditInvoice()">إلغاء</button>
         <button class="btn-primary" id="btn-save-invoice-edit" onclick="saveInvoiceEdit()" style="margin-top:0"><i class="ti ti-check"></i> حفظ التعديلات</button>
     </div>
 
     <button class="btn-danger-outline" style="width:100%;margin-top:12px" id="btn-cancel-whole-invoice" onclick="cancelWholeInvoice()">
-        <i class="ti ti-trash"></i> حذف الفاتورة بالكامل
+        <i class="ti ti-trash"></i> <span id="btn-cancel-whole-invoice-label">حذف الفاتورة بالكامل</span>
     </button>
   </div>
 </div>
 
+<!-- RETURN MODAL -->
+<div class="modal-overlay" id="return-modal">
+  <div class="modal">
+    <div class="modal-title"><span>تسجيل مرتجع</span><button class="modal-close" onclick="closeReturnModal()"><i class="ti ti-x"></i></button></div>
+
+    <div class="field">
+        <label>الفاتورة الأصلية <span style="color:var(--text-muted);font-weight:400">(اختياري)</span></label>
+        <select id="return-invoice-ref" onchange="onReturnInvoiceChange()"></select>
+    </div>
+
+    <div class="field">
+        <label>الصنف</label>
+        <select id="return-item-select" onchange="updateReturnPrice()"></select>
+    </div>
+
+    <div class="return-sold-info" id="return-sold-info" style="display:none">
+        <i class="ti ti-info-circle"></i>
+        <span>الكمية المباعة: <b id="return-sold-qty-text">-</b></span>
+    </div>
+
+    <div class="field">
+        <label>الكمية المراد إرجاعها</label>
+        <input type="number" id="return-qty" min="0" step="1" placeholder="الكمية" value="1" oninput="updateReturnTotal()">
+    </div>
+
+    <input type="hidden" id="return-price">
+
+    <div class="field">
+        <label>سبب الإرجاع <span style="color:var(--text-muted);font-weight:400">(اختياري)</span></label>
+        <textarea id="return-note" rows="2" placeholder="مثلاً: عيب في المنتج"></textarea>
+    </div>
+
+    <div class="total-bar" style="margin-top:6px;">
+        <div class="total-bar-label">إجمالي المبلغ المسترد</div>
+        <div class="total-bar-val" id="return-total-val" style="color:var(--danger)">0 جنيه</div>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn-secondary" onclick="closeReturnModal()">إلغاء</button>
+        <button class="btn-primary" id="btn-submit-return" onclick="submitReturn(this)" style="margin-top:0"><i class="ti ti-check"></i> تأكيد المرتجع</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZWnBH3miNKwOqQlbAtWeIiLdQMIjwLOuoJ2tyRgwAy0v2cO_JnredBD0wUF-X0xu2/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXc75O4GkgB5GvcSUB_82LIChEpJYu1DF0AKh6insQTT6w1Z1LkeQq8oOO--M6WLpQoA/exec';
+
+// بيانات المحل اللي بتظهر في الفاتورة المطبوعة - عدّليها هنا وهتتحدث في كل مكان تلقائيًا
+const SHOP_INFO = {
+    name: "سجاد علياء",
+    tagline: "فرش ومفروشات منزلية",
+    phone: "01061770545",
+    address: "إيتاي البارود - شارع فلسطين - بجوار شركة البركة للسياحة"
+};
 
 let items = [];
 let sales = [];
@@ -2358,8 +2764,11 @@ let itemSearch = "";
 let visibleInvoices = 5;
 let historyInvoicesCache = [];
 let editingInvoiceLines = [];
+let editingInvoiceMeta = null;
+let editingIsReturn = false;
 let historyFilter = "today";
 let customHistoryFilter = false;
+let historyTypeFilter = "all"; // all | sale | has_return | return | cancelled
 let reportFilter = "today";
 let reportFrom = "";
 let reportTo = "";
@@ -2414,6 +2823,15 @@ async function loadData() {
     items = data.items || [];
     sales = data.sales || [];
 
+    // حماية: لو الـ Google Apps Script مش بيحفظ حقل isReturn (لإنه حقل جديد ممكن يكون مش
+    // موجود في كود السيرفر القديم)، نرجعه من رقم الفاتورة نفسه، لإن كل فاتورة مرتجع
+    // بيبدأ رقمها بـ "RET-" دايمًا مهما حصل
+    sales.forEach(s => {
+        if (!s.isReturn && s.invoiceId && s.invoiceId.startsWith('RET-')) {
+            s.isReturn = true;
+        }
+    });
+
     await loadTypes();
 
     setSyncStatus('ok', 'متزامن مع Google Sheets ✓');
@@ -2430,24 +2848,50 @@ async function loadData() {
   }
 }
 
-async function saveData() {
+async function saveData(includeSales = true) {
   setSyncStatus('syncing', 'جاري الحفظ...');
   try {
     const cleanItems = items.map(i => ({...i, img: i.img || null}));
+    const body = {
+        action: "save",
+        items: cleanItems
+    };
+    if (includeSales) body.sales = sales;
     const res = await fetch(SCRIPT_URL, {
       method: 'POST',
-      
-      body: JSON.stringify({
-          action: "save",
-          items: cleanItems,
-          sales
-      })
+      body: JSON.stringify(body)
     });
     if (!res.ok) throw new Error('save failed');
     setSyncStatus('ok', 'تم الحفظ في السحابة ✓');
     return true;
   } catch (err) {
     console.error('saveData error:', err);
+    setSyncStatus('error', 'خطأ في الحفظ');
+    showToast('❌ تعذر الحفظ، تحقق من الإنترنت وحاول تاني. لسه محصلش حفظ');
+    return false;
+  }
+}
+
+// حفظ فاتورة واحدة بس (أسرع من saveData العادية اللي بتبعت كل سجل المبيعات).
+// بتستخدم في تسجيل بيع جديد، تعديل فاتورة، أو حذف/إلغاء فاتورة واحدة.
+async function saveInvoiceRows(invoiceId, lines) {
+  setSyncStatus('syncing', 'جاري الحفظ...');
+  try {
+    const cleanItems = items.map(i => ({...i, img: i.img || null}));
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+          action: "updateInvoiceRows",
+          invoiceId,
+          lines,
+          items: cleanItems
+      })
+    });
+    if (!res.ok) throw new Error('save failed');
+    setSyncStatus('ok', 'تم الحفظ في السحابة ✓');
+    return true;
+  } catch (err) {
+    console.error('saveInvoiceRows error:', err);
     setSyncStatus('error', 'خطأ في الحفظ');
     showToast('❌ تعذر الحفظ، تحقق من الإنترنت وحاول تاني. لسه محصلش حفظ');
     return false;
@@ -2801,9 +3245,9 @@ function exportAllData(btn) {
     });
 
     csv += "\r\nالفواتير\r\n";
-    csv += ["رقم الفاتورة", "التاريخ", "الصنف", "الكمية", "السعر", "الإجمالي"].map(esc).join(",") + "\r\n";
+    csv += ["رقم الفاتورة", "نوع العملية", "التاريخ", "الصنف", "الكمية", "سعر الوحدة", "الإجمالي", "البائع"].map(esc).join(",") + "\r\n";
     sales.forEach(s => {
-      csv += [s.invoiceId, s.date, s.name, s.qty, s.price, s.total].map(esc).join(",") + "\r\n";
+      csv += [s.invoiceId, s.isReturn ? "مرتجع" : "بيع", s.date, s.name, s.qty, s.unitPrice, s.total, s.seller].map(esc).join(",") + "\r\n";
     });
 
     csv += "\r\nالمستخدمين\r\n";
@@ -2915,7 +3359,10 @@ function switchTab(tab) {
   const tabs = ['inventory','add','sell','history','reports','admin','audit'];
   tabs.forEach((t, i) => {
     const el = document.getElementById('tab-'+t);
-    if (el) el.style.display = t === tab ? 'block' : 'none';
+    if (el) {
+      el.style.display = t === tab ? 'block' : 'none';
+      if (t === tab) void el.offsetHeight; // إجبار المتصفح على إعادة رسم العنصر فورًا (بيحل مشكلة عدم ظهور لون الزرار النشط أول ما تفتح التبويب في بعض المتصفحات)
+    }
     const tabEl = document.querySelectorAll('.tab')[i];
     if (tabEl) tabEl.classList.toggle('active', t === tab);
   });
@@ -2948,9 +3395,17 @@ function renderStats() {
             d.getMonth() === now.getMonth() &&
             d.getFullYear() === now.getFullYear();
     });
-    const totalToday = todaySales.reduce((s, i) => s + Number(i.total), 0);
+
+    // بنفصل المبيعات الحقيقية عن المرتجعات عشان الرقم الظاهر في الواجهة
+    // يوضح فعلاً "بعنا بكام" و"اترجع منها كام" بدل ما يطرحهم في بعض بصمت
+    const todaySalesOnly = todaySales.filter(s => !s.isReturn);
+    const todayReturnsOnly = todaySales.filter(s => s.isReturn);
+
+    const grossToday = todaySalesOnly.reduce((s, i) => s + Number(i.total), 0);
+    const returnedToday = todayReturnsOnly.reduce((s, i) => s + Math.abs(Number(i.total)), 0);
+
     const todayInvoicesCount = new Set(
-        todaySales.map(s => s.invoiceId || s.date)
+        todaySalesOnly.map(s => s.invoiceId || s.date)
     ).size;
 
     const lowStock = items.filter(i =>
@@ -2974,7 +3429,8 @@ function renderStats() {
         <div class="stat-card">
             <div class="stat-icon c-success"><i class="ti ti-cash-banknote"></i></div>
             <div class="stat-label">مبيعات اليوم</div>
-            <div class="stat-val">${Number(totalToday).toLocaleString()} <span class="stat-unit">ج</span></div>
+            <div class="stat-val">${Number(grossToday).toLocaleString()} <span class="stat-unit">ج</span></div>
+            ${returnedToday > 0 ? `<div class="stat-val-sub" style="color:var(--danger)">- ${Number(returnedToday).toLocaleString()} ج مرتجع</div>` : ""}
             <div class="stat-val-sub">${todayInvoicesCount} فاتورة</div>
         </div>
 
@@ -3258,6 +3714,41 @@ function updateSellPrice() {
     qtyInput.step = item.unit === "متر" ? "0.01" : "1";
 }
 
+// بيودّي المستخدم من كارت المرتجع لنفس الفاتورة الأصلية المرتبطة بيه
+function jumpToInvoice(invoiceId) {
+
+    setHistoryFilter('all', document.getElementById('history-filter-all'));
+
+    historyTypeFilter = 'all';
+    document
+        .querySelectorAll("#history-type-filters .btn-type-filter")
+        .forEach(b => b.classList.remove("active"));
+    const allTypeBtn = document.querySelector("#history-type-filters .btn-type-filter");
+    if (allTypeBtn) allTypeBtn.classList.add("active");
+
+    const search = document.getElementById('history-search');
+    if (search) search.value = invoiceId;
+
+    renderHistory();
+    showToast(`🔍 عرض الفاتورة ${invoiceId}`);
+
+}
+
+function setHistoryTypeFilter(filter, btn) {
+
+    historyTypeFilter = filter;
+    visibleInvoices = 5;
+
+    document
+        .querySelectorAll("#history-type-filters .btn-type-filter")
+        .forEach(b => b.classList.remove("active"));
+
+    if (btn) btn.classList.add("active");
+
+    renderHistory();
+
+}
+
 function setHistoryFilter(filter, btn) {
 
     historyFilter = filter;
@@ -3327,6 +3818,8 @@ function resetHistoryFilter() {
 
     customHistoryFilter = false;
 
+    historyTypeFilter = "all";
+
     visibleInvoices = 5;
 
     document.getElementById("history-search").value = "";
@@ -3343,6 +3836,13 @@ function resetHistoryFilter() {
 
     const allBtn = document.getElementById("history-filter-all");
     if (allBtn) allBtn.classList.add("active");
+
+    document
+        .querySelectorAll("#history-type-filters .btn-type-filter")
+        .forEach(b => b.classList.remove("active"));
+
+    const allTypeBtn = document.querySelector("#history-type-filters .btn-type-filter");
+    if (allTypeBtn) allTypeBtn.classList.add("active");
 
     renderHistory();
 
@@ -3481,7 +3981,8 @@ function getFilteredSales() {
         filteredSales = filteredSales.filter(s =>
             (s.invoiceId || "").toLowerCase().includes(search) ||
             (s.name || "").toLowerCase().includes(search) ||
-            (s.seller || "").toLowerCase().includes(search)
+            (s.seller || "").toLowerCase().includes(search) ||
+            (search.includes("مرتجع") && s.isReturn)
         );
     }
 
@@ -3539,7 +4040,9 @@ function renderHistory() {
                 seller:s.seller,
                 note:s.note || "",
                 total:0,
-                items:[]
+                items:[],
+                isReturn: !!s.isReturn,
+                relatedInvoiceId: s.relatedInvoiceId || ""
             };
 
             invoices.push(map[key]);
@@ -3554,12 +4057,32 @@ function renderHistory() {
 
     invoices.reverse();
 
-    historyInvoicesCache = invoices;
+    // لكل فاتورة أصلية (مش مرتجع): نحسب حالتها (سليمة / بها مرتجع / ملغاة بالكامل)
+    // والكمية الصافية لكل صنف، من كل سجل المبيعات مش بس الفلتر الحالي
+    invoices.forEach(inv => {
+        if (inv.isReturn) return;
+        const status = getInvoiceReturnStatus(inv.invoiceId);
+        inv.returnStatus = status.status;
+        inv.linkedReturns = status.linkedReturns;
+        inv.netByLine = status.netByLine;
+    });
+
+    // فلتر نوع العملية: الكل / المبيعات / بها مرتجع / المرتجعات / الملغاة
+    let displayInvoices = invoices;
+    if (historyTypeFilter !== "all") {
+        displayInvoices = invoices.filter(inv => {
+            if (historyTypeFilter === "return") return inv.isReturn;
+            if (inv.isReturn) return false;
+            return inv.returnStatus === historyTypeFilter;
+        });
+    }
+
+    historyInvoicesCache = displayInvoices;
 
     const countBadge = document.getElementById("invoices-count-badge");
-    if (countBadge) countBadge.textContent = invoices.length;
+    if (countBadge) countBadge.textContent = displayInvoices.length;
 
-    const visible = invoices.slice(0,visibleInvoices);
+    const visible = displayInvoices.slice(0,visibleInvoices);
 
     if(!visible.length){
 
@@ -3571,29 +4094,65 @@ function renderHistory() {
 
     el.innerHTML = visible.map((inv, i)=>{
 
-        const rows = inv.items.map(it => {
-
-    return `
+        const rows = inv.isReturn ? inv.items.map(it => `
 
         <div class="invoice-line">
 
             <div>
                 <div class="il-name">${it.name}</div>
-                <div class="il-sub">${it.qty} ${it.unit} × ${Number(it.unitPrice ?? (it.total / it.qty)).toLocaleString()} ج</div>
+                <div class="il-sub" style="color:var(--danger)">-${Math.abs(it.qty)} ${it.unit} × ${Number(it.unitPrice ?? (it.total / it.qty)).toLocaleString()} ج</div>
             </div>
 
-            <div class="il-total">
-                ${Number(it.total).toLocaleString()} ج
+            <div class="il-total" style="color:var(--danger)">
+                -${Math.abs(Number(it.total)).toLocaleString()} ج
             </div>
 
         </div>
 
-    `;
+    `).join("") : (inv.netByLine || []).map(nb => `
 
-}).join("");
+        <div class="invoice-line">
+
+            <div>
+                <div class="il-name">${nb.name}</div>
+                <div class="il-sub">
+                    ${nb.returnedQty > 0
+                        ? `بيعت ${nb.soldQty} ${nb.unit} • مرتجع <span style="color:var(--danger);font-weight:700">${nb.returnedQty} ${nb.unit}</span> • الصافي <b>${nb.netQty} ${nb.unit}</b>`
+                        : `${nb.soldQty} ${nb.unit} × ${nb.unitPrice.toLocaleString()} ج`
+                    }
+                </div>
+            </div>
+
+            <div class="il-total">
+                ${nb.returnedQty > 0 ? `<span class="price-strike">${(nb.soldQty*nb.unitPrice).toLocaleString()} ج</span>` : ""}
+                ${(nb.netQty * nb.unitPrice).toLocaleString()} ج
+            </div>
+
+        </div>
+
+    `).join("");
+
+        const statusBadgeHTML =
+            inv.isReturn ? '<span class="badge-return"><i class="ti ti-rotate"></i> مرتجع</span>' :
+            inv.returnStatus === 'cancelled' ? '<span class="badge-return"><i class="ti ti-ban"></i> ملغاة</span>' :
+            inv.returnStatus === 'has_return' ? '<span class="badge-return badge-return-warning"><i class="ti ti-rotate"></i> بها مرتجع</span>' :
+            '';
+
+        const netTotal = inv.netByLine ? inv.netByLine.reduce((s,nb)=>s+(nb.netQty*nb.unitPrice),0) : inv.total;
+
+        const priceHTML =
+            inv.isReturn ? `-${Math.abs(inv.total).toLocaleString()} ج` :
+            inv.returnStatus === 'cancelled' ? `<span class="price-strike">${inv.total.toLocaleString()} ج</span><span style="color:var(--danger)">0 ج</span>` :
+            inv.returnStatus === 'has_return' ? `<span class="price-strike">${inv.total.toLocaleString()} ج</span><span style="color:var(--warning)">${netTotal.toLocaleString()} ج</span>` :
+            `${inv.total.toLocaleString()} ج`;
+
+        const priceWrapStyle = (!inv.isReturn && (inv.returnStatus === 'cancelled' || inv.returnStatus === 'has_return'))
+            ? 'style="display:flex;flex-direction:column;align-items:flex-end;gap:1px"'
+            : (inv.isReturn ? 'style="color:var(--danger)"' : '');
+
         return `
 
-        <div class="invoice-group">
+        <div class="invoice-group ${inv.isReturn ? 'invoice-group-return' : ''} ${inv.returnStatus === 'cancelled' ? 'invoice-group-cancelled' : ''}">
 
             <div
                 class="invoice-group-head"
@@ -3601,13 +4160,14 @@ function renderHistory() {
 
                 <div class="invoice-head-info">
 
-                    <div class="invoice-icon-chip"><i class="ti ti-receipt"></i></div>
+                    <div class="invoice-icon-chip" ${inv.isReturn ? 'style="background:var(--danger-bg);color:var(--danger)"' : ''}><i class="ti ${inv.isReturn ? 'ti-rotate' : 'ti-receipt'}"></i></div>
 
                     <div class="invoice-head-texts">
 
-                        <div class="history-name">
+                        <div class="history-name" ${inv.isReturn ? 'style="color:var(--danger)"' : ''}>
 
                             ${inv.invoiceId}
+                            ${statusBadgeHTML}
 
                         </div>
 
@@ -3625,11 +4185,29 @@ function renderHistory() {
 
                 <div style="display:flex; align-items:center; gap:6px;">
 
-                    <div class="history-price">
+                    <div class="history-price" ${priceWrapStyle}>
 
-                        ${inv.total.toLocaleString()} ج
+                        ${priceHTML}
 
                     </div>
+
+                    ${inv.isReturn && inv.relatedInvoiceId ? `
+                    <button
+                        class="receipt-view-btn"
+                        title="روح للفاتورة الأصلية: ${inv.relatedInvoiceId}"
+                        onclick="event.stopPropagation(); jumpToInvoice('${inv.relatedInvoiceId}')">
+                        <i class="ti ti-external-link" style="color:var(--danger)"></i>
+                    </button>
+                    ` : ""}
+
+                    ${!inv.isReturn && inv.linkedReturns && inv.linkedReturns.length ? `
+                    <button
+                        class="receipt-view-btn"
+                        title="${inv.linkedReturns.length > 1 ? `فيه ${inv.linkedReturns.length} مرتجعات مرتبطة - دوس عشان تشوف أول واحدة` : `روح للمرتجع: ${inv.linkedReturns[0]}`}"
+                        onclick="event.stopPropagation(); jumpToInvoice('${inv.linkedReturns[0]}')">
+                        <i class="ti ti-external-link" style="color:var(--danger)"></i>
+                    </button>
+                    ` : ""}
 
                     <button
                         class="receipt-view-btn"
@@ -3722,92 +4300,133 @@ function formatReceiptDateTime(rawDate) {
 function renderReceiptPaperHTML(inv) {
 
     const rowsHTML = inv.items.map((it,idx) => `
-        <div class="receipt-row">
-            <div>
-                <div class="r-name"><span class="r-idx">${idx+1}.</span>${it.name}</div>
-                <div class="r-sub">${it.qty} ${it.unit} × ${Number(it.unitPrice).toLocaleString()} ج</div>
-            </div>
-            <div class="r-total">${Number(it.total).toLocaleString()} ج</div>
-        </div>
+        <tr class="${inv.isReturn ? 'is-return' : ''}">
+            <td class="inv-td-name">
+                <span class="inv-idx">${idx+1}.</span>${it.name}
+            </td>
+            <td>${Math.abs(it.qty)} ${it.unit}</td>
+            <td>${Number(it.unitPrice).toLocaleString()} ج</td>
+            <td class="inv-td-total">${Number(it.total).toLocaleString()} ج</td>
+        </tr>
     `).join("");
 
-    const itemsCount = inv.items.length;
-    const totalQty = inv.items.reduce((s,it)=>s+Number(it.qty),0);
     const barcodeId = `bc-${(inv.invoiceId||"").replace(/[^a-zA-Z0-9]/g,"")}`;
 
+    const returnedLines = (inv.netByLine || []).filter(nb => nb.returnedQty > 0);
+
+    const returnFlagHTML = inv.isReturn
+        ? (inv.relatedInvoiceId ? `<div class="inv-return-flag">مرتجع من الفاتورة: <b>${inv.relatedInvoiceId}</b></div>` : `<div class="inv-return-flag">مرتجع عام (بدون فاتورة محددة)</div>`)
+        : (returnedLines.length
+            ? `<div class="inv-return-flag">
+                ⚠️ تم إرجاع: ${returnedLines.map(nb => `${nb.returnedQty} ${nb.unit} ${nb.name}`).join('، ')}
+                ${inv.linkedReturns && inv.linkedReturns.length ? `<br>رقم المرتجع: <b>${inv.linkedReturns.join('، ')}</b>` : ""}
+               </div>`
+            : "");
+
+    const contactBits = [];
+    if (SHOP_INFO.phone) contactBits.push(`<span>📞 ${SHOP_INFO.phone}</span>`);
+    if (SHOP_INFO.address) contactBits.push(`<span>📍 ${SHOP_INFO.address}</span>`);
+    const contactBarHTML = contactBits.length ? `<div class="inv-contact-bar">${contactBits.join("")}</div>` : "";
+
     return `
-        <div class="receipt-zigzag receipt-zigzag-top"></div>
-        <div class="receipt-paper">
+        <div class="inv-doc">
 
-            <img class="receipt-logo" src="images/logo.jpg" alt="سجاد علياء">
-            <div class="receipt-shop">سجاد علياء</div>
-            <div class="receipt-tagline">فاتورة بيع رسمية</div>
-
-            <div class="receipt-stars">* * * * * * * * * * * * * * * * * * * * * * *</div>
-
-            <div class="receipt-meta">
-                <div>رقم الفاتورة: <b>${inv.invoiceId}</b></div>
-                <div>التاريخ: <b>${formatReceiptDateTime(inv.date)}</b></div>
-                ${inv.seller ? `<div>البائع: <b>${inv.seller}</b></div>` : ""}
+            <div class="inv-header ${inv.isReturn ? 'is-return' : ''}">
+                <div class="inv-header-left">
+                    <img class="inv-logo" src="images/logo.jpg" alt="${SHOP_INFO.name}">
+                    <div>
+                        <div class="inv-shop-name">${SHOP_INFO.name}</div>
+                        <div class="inv-shop-sub">${SHOP_INFO.tagline}</div>
+                    </div>
+                </div>
+                <div class="inv-header-right">
+                    <span class="inv-badge">${inv.isReturn ? 'فاتورة مرتجع' : 'فاتورة بيع'}</span>
+                    <div class="inv-number">${inv.invoiceId}</div>
+                </div>
             </div>
 
-            <div class="receipt-stars">* * * * * * * * * * * * * * * * * * * * * * *</div>
+            ${contactBarHTML}
 
-            ${rowsHTML}
+            <div class="inv-body">
 
-            <div class="receipt-count-line">
-                <span>عدد الأصناف: ${itemsCount}</span>
-                <span>إجمالي الكمية: ${totalQty}</span>
-            </div>
+                <div class="inv-meta-row">
+                    <div>
+                        <span class="lbl">التاريخ</span>
+                        <span class="val">${formatReceiptDateTime(inv.date)}</span>
+                    </div>
+                    ${inv.seller ? `
+                    <div>
+                        <span class="lbl">البائع</span>
+                        <span class="val">${inv.seller}</span>
+                    </div>
+                    ` : ""}
+                </div>
 
-            ${inv.note ? `<div class="invoice-note">📝 ${inv.note}</div>` : ""}
+                <table class="inv-table">
+                    <thead>
+                        <tr>
+                            <th class="inv-th-name">الصنف</th>
+                            <th>الكمية</th>
+                            <th>السعر</th>
+                            <th>الإجمالي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHTML}
+                    </tbody>
+                </table>
 
-            <div class="receipt-dashed"></div>
+                <div class="inv-summary">
+                    <div class="inv-summary-box">
+                        <div class="row total ${inv.isReturn ? 'is-return' : ''}">
+                            <span>${inv.isReturn ? 'إجمالي المرتجع' : 'الإجمالي'}</span>
+                            <span class="val">${Number(inv.total).toLocaleString()} ج</span>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="receipt-total-row">
-                <span class="total-label">الإجمالي</span>
-                <span class="total-value">${Number(inv.total).toLocaleString()} ج</span>
-            </div>
+                ${inv.note ? `<div class="inv-note-box">📝 ${inv.note}</div>` : ""}
 
-            <div class="receipt-bars">
-                <span class="bar-dark"></span>
-                <span class="bar-light"></span>
-            </div>
+                ${returnFlagHTML}
 
-            <div class="receipt-barcode">
-                <svg id="${barcodeId}"></svg>
-                <div class="receipt-barcode-id">${inv.invoiceId}</div>
-            </div>
+                <div class="inv-footer">
+                    <div class="inv-footer-thanks">
+                        شكرًا لتعاملكم معنا 🌹<br>
+                        <b>${SHOP_INFO.name}</b>
+                    </div>
+                    <div class="inv-qr">
+                        <div id="${barcodeId}" class="receipt-qr"></div>
+                        <div class="inv-qr-id">${inv.invoiceId}</div>
+                    </div>
+                </div>
 
-            <div class="receipt-thanks">
-                شكرًا لتعاملكم معنا 🌹<br>سجاد علياء
             </div>
 
         </div>
-        <div class="receipt-zigzag receipt-zigzag-bottom"></div>
     `;
 
 }
 
-// بيرسم الباركود جوه SVG بعد ما الفاتورة تتحط في الصفحة فعليًا
+// بيرسم QR code جوه الفاتورة بعد ما تتحط في الصفحة فعليًا
 function renderReceiptBarcode(inv, doc) {
     doc = doc || document;
     const barcodeId = `bc-${(inv.invoiceId||"").replace(/[^a-zA-Z0-9]/g,"")}`;
-    const svg = doc.getElementById(barcodeId);
-    const lib = doc.defaultView && doc.defaultView.JsBarcode ? doc.defaultView.JsBarcode : window.JsBarcode;
-    if (!svg || !lib) return;
+    const container = doc.getElementById(barcodeId);
+    const lib = doc.defaultView && doc.defaultView.QRCode ? doc.defaultView.QRCode : window.QRCode;
+    if (!container || !lib) return;
     try {
-        lib(svg, inv.invoiceId, {
-            format: "CODE128",
-            displayValue: false,
-            height: 42,
-            margin: 0,
-            background: "transparent",
-            lineColor: "#0d1f35"
+        container.innerHTML = "";
+        new lib(container, {
+            text: inv.invoiceId,
+            width: 130,
+            height: 130,
+            colorDark: "#0d1f35",
+            colorLight: "#ffffff",
+            correctLevel: lib.CorrectLevel.M
         });
     } catch (e) {
-        // في حالة عدم توفر الإنترنت مثلاً، تجاهل الباركود من غير ما نكسر الفاتورة
-        svg.remove();
+        // في حالة عدم توفر الإنترنت مثلاً، تجاهل الـQR من غير ما نكسر الفاتورة
+        container.remove();
     }
 }
 
@@ -3853,12 +4472,74 @@ function openEditInvoice(i) {
         originalQty: Number(s.qty),
         qty: Number(s.qty),
         unitPrice: Number(s.unitPrice),
-        removed: false
+        removed: false,
+        isNew: false
     }));
+
+    editingInvoiceMeta = {
+        invoiceId: inv.invoiceId,
+        date: inv.date,
+        seller: inv.seller,
+        relatedInvoiceId: inv.relatedInvoiceId || ""
+    };
+
+    editingIsReturn = inv.items.some(s => s.isReturn);
 
     document.getElementById("edit-invoice-id").textContent = inv.invoiceId;
     document.getElementById("edit-invoice-note").value = inv.note || "";
     document.getElementById("edit-invoice-modal").classList.add("open");
+
+    document.getElementById("edit-invoice-meta").innerHTML =
+        `<span>${formatReceiptDateTime(inv.date)}</span>` +
+        (inv.seller ? `<span>•</span><span>${inv.seller}</span>` : "");
+
+    const statusBadgeEl = document.getElementById("edit-invoice-status-badge");
+    if (editingIsReturn) {
+        statusBadgeEl.innerHTML = '<span class="badge-return"><i class="ti ti-rotate"></i> مرتجع</span>';
+    } else if (inv.returnStatus === "cancelled") {
+        statusBadgeEl.innerHTML = '<span class="badge-return"><i class="ti ti-ban"></i> ملغاة</span>';
+    } else if (inv.returnStatus === "has_return") {
+        statusBadgeEl.innerHTML = '<span class="badge-return badge-return-warning"><i class="ti ti-rotate"></i> بها مرتجع</span>';
+    } else {
+        statusBadgeEl.innerHTML = "";
+    }
+
+    const returnsPanel = document.getElementById("edit-invoice-linked-returns");
+    if (!editingIsReturn && inv.linkedReturns && inv.linkedReturns.length) {
+
+        returnsPanel.innerHTML = `
+            <div class="eim-returns-panel">
+                <div class="eim-returns-title"><i class="ti ti-rotate"></i> المرتجعات المرتبطة بالفاتورة دي</div>
+                <div class="eim-returns-chips">
+                    ${inv.linkedReturns.map(rid => `<span class="linked-return-chip" onclick="closeEditInvoice(); jumpToInvoice('${rid}')">${rid}</span>`).join("")}
+                </div>
+                <div class="eim-net-table">
+                    ${(inv.netByLine || []).map(nb => `
+                        <div class="eim-net-row">
+                            <span>${nb.name}</span>
+                            <span>بيعت ${nb.soldQty} ${nb.unit} - مرتجع ${nb.returnedQty} ${nb.unit} = <b>الصافي ${nb.netQty} ${nb.unit}</b></span>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+        `;
+        returnsPanel.style.display = "block";
+
+    } else {
+        returnsPanel.innerHTML = "";
+        returnsPanel.style.display = "none";
+    }
+
+    document.getElementById("edit-invoice-return-notice").style.display = editingIsReturn ? "block" : "none";
+    document.getElementById("eil-add-label").textContent = editingIsReturn ? "إضافة صنف آخر مرتجع من نفس الفاتورة الأصلية" : "إضافة صنف للفاتورة";
+    document.getElementById("btn-cancel-whole-invoice-label").textContent =
+        editingIsReturn ? "إلغاء المرتجع بالكامل" : "حذف الفاتورة بالكامل";
+
+    if (editingIsReturn) {
+        renderEilAddSelectForReturn();
+    } else {
+        renderEilAddSelect();
+    }
 
     renderEditInvoiceLines();
 
@@ -3867,6 +4548,8 @@ function openEditInvoice(i) {
 function closeEditInvoice() {
     document.getElementById("edit-invoice-modal").classList.remove("open");
     editingInvoiceLines = [];
+    editingInvoiceMeta = null;
+    editingIsReturn = false;
 }
 
 function renderEditInvoiceLines() {
@@ -3880,13 +4563,14 @@ function renderEditInvoiceLines() {
     } else {
         el.innerHTML = editingInvoiceLines.map((l, idx) => {
             if (l.removed) return "";
+            const displayQty = Math.abs(l.qty);
             return `
                 <div class="edit-invoice-line">
                     <div class="eil-name">
-                        ${l.name}
+                        ${l.name} ${l.isNew ? `<span style="color:${editingIsReturn ? 'var(--danger)' : 'var(--success)'};font-weight:700;font-size:11px">(${editingIsReturn ? 'مرتجع جديد' : 'جديد'})</span>` : ''}
                         <span class="eil-unit">${l.unit}</span>
                     </div>
-                    <input type="number" min="0" step="${l.unit === 'متر' ? '0.1' : '1'}" value="${l.qty}"
+                    <input type="number" min="0" step="${l.unit === 'متر' ? '0.1' : '1'}" value="${displayQty}"
                         oninput="updateInvoiceLine(${idx}, 'qty', this.value)" title="الكمية">
                     <input type="number" min="0" step="0.01" value="${l.unitPrice}"
                         oninput="updateInvoiceLine(${idx}, 'unitPrice', this.value)" title="سعر الوحدة">
@@ -3899,12 +4583,592 @@ function renderEditInvoiceLines() {
     }
 
     const total = visibleLines.reduce((s, l) => s + (Number(l.qty) * Number(l.unitPrice)), 0);
-    document.getElementById("edit-invoice-total-val").textContent = total.toLocaleString() + " جنيه";
+    const totalEl = document.getElementById("edit-invoice-total-val");
+    totalEl.textContent = total.toLocaleString() + " جنيه";
+    totalEl.style.color = editingIsReturn ? "var(--danger)" : "";
+
+}
+
+function renderEilAddSelect() {
+
+    const sel = document.getElementById("eil-add-select");
+    if (!sel) return;
+
+    const available = items.filter(i => Number(i.qty) > 0);
+
+    if (!available.length) {
+        sel.innerHTML = '<option value="">لا يوجد أصناف متاحة بالمخزون</option>';
+        return;
+    }
+
+    sel.innerHTML = available.map(item => {
+        const qty = item.unit === "متر"
+            ? Number(item.qty).toFixed(2).replace(/\.00$/, "")
+            : Number(item.qty);
+        return `<option value="${items.indexOf(item)}">${item.name} (متاح: ${qty} ${item.unit})</option>`;
+    }).join("");
+
+}
+
+// بيرجع الكمية المتاحة للإرجاع من صنف معين في الفاتورة الأصلية، آخذًا في الاعتبار
+// أي فواتير مرتجع تانية + أي تعديلات لسه مش متحفوظة في جلسة التعديل الحالية
+function getReturnRemainingForItemInSession(relatedInvoiceId, name, unit) {
+
+    const originalLine = getInvoiceLineItems(relatedInvoiceId).find(s => s.name === name && s.unit === unit);
+    if (!originalLine) return 0;
+
+    const soldQty = Number(originalLine.qty);
+
+    const returnedByOtherInvoices = sales
+        .filter(s => s.isReturn && s.relatedInvoiceId === relatedInvoiceId
+            && s.name === name && s.unit === unit
+            && s.invoiceId !== editingInvoiceMeta.invoiceId)
+        .reduce((sum, s) => sum + Math.abs(Number(s.qty)), 0);
+
+    const returnedInThisSession = editingInvoiceLines
+        .filter(l => !l.removed && l.name === name && l.unit === unit)
+        .reduce((sum, l) => sum + Math.abs(Number(l.qty)), 0);
+
+    return soldQty - returnedByOtherInvoices - returnedInThisSession;
+
+}
+
+// بيعرض بس أصناف الفاتورة الأصلية اللي لسه ليها كمية متاحة للإرجاع
+function renderEilAddSelectForReturn() {
+
+    const sel = document.getElementById("eil-add-select");
+    if (!sel) return;
+
+    const relatedInvoiceId = editingInvoiceMeta ? editingInvoiceMeta.relatedInvoiceId : "";
+
+    if (!relatedInvoiceId) {
+        sel.innerHTML = '<option value="">مرتجع عام بدون فاتورة أصلية، مينفعش تضيف صنف جديد هنا</option>';
+        return;
+    }
+
+    const lineItems = getInvoiceLineItems(relatedInvoiceId);
+
+    const options = lineItems.map(li => {
+        const remaining = getReturnRemainingForItemInSession(relatedInvoiceId, li.name, li.unit);
+        if (remaining <= 0) return null;
+        return { li, remaining };
+    }).filter(Boolean);
+
+    if (!options.length) {
+        sel.innerHTML = '<option value="">مفيش أصناف تانية قابلة للإرجاع من الفاتورة دي</option>';
+        return;
+    }
+
+    sel.innerHTML = options.map(o => `
+        <option value="${o.li.name}|||${o.li.unit}" data-price="${o.li.unitPrice}">
+            ${o.li.name} (متاح للإرجاع: ${o.remaining} ${o.li.unit})
+        </option>
+    `).join("");
+
+}
+
+function addInvoiceLine() {
+
+    if (editingIsReturn) {
+        addReturnInvoiceLine();
+        return;
+    }
+
+    const sel = document.getElementById("eil-add-select");
+    const qtyInput = document.getElementById("eil-add-qty");
+
+    const idx = parseInt(sel.value);
+    const qty = Number(qtyInput.value);
+
+    if (isNaN(idx) || !items[idx]) {
+        showToast("❌ اختار صنف الأول");
+        return;
+    }
+
+    if (!Number.isFinite(qty) || qty <= 0) {
+        showToast("❌ الكمية غير صحيحة");
+        return;
+    }
+
+    const item = items[idx];
+
+    // نجمع أي كمية اتضافت لنفس الصنف في نفس جلسة التعديل عشان منتجاوزش المتاح فعليًا بالمخزون
+    const alreadyAddedQty = editingInvoiceLines
+        .filter(l => l.isNew && !l.removed && l.name === item.name && l.unit === item.unit)
+        .reduce((s, l) => s + Number(l.qty), 0);
+
+    if (qty + alreadyAddedQty > Number(item.qty)) {
+        showToast(`❌ الكمية المتاحة من "${item.name}" هي ${item.qty} ${item.unit} بس`);
+        return;
+    }
+
+    editingInvoiceLines.push({
+        ref: null,
+        name: item.name,
+        unit: item.unit,
+        type: item.type,
+        originalQty: 0,
+        qty: qty,
+        unitPrice: Number(item.price) || 0,
+        removed: false,
+        isNew: true
+    });
+
+    qtyInput.value = 1;
+    renderEditInvoiceLines();
+    showToast(`✅ تمت إضافة "${item.name}" للفاتورة`);
+
+}
+
+// إضافة صنف مرتجع جديد لنفس فاتورة المرتجع، بيتقيّد بأصناف الفاتورة الأصلية بس
+function addReturnInvoiceLine() {
+
+    const sel = document.getElementById("eil-add-select");
+    const qtyInput = document.getElementById("eil-add-qty");
+
+    if (!sel.value) {
+        showToast("❌ اختار صنف الأول");
+        return;
+    }
+
+    const [name, unit] = sel.value.split("|||");
+    const qty = Number(qtyInput.value);
+    const selectedOption = sel.options[sel.selectedIndex];
+    const price = selectedOption ? Number(selectedOption.dataset.price) || 0 : 0;
+
+    if (!Number.isFinite(qty) || qty <= 0) {
+        showToast("❌ الكمية غير صحيحة");
+        return;
+    }
+
+    const relatedInvoiceId = editingInvoiceMeta.relatedInvoiceId;
+    const remaining = getReturnRemainingForItemInSession(relatedInvoiceId, name, unit);
+
+    if (qty > remaining) {
+        showToast(`❌ أقصى كمية ممكن ترجعها من "${name}" هي ${remaining} ${unit}`);
+        return;
+    }
+
+    const originalLine = getInvoiceLineItems(relatedInvoiceId).find(s => s.name === name && s.unit === unit);
+
+    editingInvoiceLines.push({
+        ref: null,
+        name,
+        unit,
+        type: originalLine ? originalLine.type : "",
+        originalQty: 0,
+        qty: -qty,
+        unitPrice: price,
+        removed: false,
+        isNew: true
+    });
+
+    qtyInput.value = 1;
+    renderEilAddSelectForReturn();
+    renderEditInvoiceLines();
+    showToast(`✅ تمت إضافة مرتجع "${name}"`);
+
+}
+
+// =========================================================
+// المرتجعات: إرجاع صنف من عميل، بيزود المخزون تلقائي ويسجل
+// العملية في سجل الفواتير بدل التعديل اليدوي في المخزون
+// =========================================================
+
+// بيرجع بنود فاتورة حقيقية معيّنة (البيع بس، من غير أي مرتجعات)
+function getInvoiceLineItems(invoiceId) {
+    return sales.filter(s => !s.isReturn && (s.invoiceId || s.date) === invoiceId);
+}
+
+// بيرجع الكمية اللي اترجعت خلاص من صنف معين في فاتورة معينة، عشان منسمحش
+// نرجع أكتر من اللي اتباع فعلاً في نفس البند
+function getAlreadyReturnedQtyForInvoiceItem(invoiceId, name, unit) {
+    return sales
+        .filter(s => s.isReturn && s.relatedInvoiceId === invoiceId && s.name === name && s.unit === unit)
+        .reduce((sum, s) => sum + Math.abs(Number(s.qty)), 0);
+}
+
+// المصدر الوحيد لحالة الفاتورة الأصلية: سليمة (sale) / بها مرتجع جزئي (has_return) /
+// اترجعت بالكامل (cancelled)، وبيرجع كمان الكمية الصافية لكل صنف والمرتجعات المرتبطة بيها.
+// بيحسب من كل سجل sales (مش بس المفلتر حاليًا) عشان يبقى دقيق دايمًا.
+function getInvoiceReturnStatus(invoiceId) {
+
+    const originalLines = getInvoiceLineItems(invoiceId);
+
+    if (!originalLines.length) {
+        return { status: "none", linkedReturns: [], netByLine: [] };
+    }
+
+    let totalSold = 0;
+    let totalReturned = 0;
+
+    const netByLine = originalLines.map(li => {
+
+        const returned = Math.min(
+            getAlreadyReturnedQtyForInvoiceItem(invoiceId, li.name, li.unit),
+            Number(li.qty)
+        );
+
+        const net = Number(li.qty) - returned;
+
+        totalSold += Number(li.qty);
+        totalReturned += returned;
+
+        return {
+            name: li.name,
+            unit: li.unit,
+            unitPrice: Number(li.unitPrice),
+            soldQty: Number(li.qty),
+            returnedQty: returned,
+            netQty: net
+        };
+
+    });
+
+    const linkedReturns = [...new Set(
+        sales
+            .filter(s => s.isReturn && s.relatedInvoiceId === invoiceId)
+            .map(s => s.invoiceId)
+    )];
+
+    let status = "sale";
+    if (totalReturned > 0) {
+        status = (totalReturned >= totalSold) ? "cancelled" : "has_return";
+    }
+
+    return { status, linkedReturns, netByLine };
+
+}
+
+// لو فيه فاتورة محددة: بيعرض بس الأصناف اللي فعلاً كانت في الفاتورة دي (بالكمية المتاحة للإرجاع).
+// لو "بدون فاتورة محددة": بيعرض كل أصناف المخزون زي مرتجع عام.
+function renderReturnItemSelect(invoiceId) {
+
+    const sel = document.getElementById("return-item-select");
+    if (!sel) return;
+
+    if (invoiceId) {
+
+        const lineItems = getInvoiceLineItems(invoiceId);
+
+        const options = lineItems.map(li => {
+
+            const idx = items.findIndex(it => it.name === li.name && it.unit === li.unit);
+            if (idx === -1) return null; // الصنف اتشال من المخزون خالص، منقدرش نرجعله
+
+            const alreadyReturned = getAlreadyReturnedQtyForInvoiceItem(invoiceId, li.name, li.unit);
+            const remaining = Number(li.qty) - alreadyReturned;
+
+            if (remaining <= 0) return null; // الكمية دي كلها اترجعت خلاص قبل كده
+
+            return { idx, li, remaining };
+
+        }).filter(Boolean);
+
+        if (!options.length) {
+            sel.innerHTML = '<option value="">مفيش أصناف قابلة للإرجاع في الفاتورة دي</option>';
+            updateReturnPrice();
+            return;
+        }
+
+        sel.innerHTML = options.map(o => `
+            <option value="${o.idx}" data-max="${o.remaining}" data-price="${o.li.unitPrice}" data-sold="${o.li.qty}">
+                ${o.li.name} (بيعت ${o.li.qty} ${o.li.unit} — متاح للإرجاع ${o.remaining} ${o.li.unit})
+            </option>
+        `).join("");
+
+    } else {
+
+        if (!items.length) {
+            sel.innerHTML = '<option value="">لا يوجد أصناف بالمخزون</option>';
+            return;
+        }
+
+        sel.innerHTML = items.map((item, idx) => {
+            const qty = item.unit === "متر"
+                ? Number(item.qty).toFixed(2).replace(/\.00$/, "")
+                : Number(item.qty);
+            return `<option value="${idx}">${item.name} (بالمخزون حاليًا: ${qty} ${item.unit})</option>`;
+        }).join("");
+
+    }
+
+    updateReturnPrice();
+
+}
+
+function onReturnInvoiceChange() {
+    const invoiceId = document.getElementById("return-invoice-ref").value;
+    renderReturnItemSelect(invoiceId);
+}
+
+// بيرجع كل الفواتير الحقيقية (البيع بس، من غير المرتجعات) عشان نختار منها
+// كمرجع للمرتجع، مرتبة الأحدث الأول
+function getAllRealInvoices() {
+
+    const map = {};
+    const list = [];
+
+    sales.forEach(s => {
+
+        if (s.isReturn) return;
+
+        const key = s.invoiceId || s.date;
+
+        if (!map[key]) {
+            map[key] = { invoiceId: key, date: s.date, seller: s.seller, total: 0 };
+            list.push(map[key]);
+        }
+
+        map[key].total += Number(s.total);
+
+    });
+
+    return list.reverse();
+
+}
+
+function renderReturnInvoiceSelect() {
+
+    const sel = document.getElementById("return-invoice-ref");
+    if (!sel) return;
+
+    const invoices = getAllRealInvoices();
+
+    const noneOption = '<option value="">بدون فاتورة محددة</option>';
+
+    if (!invoices.length) {
+        sel.innerHTML = noneOption;
+        return;
+    }
+
+    sel.innerHTML = noneOption + invoices.map(inv => `
+        <option value="${inv.invoiceId}">
+            ${inv.invoiceId} — ${formatReceiptDateTime(inv.date)}${inv.seller ? " — " + inv.seller : ""} (${inv.total.toLocaleString()} ج)
+        </option>
+    `).join("");
+
+}
+
+function openReturnModal() {
+
+    renderReturnInvoiceSelect();
+    document.getElementById("return-invoice-ref").value = "";
+    renderReturnItemSelect("");
+
+    document.getElementById("return-qty").value = 1;
+    document.getElementById("return-note").value = "";
+
+    const soldInfo = document.getElementById("return-sold-info");
+    if (soldInfo) soldInfo.style.display = "none";
+
+    document.getElementById("return-modal").classList.add("open");
+
+}
+
+function closeReturnModal() {
+    document.getElementById("return-modal").classList.remove("open");
+}
+
+function updateReturnPrice() {
+
+    const sel = document.getElementById("return-item-select");
+    const idx = parseInt(sel.value);
+    const item = items[idx];
+
+    const selectedOption = sel.options[sel.selectedIndex];
+    const linePrice = selectedOption ? selectedOption.dataset.price : null;
+    const maxReturnable = selectedOption ? selectedOption.dataset.max : null;
+    const soldQty = selectedOption ? selectedOption.dataset.sold : null;
+
+    document.getElementById("return-price").value =
+        linePrice ? Number(linePrice) : (item ? Number(item.price) : "");
+
+    const qtyInput = document.getElementById("return-qty");
+    const soldInfo = document.getElementById("return-sold-info");
+    const soldText = document.getElementById("return-sold-qty-text");
+
+    if (maxReturnable) {
+
+        qtyInput.max = maxReturnable;
+        if (Number(qtyInput.value) > Number(maxReturnable)) {
+            qtyInput.value = maxReturnable;
+        }
+
+        if (soldInfo && soldText && item) {
+            soldText.textContent = Number(soldQty) === Number(maxReturnable)
+                ? `${soldQty} ${item.unit}`
+                : `${soldQty} ${item.unit} (المتاح للإرجاع دلوقتي: ${maxReturnable} ${item.unit})`;
+            soldInfo.style.display = "flex";
+        }
+
+    } else {
+
+        qtyInput.removeAttribute("max");
+        if (soldInfo) soldInfo.style.display = "none";
+
+    }
+
+    updateReturnTotal();
+
+}
+
+function updateReturnTotal() {
+
+    const qty = Number(document.getElementById("return-qty").value) || 0;
+    const price = Number(document.getElementById("return-price").value) || 0;
+
+    document.getElementById("return-total-val").textContent =
+        (qty * price).toLocaleString() + " جنيه";
+
+}
+
+async function submitReturn(btn) {
+
+    const sel = document.getElementById("return-item-select");
+    const idx = parseInt(sel.value);
+    const item = items[idx];
+
+    const qty = Number(document.getElementById("return-qty").value);
+    const price = Number(document.getElementById("return-price").value);
+    const relatedInvoiceId = document.getElementById("return-invoice-ref").value;
+    const note = document.getElementById("return-note").value.trim();
+
+    if (!item) {
+        showToast("❌ اختار الصنف الأول");
+        return;
+    }
+
+    if (!Number.isFinite(qty) || qty <= 0) {
+        showToast("❌ الكمية غير صحيحة");
+        return;
+    }
+
+    if (!Number.isFinite(price) || price < 0) {
+        showToast("❌ السعر غير صحيح");
+        return;
+    }
+
+    // لو فيه فاتورة محددة: لازم نتأكد إن الصنف ده فعلاً كان في الفاتورة دي،
+    // وإن الكمية المرتجعة منطقية (مش أكتر من اللي اتباع فعلاً)
+    if (relatedInvoiceId) {
+
+        const selectedOption = sel.options[sel.selectedIndex];
+        const maxReturnable = selectedOption ? Number(selectedOption.dataset.max) : NaN;
+
+        if (!selectedOption || isNaN(maxReturnable)) {
+            showToast("❌ الصنف ده مش موجود في الفاتورة المختارة");
+            return;
+        }
+
+        if (qty > maxReturnable) {
+            showToast(`❌ أقصى كمية ممكن ترجعها من الفاتورة دي هي ${maxReturnable} ${item.unit}`);
+            return;
+        }
+
+    }
+
+    const itemsBackup = JSON.parse(JSON.stringify(items));
+    const salesBackup = JSON.parse(JSON.stringify(sales));
+
+    setButtonLoading(btn, true, "جاري التسجيل...");
+
+    try {
+
+        const now = new Date();
+        const date = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+        item.qty = Number(item.qty) + qty;
+
+        const invoiceId = `RET-${now.getTime()}`;
+        const returnLine = {
+            invoiceId,
+            relatedInvoiceId: relatedInvoiceId || "",
+            name: item.name,
+            type: item.type,
+            unit: item.unit,
+            qty: -qty,
+            unitPrice: price,
+            total: -(qty * price),
+            date,
+            seller: currentUser ? currentUser.username : "",
+            note: note,
+            isReturn: true
+        };
+        sales.push(returnLine);
+
+        const saved = await saveInvoiceRows(invoiceId, [returnLine]);
+
+        if (!saved) {
+            items = itemsBackup;
+            sales = salesBackup;
+            showToast("❌ ما اتحفظش، حاول تاني لما النت يرجع");
+            return;
+        }
+
+        renderStats();
+        renderItems();
+        renderHistory();
+        renderSellSelect();
+        checkLowStock();
+        closeReturnModal();
+        showToast(`✅ تم تسجيل مرتجع "${item.name}" وزيادة المخزون`);
+
+    } finally {
+        setButtonLoading(btn, false);
+    }
 
 }
 
 function updateInvoiceLine(idx, field, value) {
-    editingInvoiceLines[idx][field] = Number(value) || 0;
+
+    const line = editingInvoiceLines[idx];
+    let v = Number(value) || 0;
+
+    if (field === 'qty') {
+
+        if (editingIsReturn) {
+
+            v = Math.abs(v);
+
+            const relatedInvoiceId = editingInvoiceMeta ? editingInvoiceMeta.relatedInvoiceId : "";
+            let maxAllowed;
+
+            if (relatedInvoiceId) {
+                // بنضيف كمية السطر الحالي نفسه، لأن الدالة بتحسب "المتاح" مع افتراض إننا هنشيل كل حجوزات الجلسة الحالية بما فيها السطر ده
+                maxAllowed = getReturnRemainingForItemInSession(relatedInvoiceId, line.name, line.unit) + Math.abs(line.qty);
+            } else {
+                // مرتجع عام من غير فاتورة أصلية: مفيش مرجع نتأكد منه، فمنسمحش بزيادة الكمية عن اللي كانت متسجلة
+                maxAllowed = Math.abs(line.qty);
+            }
+
+            if (v > maxAllowed) {
+                showToast(`❌ أقصى كمية ممكن ترجعها من "${line.name}" هي ${maxAllowed} ${line.unit}`);
+                renderEditInvoiceLines();
+                return;
+            }
+
+            v = -v;
+
+        } else {
+
+            const stockItem = items.find(it => it.name === line.name && it.unit === line.unit);
+            // الكمية المتاحة لزيادة السطر ده = المخزون الحالي + الكمية اللي السطر ده أصلاً حاجزها
+            const maxAllowed = stockItem
+                ? Number(stockItem.qty) + Number(line.originalQty)
+                : Number(line.originalQty);
+
+            if (v > maxAllowed) {
+                showToast(`❌ أقصى كمية متاحة من "${line.name}" هي ${maxAllowed} ${line.unit}`);
+                renderEditInvoiceLines();
+                return;
+            }
+
+        }
+
+    }
+
+    line[field] = v;
     renderEditInvoiceLines();
 }
 
@@ -3927,15 +5191,45 @@ async function applyInvoiceChangesAndSave(successMsg) {
 
         if (l.removed) {
 
+            // صنف مضاف جديد ثم اتحذف قبل الحفظ: محصلش أي تأثير فعلي، تجاهله
+            if (l.isNew) return;
+
             if (stockItem) stockItem.qty = Number(stockItem.qty) + l.originalQty;
 
             const idx = sales.indexOf(l.ref);
             if (idx >= 0) sales.splice(idx, 1);
 
+        } else if (l.isNew) {
+
+            // صنف جديد مُضاف للفاتورة: نخصم من المخزون (أو نزوده لو مرتجع، لإن الكمية سالبة أصلاً)
+            // الحد الأدنى صفر كخط دفاع أخير حتى لو حصل تعارض مع تعديل تاني في نفس الوقت
+            if (stockItem) stockItem.qty = Math.max(0, Number(stockItem.qty) - l.qty);
+
+            const newSaleRecord = {
+                invoiceId: editingInvoiceMeta ? editingInvoiceMeta.invoiceId : "",
+                name: l.name,
+                type: l.type,
+                unit: l.unit,
+                qty: l.qty,
+                unitPrice: l.unitPrice,
+                total: l.qty * l.unitPrice,
+                date: editingInvoiceMeta ? editingInvoiceMeta.date : "",
+                seller: editingInvoiceMeta ? editingInvoiceMeta.seller : "",
+                note: newNote
+            };
+
+            if (editingIsReturn) {
+                newSaleRecord.isReturn = true;
+                newSaleRecord.relatedInvoiceId = editingInvoiceMeta ? editingInvoiceMeta.relatedInvoiceId : "";
+            }
+
+            sales.push(newSaleRecord);
+            l.ref = newSaleRecord;
+
         } else {
 
             const delta = l.qty - l.originalQty;
-            if (stockItem) stockItem.qty = Number(stockItem.qty) - delta;
+            if (stockItem) stockItem.qty = Math.max(0, Number(stockItem.qty) - delta);
 
             l.ref.qty = l.qty;
             l.ref.unitPrice = l.unitPrice;
@@ -3946,7 +5240,10 @@ async function applyInvoiceChangesAndSave(successMsg) {
 
     });
 
-    const saved = await saveData();
+    const invoiceId = editingInvoiceMeta ? editingInvoiceMeta.invoiceId : "";
+    const finalLines = sales.filter(s => s.invoiceId === invoiceId);
+
+    const saved = await saveInvoiceRows(invoiceId, finalLines);
 
     if (!saved) {
         items = itemsBackup;
@@ -3971,8 +5268,18 @@ async function saveInvoiceEdit() {
 
     const remaining = editingInvoiceLines.filter(l => !l.removed);
 
+    if (!remaining.length) {
+        showToast(`❌ لازم يفضل صنف واحد على الأقل، لو عايز تحذف الفاتورة بالكامل استخدم الزرار تحت`);
+        return;
+    }
+
+    const relatedInvoiceId = editingIsReturn ? editingInvoiceMeta.relatedInvoiceId : "";
+
     for (const l of remaining) {
-        if (!Number.isFinite(l.qty) || l.qty <= 0) {
+
+        const absQty = Math.abs(l.qty);
+
+        if (!Number.isFinite(absQty) || absQty <= 0) {
             showToast(`❌ الكمية غير صحيحة لصنف "${l.name}"`);
             return;
         }
@@ -3980,13 +5287,44 @@ async function saveInvoiceEdit() {
             showToast(`❌ السعر غير صحيح لصنف "${l.name}"`);
             return;
         }
+
+        if (editingIsReturn && relatedInvoiceId) {
+
+            const originalLine = getInvoiceLineItems(relatedInvoiceId).find(s => s.name === l.name && s.unit === l.unit);
+
+            if (!originalLine) {
+                showToast(`❌ "${l.name}" مش موجود في الفاتورة الأصلية، منقدرش نحفظ`);
+                return;
+            }
+
+            const soldQty = Number(originalLine.qty);
+
+            const returnedByOtherInvoices = sales
+                .filter(s => s.isReturn && s.relatedInvoiceId === relatedInvoiceId
+                    && s.name === l.name && s.unit === l.unit
+                    && s.invoiceId !== editingInvoiceMeta.invoiceId)
+                .reduce((sum, s) => sum + Math.abs(Number(s.qty)), 0);
+
+            const returnedByOtherLinesHere = editingInvoiceLines
+                .filter(x => x !== l && !x.removed && x.name === l.name && x.unit === l.unit)
+                .reduce((sum, x) => sum + Math.abs(Number(x.qty)), 0);
+
+            const maxAllowed = soldQty - returnedByOtherInvoices - returnedByOtherLinesHere;
+
+            if (absQty > maxAllowed) {
+                showToast(`❌ أقصى كمية ممكن ترجعها من "${l.name}" هي ${maxAllowed} ${l.unit}`);
+                return;
+            }
+
+        }
+
     }
 
     const btn = document.getElementById("btn-save-invoice-edit");
     setButtonLoading(btn, true, "جاري الحفظ...");
 
     try {
-        await applyInvoiceChangesAndSave("✅ تم تعديل الفاتورة");
+        await applyInvoiceChangesAndSave(editingIsReturn ? "✅ تم تعديل المرتجع" : "✅ تم تعديل الفاتورة");
     } finally {
         setButtonLoading(btn, false);
     }
@@ -3998,7 +5336,9 @@ async function cancelWholeInvoice() {
     const invoiceId = document.getElementById("edit-invoice-id").textContent;
 
     const typed = prompt(
-        `هيتم حذف الفاتورة ${invoiceId} بالكامل، والكميات هترجع تلقائيًا للمخزون. مفيش رجوع بعد كده.\n\nاكتب كلمة "حذف" بالظبط للتأكيد:`
+        editingIsReturn
+        ? `هيتم إلغاء المرتجع ${invoiceId} بالكامل، والكمية هتتخصم تاني من المخزون. مفيش رجوع بعد كده.\n\nاكتب كلمة "حذف" بالظبط للتأكيد:`
+        : `هيتم حذف الفاتورة ${invoiceId} بالكامل، والكميات هترجع تلقائيًا للمخزون. مفيش رجوع بعد كده.\n\nاكتب كلمة "حذف" بالظبط للتأكيد:`
     );
 
     if (typed !== "حذف") {
@@ -4012,7 +5352,7 @@ async function cancelWholeInvoice() {
     setButtonLoading(btn, true, "جاري الحذف...");
 
     try {
-        await applyInvoiceChangesAndSave("🗑️ تم حذف الفاتورة بالكامل");
+        await applyInvoiceChangesAndSave(editingIsReturn ? "🗑️ تم إلغاء المرتجع" : "🗑️ تم حذف الفاتورة بالكامل");
     } finally {
         setButtonLoading(btn, false);
     }
@@ -4035,59 +5375,79 @@ function printReceipt() {
         <head>
         <meta charset="UTF-8">
         <base href="${document.baseURI}">
-        <title>فاتورة ${inv.invoiceId} - سجاد علياء</title>
+        <title>فاتورة ${inv.invoiceId} - ${SHOP_INFO.name}</title>
         <style>
             * { box-sizing:border-box; }
             html,body{ height:auto; }
+            :root{
+                --navy:#0d1f35; --navy-light:#162d4a; --danger:#dc2626; --danger-bg:#fef2f2;
+                --surface-2:#f4f6f9; --border:#e2eaf2; --text-primary:#0d1f35;
+                --text-secondary:#4a6080; --text-muted:#8fa3bc; --red:#e8442a;
+            }
             body{
                 font-family:'Cairo','Segoe UI',Tahoma,Arial,sans-serif;
                 direction:rtl;
-                background:#f0f4f8;
+                background:#eef2f6;
                 padding:24px;
             }
-            .print-actions{ max-width:360px; margin:0 auto 16px; }
+            .print-actions{ max-width:480px; margin:0 auto 16px; }
             .print-actions button{
                 width:100%; background:#0d1f35; color:#fff; border:none;
                 border-radius:10px; padding:12px; font-size:14px; cursor:pointer;
                 font-family:inherit;
             }
-            @page{ margin:8mm; }
+            @page{ size:auto; margin:10mm; }
             @media print{
                 .print-actions{ display:none; }
-                body{ background:#eef2f6; padding:10px 0; }
-                .receipt-paper{ box-shadow:none !important; }
+                body{ background:#fff; padding:0; }
+                .inv-doc{ box-shadow:none !important; border:1px solid #eee; }
+                *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
             }
-            .receipt-wrap{ max-width:360px; margin:0 auto; }
-            .receipt-paper{ background:#fff; box-shadow:0 8px 32px rgba(13,31,53,0.14); padding:26px 22px 24px; }
-            .receipt-logo{ display:block; width:44px; height:44px; border-radius:50%; margin:0 auto 10px; object-fit:cover; border:2px solid #f0f4f8; }
-            .receipt-shop{ text-align:center; font-size:21px; font-weight:900; color:#0d1f35; letter-spacing:1px; }
-            .receipt-tagline{ text-align:center; font-size:11px; color:#8fa3bc; margin-top:4px; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
-            .receipt-stars{ text-align:center; color:#e2eaf2; font-weight:700; letter-spacing:4px; margin:14px 0; overflow:hidden; white-space:nowrap; font-size:13px; }
-            .receipt-meta{ font-size:12.5px; color:#4a6080; }
-            .receipt-meta > div{ margin-top:5px; }
-            .receipt-meta > div:first-child{ margin-top:0; }
-            .receipt-meta b{ color:#0d1f35; }
-            .receipt-dashed{ border-top:1.5px dashed #e2eaf2; margin:16px 0; }
-            .receipt-row{ display:flex; justify-content:space-between; align-items:flex-start; padding:7px 0; font-size:13px; }
-            .receipt-row > div:first-child{ flex:1; min-width:0; margin-left:10px; }
-            .receipt-row .r-idx{ color:#8fa3bc; font-weight:700; margin-left:6px; }
-            .receipt-row .r-name{ color:#0d1f35; font-weight:600; }
-            .receipt-row .r-sub{ color:#8fa3bc; font-size:11.5px; margin-top:2px; }
-            .receipt-row .r-total{ color:#0d1f35; font-weight:700; white-space:nowrap; }
-            .receipt-count-line{ display:flex; justify-content:space-between; margin-top:10px; padding-top:10px; border-top:1px dashed #e2eaf2; font-size:12px; color:#8fa3bc; font-weight:700; }
-            .invoice-note{ margin-top:12px; padding:10px 12px; background:#fff8ec; border:1px solid #fde8c0; border-radius:8px; font-size:13px; color:#8a5a12; }
-            .receipt-total-row{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; }
-            .receipt-total-row .total-label{ font-size:15px; font-weight:800; color:#0d1f35; }
-            .receipt-total-row .total-value{ font-size:27px; font-weight:900; color:#e8442a; }
-            .receipt-bars{ display:flex; gap:6px; margin-top:10px; }
-            .receipt-bars .bar-dark{ flex:2; height:7px; border-radius:4px; background:#0d1f35; }
-            .receipt-bars .bar-light{ flex:1; height:7px; border-radius:4px; background:#e2eaf2; }
-            .receipt-barcode{ margin-top:18px; text-align:center; }
-            .receipt-barcode svg{ width:100%; max-width:260px; height:auto; }
-            .receipt-barcode-id{ font-size:11px; letter-spacing:1px; color:#8fa3bc; margin-top:4px; font-weight:600; }
-            .receipt-thanks{ text-align:center; font-size:11.5px; color:#8fa3bc; margin-top:16px; line-height:1.7; }
-            .receipt-zigzag{ height:16px; width:100%; background-image:radial-gradient(circle at 10px 0, transparent 9px, #fff 9.5px); background-size:20px 16px; background-repeat:repeat-x; background-position:-10px -1px; }
-            .receipt-zigzag-top{ transform:scaleY(-1); }
+            .receipt-wrap{ max-width:480px; margin:0 auto; }
+
+            .inv-doc{ background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(13,31,53,0.14); overflow:hidden; }
+            .inv-header{ background:linear-gradient(135deg, #1a3a5e 0%, #2c5686 100%); padding:20px 22px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+            .inv-header.is-return{ background:linear-gradient(135deg, #c23636 0%, #dd5252 100%); }
+            .inv-header-left{ display:flex; align-items:center; gap:12px; min-width:0; }
+            .inv-logo{ width:46px; height:46px; border-radius:12px; object-fit:cover; border:2px solid rgba(255,255,255,0.25); flex-shrink:0; }
+            .inv-shop-name{ color:#fff; font-size:17px; font-weight:900; white-space:nowrap; }
+            .inv-shop-sub{ color:rgba(255,255,255,0.75); font-size:11px; font-weight:600; margin-top:2px; }
+            .inv-header-right{ text-align:left; flex-shrink:0; }
+            .inv-badge{ display:inline-block; background:rgba(255,255,255,0.16); color:#fff; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; }
+            .inv-number{ color:#fff; font-size:13px; font-weight:800; margin-top:6px; direction:ltr; text-align:left; }
+            .inv-contact-bar{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:6px 14px; padding:9px 22px; background:#f8fafc; border-bottom:1px solid #e2eaf2; font-size:11.5px; color:#4a6080; font-weight:700; }
+            .inv-contact-bar span{ display:flex; align-items:center; gap:5px; }
+            .inv-contact-bar span:not(:last-child)::after{ content:""; display:inline-block; width:3px; height:3px; border-radius:50%; background:#8fa3bc; margin-right:14px; }
+            .inv-body{ padding:20px 22px 22px; }
+            .inv-meta-row{ display:flex; justify-content:space-between; gap:10px; margin-bottom:16px; }
+            .inv-meta-row .lbl{ display:block; font-size:10.5px; color:#8fa3bc; font-weight:600; margin-bottom:2px; }
+            .inv-meta-row .val{ font-size:13px; color:#0d1f35; font-weight:800; }
+            .inv-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+            .inv-table thead th{ background:#f4f6f9; color:#8fa3bc; font-size:11px; font-weight:700; padding:9px 8px; text-align:center; border-bottom:1.5px solid #e2eaf2; }
+            .inv-table thead th:first-child{ border-radius:8px 0 0 0; }
+            .inv-table thead th:last-child{ border-radius:0 8px 0 0; }
+            .inv-table thead th.inv-th-name{ text-align:right; }
+            .inv-table tbody td{ padding:9px 8px; text-align:center; border-bottom:1px solid #e2eaf2; color:#0d1f35; }
+            .inv-table tbody tr:last-child td{ border-bottom:none; }
+            .inv-table tbody td.inv-td-name{ text-align:right; font-weight:700; }
+            .inv-table tbody td.inv-td-name .inv-idx{ color:#8fa3bc; font-weight:700; margin-left:4px; }
+            .inv-table tbody td.inv-td-total{ font-weight:800; white-space:nowrap; }
+            .inv-table tbody tr.is-return td.inv-td-total{ color:#dc2626; }
+            .inv-summary{ display:flex; justify-content:flex-end; margin-top:12px; }
+            .inv-summary-box{ min-width:180px; font-size:12px; color:#4a6080; }
+            .inv-summary-box .row{ display:flex; justify-content:space-between; padding:4px 0; }
+            .inv-summary-box .row.total{ margin-top:6px; padding-top:10px; border-top:1.5px solid #e2eaf2; font-size:16px; font-weight:900; color:#0d1f35; }
+            .inv-summary-box .row.total .val{ color:#e8442a; }
+            .inv-summary-box .row.total.is-return .val{ color:#dc2626; }
+            .inv-note-box{ margin-top:14px; padding:10px 12px; background:#fff8ec; border:1px solid #fde8c0; border-radius:8px; font-size:12.5px; color:#8a5a12; }
+            .inv-return-flag{ margin-top:14px; padding:10px 12px; background:#fef2f2; color:#dc2626; border-radius:8px; font-size:12px; font-weight:600; line-height:1.6; }
+            .inv-footer{ display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:18px; padding-top:16px; border-top:1.5px dashed #e2eaf2; }
+            .inv-footer-thanks{ font-size:12px; color:#8fa3bc; line-height:1.7; }
+            .inv-footer-thanks b{ color:#0d1f35; }
+            .inv-qr{ display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; }
+            .inv-qr .receipt-qr{ display:inline-block; padding:6px; background:#fff; border:1px solid #e2eaf2; border-radius:10px; }
+            .inv-qr .receipt-qr img, .inv-qr .receipt-qr canvas{ display:block; width:84px; height:84px; }
+            .inv-qr-id{ font-size:9.5px; color:#8fa3bc; font-weight:600; }
         </style>
         </head>
         <body>
@@ -4097,16 +5457,16 @@ function printReceipt() {
             <div class="receipt-wrap">
                 ${renderReceiptPaperHTML(inv)}
             </div>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"><\/script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
             <script>
                 try {
-                    JsBarcode("#${barcodeId}", ${JSON.stringify(inv.invoiceId)}, {
-                        format: "CODE128",
-                        displayValue: false,
-                        height: 42,
-                        margin: 0,
-                        background: "transparent",
-                        lineColor: "#0d1f35"
+                    new QRCode(document.getElementById(${JSON.stringify(barcodeId)}), {
+                        text: ${JSON.stringify(inv.invoiceId)},
+                        width: 84,
+                        height: 84,
+                        colorDark: "#0d1f35",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
                     });
                 } catch (e) {
                     const el = document.getElementById(${JSON.stringify(barcodeId)});
@@ -4244,9 +5604,9 @@ function renderReports() {
     // إجمالي المبيعات
     const totalSales = reportSales.reduce((sum, s) => sum + Number(s.total || 0), 0);
 
-    // الفواتير
+    // الفواتير (المرتجعات مستبعدة من العدّ، لكنها متضمنة في الإجمالي المالي كخصم)
     const invoiceIds = [...new Set(
-        reportSales.map(s => s.invoiceId || s.date)
+        reportSales.filter(s => !s.isReturn).map(s => s.invoiceId || s.date)
     )];
 
     const invoicesCount = invoiceIds.length;
@@ -4506,6 +5866,7 @@ function exportReportExcel(btn){
         const salesRows = reportSales.map(s => ({
             "التاريخ": s.date,
             "رقم الفاتورة": s.invoiceId,
+            "نوع العملية": s.isReturn ? "مرتجع" : "بيع",
             "الصنف": s.name,
             "النوع": s.type,
             "الكمية": s.qty,
@@ -4517,7 +5878,7 @@ function exportReportExcel(btn){
 
         const salesSheet = XLSX.utils.json_to_sheet(salesRows);
         salesSheet["!cols"] = [
-            { wch: 12 }, { wch: 14 }, { wch: 22 }, { wch: 14 },
+            { wch: 12 }, { wch: 14 }, { wch: 10 }, { wch: 22 }, { wch: 14 },
             { wch: 8 }, { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 14 }
         ];
 
@@ -4964,7 +6325,7 @@ async function addItem() {
 
     items.push({ type, name, unit, qty, price, min, img: null });
 
-    const saved = await saveData();
+    const saved = await saveData(false);
 
     if (!saved) {
         items.pop();
@@ -5133,11 +6494,12 @@ async function finalizeSale() {
     const salesLengthBefore = sales.length;
 
     let invoiceTotal = 0;
+    const newLines = [];
 
     sellCart.forEach(c => {
         const stockItem = items[c.itemIndex];
         stockItem.qty = Number(stockItem.qty) - c.qty;
-        sales.push({
+        const line = {
           invoiceId,
           name: c.name,
           type: c.type,
@@ -5148,11 +6510,13 @@ async function finalizeSale() {
           date,
           seller: currentUser.username,
           note: invoiceNote
-      });
+      };
+        sales.push(line);
+        newLines.push(line);
         invoiceTotal += c.total;
     });
 
-    const saved = await saveData();
+    const saved = await saveInvoiceRows(invoiceId, newLines);
 
     if (!saved) {
         // فشل الحفظ: نرجع الكميات والفواتير زي ما كانت، ونسيب الفاتورة في السلة عشان يقدر يعيد المحاولة
@@ -5196,7 +6560,7 @@ async function deleteItem(i, btn) {
         // حذف المنتج
         items.splice(i, 1);
 
-        const saved = await saveData();
+        const saved = await saveData(false);
 
         if (!saved) {
             items.splice(i, 0, item);
@@ -5485,7 +6849,7 @@ async function saveEdit() {
       min,
     };
 
-    const saved = await saveData();
+    const saved = await saveData(false);
 
     if (!saved) {
         items[editIndex] = originalItem;
@@ -6718,7 +8082,7 @@ if ('serviceWorker' in navigator) {
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.7.1/dom-to-image-more.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 </body>
