@@ -83,6 +83,16 @@
   .field input, .field select, .field textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--surface-0); color: var(--text-primary); font-size: 15px; font-family: inherit; transition: border-color 0.2s; }
   .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--red); background: #fff; box-shadow: 0 0 0 3px rgba(232,68,42,0.1); }
   .field textarea { resize: vertical; min-height: 70px; line-height: 1.6; }
+  .searchable-select { position: relative; }
+  .searchable-select-input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--surface-0); color: var(--text-primary); font-size: 15px; font-family: inherit; transition: border-color 0.2s; }
+  .searchable-select-input:focus { outline: none; border-color: var(--red); background: #fff; box-shadow: 0 0 0 3px rgba(232,68,42,0.1); }
+  .searchable-select-list { display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0; max-height: 220px; overflow-y: auto; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-lg); z-index: 40; }
+  .searchable-select-list.open { display: block; }
+  .searchable-select-item { padding: 11px 14px; font-size: 14px; color: var(--text-primary); cursor: pointer; border-bottom: 1px solid var(--border); }
+  .searchable-select-item:last-child { border-bottom: none; }
+  .searchable-select-item:hover { background: var(--accent-bg); }
+  .searchable-select-item:active { background: var(--accent-bg); }
+  .searchable-select-empty { padding: 14px; font-size: 13px; color: var(--text-muted); text-align: center; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .btn-primary { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(13,31,53,0.25); transition: opacity 0.2s; }
   .btn-sm { width: auto; padding: 13px 21px; font-size: 13px; margin-top: 0; white-space: nowrap; box-shadow: 0 2px 8px rgba(13,31,53,0.2); }
@@ -163,7 +173,8 @@
   .history-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 13px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
   .history-name { font-size: 13.5px; color: var(--text-primary); font-weight: 800; letter-spacing: -0.1px; font-variant-numeric: tabular-nums; }
   .history-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 5px; }
-  .history-price { font-size: 16px; font-weight: 800; color: var(--success); white-space: nowrap; margin-right: 8px; }
+  .history-price { font-size: 15px; font-weight: 800; color: var(--success); white-space: nowrap; }
+  .invoice-head-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
   .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; line-height: 1.8; }
   .empty-state i { font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.4; }
 
@@ -194,6 +205,8 @@
   .invoice-head-texts { min-width: 0; }
   .invoice-chevron { font-size: 13px; color: var(--text-muted); transition: transform 0.2s ease; flex-shrink: 0; }
   .invoice-group-head.open .invoice-chevron { transform: rotate(180deg); }
+  .history-badge-row { margin-top: 4px; }
+  .history-badge-row .badge-return { margin-right: 0; }
   .invoice-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-secondary); padding: 6px 0; border-bottom: 1px dashed var(--border); }
   .invoice-line:last-of-type { border-bottom: none; }
   .invoice-line .il-name { color: var(--text-primary); font-weight: 600; }
@@ -591,12 +604,22 @@
 }
 
 .invoice-details{
-    display:none;
-    margin-top:10px;
+    display:grid;
+    grid-template-rows:0fr;
+    opacity:0;
+    margin-top:0;
+    transition: grid-template-rows .28s ease, opacity .22s ease, margin-top .28s ease;
+}
+
+.invoice-details > .invoice-details-inner{
+    overflow:hidden;
+    min-height:0;
 }
 
 .invoice-details.open{
-    display:block;
+    grid-template-rows:1fr;
+    opacity:1;
+    margin-top:10px;
 }
 
 .invoice-group-head{
@@ -722,6 +745,66 @@
     flex-shrink:0;
 }
 .receipt-view-btn:active{ background:#e3e9f2; }
+
+/* ===================== قايمة الإجراءات (٣ نقط) في رأس الفاتورة ===================== */
+
+.invoice-head-controls{
+    display:flex;
+    align-items:center;
+    gap:4px;
+}
+.invoice-menu-wrap{
+    position:relative;
+}
+.invoice-menu-btn{
+    width:28px;
+    height:28px;
+    border-radius:9px;
+    border:none;
+    background:var(--surface-0);
+    color:var(--text-muted);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:15px;
+    cursor:pointer;
+    flex-shrink:0;
+}
+.invoice-menu-btn:active{ background:var(--accent-bg); }
+.invoice-menu-dropdown{
+    display:none;
+    position:absolute;
+    top:calc(100% + 6px);
+    right:0;
+    min-width:180px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:12px;
+    box-shadow:var(--shadow-lg);
+    z-index:30;
+    overflow:hidden;
+}
+.invoice-menu-dropdown.open{ display:block; }
+.invoice-menu-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    width:100%;
+    padding:11px 14px;
+    border:none;
+    background:none;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:600;
+    color:var(--text-primary);
+    cursor:pointer;
+    border-bottom:1px solid var(--border);
+    text-align:right;
+}
+.invoice-menu-item:last-child{ border-bottom:none; }
+.invoice-menu-item:active{ background:var(--accent-bg); }
+.invoice-menu-item-danger{ color:var(--danger); }
+.invoice-menu-item-danger:active{ background:var(--danger-bg); }
 
 /* ===================== مودال عرض الفاتورة ===================== */
 
@@ -1003,9 +1086,14 @@
 .filter-buttons{
     display:flex;
     gap:10px;
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
     margin-top:15px;
+    padding-bottom:2px;
 }
+.filter-buttons::-webkit-scrollbar{ display:none; }
 
 .btn-filter{
     background:#e7edf6;
@@ -1017,6 +1105,8 @@
     cursor:pointer;
     transition:all .2s ease;
     border:1px solid #d3e0ee;
+    flex-shrink:0;
+    white-space:nowrap;
 }
 
 .btn-filter:hover{
@@ -1047,9 +1137,14 @@
 .type-filter-buttons{
     display:flex;
     gap:8px;
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
     margin-bottom:4px;
+    padding-bottom:2px;
 }
+.type-filter-buttons::-webkit-scrollbar{ display:none; }
 
 .btn-type-filter{
     border:1px solid #d3e0ee;
@@ -1061,6 +1156,8 @@
     font-weight:700;
     cursor:pointer;
     transition:all .2s ease;
+    flex-shrink:0;
+    white-space:nowrap;
 }
 
 .btn-type-filter:hover{
@@ -1258,6 +1355,14 @@
     font-size:13px;
     background:#fff;
     color:var(--text-primary);
+}
+.eil-add-search-wrap{
+    flex:5;
+    min-width:0;
+}
+.eil-add-search-input{
+    padding:11px 10px !important;
+    font-size:13px !important;
 }
 .eil-add-row input{
     flex:2;
@@ -2075,7 +2180,11 @@ button.btn-loading{
     <div class="form-card">
       <div class="field">
         <label>اختر الصنف</label>
-        <select id="sell-item" onchange="updateSellPrice()"></select>
+        <div class="searchable-select">
+            <input type="text" id="sell-item-search" class="searchable-select-input" placeholder="اكتب اسم الصنف للبحث..." autocomplete="off">
+            <div class="searchable-select-list" id="sell-item-list"></div>
+        </div>
+        <select id="sell-item" onchange="updateSellPrice()" style="display:none"></select>
       </div>
       <div class="row2">
         <div class="field">
@@ -2129,7 +2238,7 @@ button.btn-loading{
                 oninput="renderHistory()">
         </div>
 
-        <div class="filter-buttons">
+        <div class="filter-buttons" id="history-filter-buttons">
 
             <button class="btn-filter active"
                 onclick="setHistoryFilter('today',this)">
@@ -2673,7 +2782,11 @@ button.btn-loading{
     <div class="eil-add-box" id="eil-add-box">
         <label id="eil-add-label">إضافة صنف للفاتورة</label>
         <div class="eil-add-row">
-            <select id="eil-add-select"></select>
+            <div class="searchable-select eil-add-search-wrap">
+                <input type="text" id="eil-add-item-search" class="searchable-select-input eil-add-search-input" placeholder="اكتب اسم الصنف..." autocomplete="off">
+                <div class="searchable-select-list" id="eil-add-item-list"></div>
+                <select id="eil-add-select" style="display:none"></select>
+            </div>
             <input type="number" id="eil-add-qty" min="0" step="1" value="1" placeholder="الكمية">
             <button class="eil-add-btn" onclick="addInvoiceLine()"><i class="ti ti-plus"></i></button>
         </div>
@@ -3352,6 +3465,20 @@ async function restoreBackup(backupId) {
   }
 }
 
+// قايمة الإجراءات (٣ نقط) في كارت الفاتورة - فتح/قفل
+function closeInvoiceMenus() {
+    document.querySelectorAll('.invoice-menu-dropdown.open').forEach(d => d.classList.remove('open'));
+}
+function toggleInvoiceMenu(btn) {
+    const dropdown = btn.nextElementSibling;
+    const wasOpen = dropdown.classList.contains('open');
+    closeInvoiceMenus();
+    if (!wasOpen) dropdown.classList.add('open');
+}
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.invoice-menu-wrap')) closeInvoiceMenus();
+});
+
 function switchTab(tab) {
   const isAdmin = currentUser && currentUser.role === "admin";
   const staffOnly = ['inventory', 'sell', 'history'];
@@ -3683,6 +3810,67 @@ function renderSellSelect() {
 
 }
 
+// ============================================
+// سيليكت قابل للبحث (Searchable Select)
+// بيحوّل أي <select> عادي لصندوق بحث - مفيد لما تكون قائمة الأصناف طويلة
+// ============================================
+function initSearchableSelect(selectId, inputId, listId) {
+
+    const select = document.getElementById(selectId);
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
+    if (!select || !input || !list) return;
+
+    function getOptions() {
+        return Array.from(select.options).filter(o => o.value !== "");
+    }
+
+    function syncInputFromSelect() {
+        const opt = select.options[select.selectedIndex];
+        input.value = (opt && opt.value !== "") ? opt.textContent.trim() : "";
+    }
+
+    function renderList(filterText) {
+        const opts = getOptions();
+        const term = (filterText || "").trim().toLowerCase();
+        const filtered = term
+            ? opts.filter(o => o.textContent.toLowerCase().includes(term))
+            : opts;
+
+        list.innerHTML = filtered.length
+            ? filtered.map(o => `<div class="searchable-select-item" data-value="${o.value}">${o.textContent.trim()}</div>`).join('')
+            : '<div class="searchable-select-empty">لا توجد نتائج</div>';
+
+        list.classList.add('open');
+    }
+
+    input.addEventListener('focus', () => renderList(""));
+    input.addEventListener('input', () => renderList(input.value));
+
+    list.addEventListener('mousedown', (e) => {
+        const item = e.target.closest('.searchable-select-item');
+        if (!item) return;
+        select.value = item.dataset.value;
+        syncInputFromSelect();
+        list.classList.remove('open');
+        select.dispatchEvent(new Event('change'));
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target !== input && !list.contains(e.target)) {
+            list.classList.remove('open');
+        }
+    });
+
+    // بنخزن الدالة عشان نستدعيها بعد أي إعادة رسم للسيليكت الأصلي (لما تتغير الأصناف)
+    select._syncSearchable = syncInputFromSelect;
+    syncInputFromSelect();
+
+}
+
+initSearchableSelect('sell-item', 'sell-item-search', 'sell-item-list');
+initSearchableSelect('eil-add-select', 'eil-add-item-search', 'eil-add-item-list');
+
 function updateSellPrice() {
 
     const idx = parseInt(document.getElementById('sell-item').value);
@@ -3756,7 +3944,7 @@ function setHistoryFilter(filter, btn) {
     visibleInvoices = 5;
 
     document
-        .querySelectorAll(".btn-filter")
+        .querySelectorAll("#history-filter-buttons .btn-filter")
         .forEach(b => b.classList.remove("active"));
 
     if (btn)
@@ -3802,7 +3990,7 @@ function applyCustomHistoryFilter() {
     visibleInvoices = 5;
 
     document
-        .querySelectorAll(".btn-filter")
+        .querySelectorAll("#history-filter-buttons .btn-filter")
         .forEach(b => b.classList.remove("active"));
 
     const customBtn = document.getElementById("history-custom-btn");
@@ -3831,7 +4019,7 @@ function resetHistoryFilter() {
     document.getElementById("custom-date-filter").style.display = "none";
 
     document
-        .querySelectorAll(".btn-filter")
+        .querySelectorAll("#history-filter-buttons .btn-filter")
         .forEach(b => b.classList.remove("active"));
 
     const allBtn = document.getElementById("history-filter-all");
@@ -4165,11 +4353,10 @@ function renderHistory() {
                     <div class="invoice-head-texts">
 
                         <div class="history-name" ${inv.isReturn ? 'style="color:var(--danger)"' : ''}>
-
                             ${inv.invoiceId}
-                            ${statusBadgeHTML}
-
                         </div>
+
+                        ${statusBadgeHTML ? `<div class="history-badge-row">${statusBadgeHTML}</div>` : ""}
 
                         <div class="history-meta">
 
@@ -4183,7 +4370,7 @@ function renderHistory() {
 
                 </div>
 
-                <div style="display:flex; align-items:center; gap:6px;">
+                <div class="invoice-head-right">
 
                     <div class="history-price" ${priceWrapStyle}>
 
@@ -4191,45 +4378,50 @@ function renderHistory() {
 
                     </div>
 
-                    ${inv.isReturn && inv.relatedInvoiceId ? `
-                    <button
-                        class="receipt-view-btn"
-                        title="روح للفاتورة الأصلية: ${inv.relatedInvoiceId}"
-                        onclick="event.stopPropagation(); jumpToInvoice('${inv.relatedInvoiceId}')">
-                        <i class="ti ti-external-link" style="color:var(--danger)"></i>
-                    </button>
-                    ` : ""}
+                    <div class="invoice-head-controls">
 
-                    ${!inv.isReturn && inv.linkedReturns && inv.linkedReturns.length ? `
-                    <button
-                        class="receipt-view-btn"
-                        title="${inv.linkedReturns.length > 1 ? `فيه ${inv.linkedReturns.length} مرتجعات مرتبطة - دوس عشان تشوف أول واحدة` : `روح للمرتجع: ${inv.linkedReturns[0]}`}"
-                        onclick="event.stopPropagation(); jumpToInvoice('${inv.linkedReturns[0]}')">
-                        <i class="ti ti-external-link" style="color:var(--danger)"></i>
-                    </button>
-                    ` : ""}
+                        <div class="invoice-menu-wrap">
 
-                    <button
-                        class="receipt-view-btn"
-                        title="عرض الفاتورة"
-                        onclick="event.stopPropagation(); openReceipt(${i})">
-                        <i class="ti ti-receipt"></i>
-                    </button>
+                            <button class="invoice-menu-btn" onclick="event.stopPropagation(); toggleInvoiceMenu(this)">
+                                <i class="ti ti-dots-vertical"></i>
+                            </button>
 
-                    <button
-                        class="receipt-view-btn admin-only"
-                        title="تعديل الفاتورة"
-                        onclick="event.stopPropagation(); openEditInvoice(${i})">
-                        <i class="ti ti-pencil"></i>
-                    </button>
+                            <div class="invoice-menu-dropdown">
 
-                    <i class="ti ti-chevron-down invoice-chevron"></i>
+                                <button class="invoice-menu-item" onclick="event.stopPropagation(); closeInvoiceMenus(); openReceipt(${i})">
+                                    <i class="ti ti-receipt"></i> عرض الفاتورة
+                                </button>
+
+                                <button class="invoice-menu-item admin-only" onclick="event.stopPropagation(); closeInvoiceMenus(); openEditInvoice(${i})">
+                                    <i class="ti ti-pencil"></i> تعديل
+                                </button>
+
+                                ${inv.isReturn && inv.relatedInvoiceId ? `
+                                <button class="invoice-menu-item invoice-menu-item-danger" onclick="event.stopPropagation(); closeInvoiceMenus(); jumpToInvoice('${inv.relatedInvoiceId}')">
+                                    <i class="ti ti-external-link"></i> الفاتورة الأصلية
+                                </button>
+                                ` : ""}
+
+                                ${!inv.isReturn && inv.linkedReturns && inv.linkedReturns.length ? `
+                                <button class="invoice-menu-item invoice-menu-item-danger" onclick="event.stopPropagation(); closeInvoiceMenus(); jumpToInvoice('${inv.linkedReturns[0]}')">
+                                    <i class="ti ti-external-link"></i> ${inv.linkedReturns.length > 1 ? `المرتجعات (${inv.linkedReturns.length})` : "المرتجع"}
+                                </button>
+                                ` : ""}
+
+                            </div>
+
+                        </div>
+
+                        <i class="ti ti-chevron-down invoice-chevron"></i>
+
+                    </div>
 
                 </div>
 
             </div>
 
             <div class="invoice-details">
+              <div class="invoice-details-inner">
 
                 ${rows}
 
@@ -4245,6 +4437,7 @@ function renderHistory() {
                     ""
                 }
 
+              </div>
             </div>
 
         </div>
@@ -4598,6 +4791,7 @@ function renderEilAddSelect() {
 
     if (!available.length) {
         sel.innerHTML = '<option value="">لا يوجد أصناف متاحة بالمخزون</option>';
+        if (sel._syncSearchable) sel._syncSearchable();
         return;
     }
 
@@ -4607,6 +4801,8 @@ function renderEilAddSelect() {
             : Number(item.qty);
         return `<option value="${items.indexOf(item)}">${item.name} (متاح: ${qty} ${item.unit})</option>`;
     }).join("");
+
+    if (sel._syncSearchable) sel._syncSearchable();
 
 }
 
@@ -4643,6 +4839,7 @@ function renderEilAddSelectForReturn() {
 
     if (!relatedInvoiceId) {
         sel.innerHTML = '<option value="">مرتجع عام بدون فاتورة أصلية، مينفعش تضيف صنف جديد هنا</option>';
+        if (sel._syncSearchable) sel._syncSearchable();
         return;
     }
 
@@ -4656,6 +4853,7 @@ function renderEilAddSelectForReturn() {
 
     if (!options.length) {
         sel.innerHTML = '<option value="">مفيش أصناف تانية قابلة للإرجاع من الفاتورة دي</option>';
+        if (sel._syncSearchable) sel._syncSearchable();
         return;
     }
 
@@ -4664,6 +4862,8 @@ function renderEilAddSelectForReturn() {
             ${o.li.name} (متاح للإرجاع: ${o.remaining} ${o.li.unit})
         </option>
     `).join("");
+
+    if (sel._syncSearchable) sel._syncSearchable();
 
 }
 
