@@ -129,7 +129,6 @@
     box-shadow:0 6px 18px rgba(0,0,0,.08);
 
 }
-  .item-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; background: linear-gradient(135deg, #f0f4f8, #e2eaf2); }
   .item-info { flex: 1; min-width: 0; }
 .item-name{
 
@@ -244,10 +243,6 @@
   .alert-banner { background: linear-gradient(135deg, #b45309, #92400e); color: #fff; border-radius: 14px; padding: 12px 16px; margin-bottom: 14px; display: none; align-items: center; gap: 10px; box-shadow: var(--shadow-lg); }
   .alert-banner.show { display: flex; }
   .alert-text { flex: 1; font-size: 13px; font-weight: 600; }
-
-  /* ITEM IMAGE */
-  .item-img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
-  .item-img-placeholder { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #f0f4f8, #e2eaf2); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
 
   /* REPORT CARD */
   .report-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
@@ -494,6 +489,12 @@
 
     transition:transform .3s ease;
 
+}
+
+.type-left{
+    display:flex;
+    align-items:center;
+    min-width:0;
 }
 
 .type-arrow.open{
@@ -775,7 +776,7 @@
     display:none;
     position:absolute;
     top:calc(100% + 6px);
-    left:0;
+    right:0;
     min-width:180px;
     background:var(--surface-2);
     border:1px solid var(--border);
@@ -847,69 +848,83 @@
 .receipt-capture{ position:relative; }
 
 .inv-doc{
-    background:#fff;
-    border-radius:16px;
+    background:#eef5f0;
+    border-radius:4px;
     box-shadow:var(--shadow-lg);
     overflow:hidden;
+    font-family:'Courier New', Courier, monospace;
+}
+
+.inv-zigzag{
+    height:14px;
+    background:
+        linear-gradient(135deg, #3f8f82 25%, transparent 25%) 0 50%,
+        linear-gradient(225deg, #3f8f82 25%, transparent 25%) 0 50%;
+    background-size:18px 18px;
+    background-repeat:repeat-x;
+}
+
+.inv-content{
+    padding:24px 22px 22px;
 }
 
 .inv-header{
-    background:linear-gradient(135deg, #1a3a5e 0%, #2c5686 100%);
-    padding:20px 22px;
+    background:none;
+    padding:0;
     display:flex;
+    flex-direction:column;
     align-items:center;
-    justify-content:space-between;
-    gap:12px;
+    text-align:center;
+    gap:2px;
 }
-.inv-header.is-return{
-    background:linear-gradient(135deg, #c23636 0%, #dd5252 100%);
-}
+.inv-header.is-return .inv-shop-name{ color:var(--danger); }
 .inv-header-left{
     display:flex;
+    flex-direction:column;
     align-items:center;
-    gap:12px;
-    min-width:0;
+    gap:6px;
 }
 .inv-logo{
-    width:46px;
-    height:46px;
-    border-radius:12px;
+    width:42px;
+    height:42px;
+    border-radius:50%;
     object-fit:cover;
-    border:2px solid rgba(255,255,255,0.25);
-    flex-shrink:0;
+    border:2px solid #3f8f82;
+    margin-bottom:2px;
 }
 .inv-shop-name{
-    color:#fff;
-    font-size:17px;
+    color:#2c3e50;
+    font-size:25px;
     font-weight:900;
+    letter-spacing:4px;
     white-space:nowrap;
 }
 .inv-shop-sub{
-    color:rgba(255,255,255,0.75);
+    color:#5b7083;
     font-size:11px;
     font-weight:600;
-    margin-top:2px;
+    margin-top:4px;
 }
 .inv-header-right{
-    text-align:left;
-    flex-shrink:0;
+    text-align:center;
+    margin-top:8px;
 }
 .inv-badge{
     display:inline-block;
-    background:rgba(255,255,255,0.16);
-    color:#fff;
+    background:var(--danger-bg);
+    color:var(--danger);
     font-size:11px;
     font-weight:700;
-    padding:3px 10px;
+    padding:3px 12px;
     border-radius:999px;
+    margin-bottom:6px;
 }
 .inv-number{
-    color:#fff;
+    color:#2c3e50;
     font-size:13px;
     font-weight:800;
-    margin-top:6px;
     direction:ltr;
-    text-align:left;
+    text-align:center;
 }
 
 .inv-contact-bar{
@@ -917,12 +932,12 @@
     flex-wrap:wrap;
     justify-content:center;
     align-items:center;
-    gap:6px 14px;
-    padding:9px 22px;
-    background:var(--surface-1);
-    border-bottom:1px solid var(--border);
-    font-size:11.5px;
-    color:var(--text-secondary);
+    gap:4px 14px;
+    padding:6px 0 0;
+    background:none;
+    border:none;
+    font-size:12px;
+    color:#2c3e50;
     font-weight:700;
 }
 .inv-contact-bar span{ display:flex; align-items:center; gap:5px; }
@@ -932,131 +947,134 @@
     width:3px;
     height:3px;
     border-radius:50%;
-    background:var(--text-muted);
+    background:#5b7083;
     margin-right:14px;
 }
 
+.inv-divider{
+    text-align:center;
+    color:#3f8f82;
+    font-size:14px;
+    letter-spacing:1px;
+    margin:12px 0;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
 .inv-body{
-    padding:20px 22px 22px;
+    padding:0;
 }
 
 .inv-meta-row{
     display:flex;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom:16px;
+    justify-content:center;
+    gap:18px;
+    margin-bottom:0;
+    text-align:center;
 }
 .inv-meta-row .lbl{
-    display:block;
-    font-size:10.5px;
-    color:var(--text-muted);
-    font-weight:600;
-    margin-bottom:2px;
+    display:inline;
+    color:#5b7083;
+    font-weight:700;
+    font-size:11.5px;
 }
 .inv-meta-row .val{
     font-size:13px;
-    color:var(--text-primary);
+    color:#2c3e50;
     font-weight:800;
+    margin-right:4px;
 }
 
-.inv-table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:12.5px;
+.inv-items{
+    margin-top:14px;
 }
-.inv-table thead th{
-    background:var(--surface-2);
-    color:var(--text-muted);
-    font-size:11px;
-    font-weight:700;
-    padding:9px 8px;
-    text-align:center;
-    border-bottom:1.5px solid var(--border);
-}
-.inv-table thead th:first-child{ border-radius:8px 0 0 0; }
-.inv-table thead th:last-child{ border-radius:0 8px 0 0; }
-.inv-table thead th.inv-th-name{ text-align:right; }
-.inv-table tbody td{
-    padding:9px 8px;
-    text-align:center;
-    border-bottom:1px solid var(--border);
-    color:var(--text-primary);
-}
-.inv-table tbody tr:last-child td{ border-bottom:none; }
-.inv-table tbody td.inv-td-name{
-    text-align:right;
-    font-weight:700;
-}
-.inv-table tbody td.inv-td-name .inv-idx{ color:var(--text-muted); font-weight:700; margin-left:4px; }
-.inv-table tbody td.inv-td-total{ font-weight:800; white-space:nowrap; }
-.inv-table tbody tr.is-return td.inv-td-total{ color:var(--danger); }
-
-.inv-summary{
-    display:flex;
-    justify-content:flex-end;
-    margin-top:12px;
-}
-.inv-summary-box{
-    min-width:180px;
-    font-size:12px;
-    color:var(--text-secondary);
-}
-.inv-summary-box .row{
+.inv-item-row{
     display:flex;
     justify-content:space-between;
-    padding:4px 0;
+    align-items:baseline;
+    gap:10px;
+    padding:5px 0;
+    font-size:13px;
+    color:#2c3e50;
 }
+.inv-item-name{ font-weight:700; }
+.inv-item-price{ font-weight:700; white-space:nowrap; }
+.inv-item-row.is-return .inv-item-price{ color:var(--danger); }
+
+.inv-dashed{
+    border-top:2px dashed #2c3e50;
+    margin:14px 0;
+}
+
+.inv-summary{ display:block; margin-top:0; }
+.inv-summary-box{ width:100%; min-width:0; font-size:12px; color:#5b7083; }
+.inv-summary-box .row{ display:flex; justify-content:space-between; padding:4px 0; }
 .inv-summary-box .row.total{
-    margin-top:6px;
-    padding-top:10px;
-    border-top:1.5px solid var(--border);
-    font-size:16px;
+    margin:0;
+    padding:0;
+    border:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-size:20px;
     font-weight:900;
-    color:var(--text-primary);
+    color:#2c3e50;
+    letter-spacing:1.5px;
 }
-.inv-summary-box .row.total .val{ color:var(--red); }
+.inv-summary-box .row.total .val{ color:#2c3e50; font-size:24px; }
 .inv-summary-box .row.total.is-return .val{ color:var(--danger); }
 
 .inv-note-box{
     margin-top:14px;
     padding:10px 12px;
-    background:#fff8ec;
-    border:1px solid #fde8c0;
-    border-radius:8px;
-    font-size:12.5px;
+    background:rgba(255,255,255,0.55);
+    border:1px dashed #3f8f82;
+    border-radius:4px;
+    font-size:12px;
     color:#8a5a12;
 }
 
 .inv-return-flag{
     margin-top:14px;
     padding:10px 12px;
-    background:var(--danger-bg);
+    background:rgba(255,255,255,0.55);
     color:var(--danger);
-    border-radius:8px;
+    border:1px dashed var(--danger);
+    border-radius:4px;
     font-size:12px;
-    font-weight:600;
+    font-weight:700;
     line-height:1.6;
 }
 
+.inv-bars{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+.inv-bar-long{ height:8px; flex:0 0 65%; background:#33475b; border-radius:2px; }
+.inv-bar-short{ height:8px; flex:0 0 22%; background:#33475b; border-radius:2px; }
+
 .inv-footer{
     display:flex;
+    flex-direction:column;
     align-items:center;
-    justify-content:space-between;
-    gap:14px;
+    gap:10px;
     margin-top:18px;
-    padding-top:16px;
-    border-top:1.5px dashed var(--border);
+    padding-top:0;
+    border:none;
 }
 .inv-footer-thanks{
-    font-size:12px;
-    color:var(--text-muted);
-    line-height:1.7;
+    font-size:11.5px;
+    color:#5b7083;
+    text-align:center;
+    line-height:1.6;
+    order:2;
 }
-.inv-footer-thanks b{ color:var(--text-primary); }
-.inv-qr{ display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; }
-.inv-qr .receipt-qr{ display:inline-block; padding:6px; background:#fff; border:1px solid var(--border); border-radius:10px; }
-.inv-qr .receipt-qr img, .inv-qr .receipt-qr canvas{ display:block; width:84px; height:84px; }
-.inv-qr-id{ font-size:9.5px; color:var(--text-muted); font-weight:600; }
+.inv-footer-thanks b{ color:#2c3e50; }
+.inv-qr{ display:flex; flex-direction:column; align-items:center; gap:4px; order:1; }
+.inv-qr .receipt-qr{ display:block; background:#fff; padding:4px; border-radius:4px; }
+.inv-qr-id{ font-size:9.5px; color:#5b7083; font-weight:600; letter-spacing:1px; }
 
 .receipt-actions{
     display:flex;
@@ -1133,6 +1151,21 @@
     margin-bottom:14px;
     box-shadow:var(--shadow);
 }
+
+.inv-toggle-all-btn{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    background:none;
+    border:none;
+    color:var(--text-secondary);
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    font-family:inherit;
+    padding:4px 2px;
+}
+.inv-toggle-all-btn:hover{ color:var(--accent); }
 
 .type-filter-buttons{
     display:flex;
@@ -2101,9 +2134,10 @@ button.btn-loading{
 
   <div id="tab-inventory">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;gap:10px;">
-    <div class="section-title" style="margin:0;">
+    <div class="section-title" style="margin:0;display:flex;align-items:center;gap:8px;">
         <i class="ti ti-package"></i>
         المخزون الحالي
+        <span class="invoices-count-badge" id="inv-stat-count">0</span>
     </div>
     <button
         class="btn-primary btn-sm admin-only"
@@ -2115,6 +2149,7 @@ button.btn-loading{
     </button>
 
     </div>
+
         <div class="search-box">
             <i class="ti ti-search"></i>
             <input
@@ -2129,6 +2164,19 @@ button.btn-loading{
                 onclick="clearItemSearch()"
                 aria-label="مسح البحث">
                 <i class="ti ti-x"></i>
+            </button>
+        </div>
+
+        <div class="type-filter-buttons" id="item-status-filters" style="margin:12px 0 6px">
+            <button class="btn-type-filter active" onclick="setItemStatusFilter('all', this)">الكل</button>
+            <button class="btn-type-filter" onclick="setItemStatusFilter('ok', this)">متاح</button>
+            <button class="btn-type-filter" onclick="setItemStatusFilter('low', this)">منخفض</button>
+            <button class="btn-type-filter" onclick="setItemStatusFilter('out', this)">نفد</button>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+            <button class="inv-toggle-all-btn" id="toggle-all-types-btn" onclick="toggleAllTypes()">
+                <i class="ti ti-arrows-vertical"></i> توسيع الكل
             </button>
         </div>
 
@@ -2874,6 +2922,7 @@ let types = [];
 let currentUser = null;
 let editingUserIndex = -1;
 let itemSearch = "";
+let itemStatusFilter = "all";
 let visibleInvoices = 5;
 let historyInvoicesCache = [];
 let editingInvoiceLines = [];
@@ -3577,16 +3626,45 @@ function renderStats() {
 
 }
 
+function setItemStatusFilter(filter, btn) {
+    itemStatusFilter = filter;
+    document
+        .querySelectorAll("#item-status-filters .btn-type-filter")
+        .forEach(b => b.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+    renderItems();
+}
+
+function toggleAllTypes() {
+    const btn = document.getElementById("toggle-all-types-btn");
+    const expanding = !btn.classList.contains("is-expanded");
+    const allTypes = [...new Set(items.map(i => i.type))];
+    const openedTypes = window.openedTypes || {};
+    allTypes.forEach(t => { openedTypes[t] = expanding; });
+    window.openedTypes = openedTypes;
+    btn.classList.toggle("is-expanded", expanding);
+    btn.innerHTML = expanding
+        ? '<i class="ti ti-arrows-vertical"></i> طي الكل'
+        : '<i class="ti ti-arrows-vertical"></i> توسيع الكل';
+    renderItems();
+}
+
 function renderItems() {
 
     const el = document.getElementById('item-list');
 
     const isAdmin = currentUser && currentUser.role === 'admin';
 
+    // إحصائيات المخزون بتتحسب من كل الأصناف دايمًا، مش من نتيجة البحث/الفلتر
+    const totalCount = items.length;
+
+    const setStat = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+    setStat('inv-stat-count', totalCount.toLocaleString());
+
     let filteredItems = items;
 
     if (itemSearch) {
-    filteredItems = items.filter(item => {
+    filteredItems = filteredItems.filter(item => {
 
         const name = (item.name || "").toLowerCase();
         const type = (item.type || "").toLowerCase();
@@ -3605,8 +3683,19 @@ function renderItems() {
     });
 }
 
+    if (itemStatusFilter !== "all") {
+        filteredItems = filteredItems.filter(item => {
+            const qty = Number(item.qty);
+            const min = Number(item.min);
+            if (itemStatusFilter === "out") return qty <= 0;
+            if (itemStatusFilter === "low") return qty > 0 && qty <= min;
+            if (itemStatusFilter === "ok") return qty > min;
+            return true;
+        });
+    }
+
     if (!filteredItems.length) {
-        el.innerHTML = itemSearch
+        el.innerHTML = (itemSearch || itemStatusFilter !== "all")
             ? '<div class="empty-state"><i class="ti ti-search"></i>لا توجد نتائج مطابقة</div>'
             : '<div class="empty-state"><i class="ti ti-package"></i>لا يوجد أصناف بعد<br>اضغط "إضافة" لإضافة أول صنف</div>';
         return;
@@ -3625,13 +3714,16 @@ function renderItems() {
 
     const openedTypes = window.openedTypes || {};
     window.openedTypes = openedTypes;
+
+    // وقت البحث أو الفلترة، الأنواع اللي فيها نتائج تتفتح تلقائيًا حتى لو كانت مطوية،
+    // عشان المستخدم يشوف النتيجة على طول من غير ما يفتحها يدويًا
+    const forceOpen = !!(itemSearch || itemStatusFilter !== "all");
+
     let html = "";
 
     Object.keys(grouped).forEach(type => {
 
-        const icon = type === "سجاد" ? "🟫" : "🟨";
-
-        const isOpen = openedTypes[type] !== false;
+        const isOpen = forceOpen ? true : (openedTypes[type] === true);
 
         const typeAttr = String(type).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
 
@@ -3648,7 +3740,7 @@ function renderItems() {
 
                 <span class="type-title">
 
-                    ${icon} ${type}
+                    ${type}
 
                     <span class="type-count">
                         ${grouped[type].length}
@@ -3698,10 +3790,6 @@ function renderItems() {
 
             const index = items.indexOf(item);
 
-            const imgHtml = item.img
-            ? `<img class="item-img" src="${item.img}">`
-            : `<div class="item-icon">${icon}</div>`;
-
             const qty = item.unit === "متر"
                 ? Number(item.qty).toFixed(2).replace(/\.00$/, "")
                 : Number(item.qty);
@@ -3717,8 +3805,6 @@ function renderItems() {
 
             html += `
                 <div class="item-row">
-
-                    ${imgHtml}
 
                     <div class="item-info">
 
@@ -4492,15 +4578,13 @@ function formatReceiptDateTime(rawDate) {
 
 function renderReceiptPaperHTML(inv) {
 
-    const rowsHTML = inv.items.map((it,idx) => `
-        <tr class="${inv.isReturn ? 'is-return' : ''}">
-            <td class="inv-td-name">
-                <span class="inv-idx">${idx+1}.</span>${it.name}
-            </td>
-            <td>${Math.abs(it.qty)} ${it.unit}</td>
-            <td>${Number(it.unitPrice).toLocaleString()} ج</td>
-            <td class="inv-td-total">${Number(it.total).toLocaleString()} ج</td>
-        </tr>
+    const DIVIDER = "*".repeat(34);
+
+    const rowsHTML = inv.items.map((it) => `
+        <div class="inv-item-row ${inv.isReturn ? 'is-return' : ''}">
+            <span class="inv-item-name">${it.name}${Math.abs(it.qty) > 1 || it.unit === 'متر' ? ` (${Math.abs(it.qty)} ${it.unit})` : ''}</span>
+            <span class="inv-item-price">${Number(it.total).toLocaleString()} ج</span>
+        </div>
     `).join("");
 
     const barcodeId = `bc-${(inv.invoiceId||"").replace(/[^a-zA-Z0-9]/g,"")}`;
@@ -4517,63 +4601,57 @@ function renderReceiptPaperHTML(inv) {
             : "");
 
     const contactBits = [];
-    if (SHOP_INFO.phone) contactBits.push(`<span>📞 ${SHOP_INFO.phone}</span>`);
-    if (SHOP_INFO.address) contactBits.push(`<span>📍 ${SHOP_INFO.address}</span>`);
+    if (SHOP_INFO.phone) contactBits.push(`<span>Tel: ${SHOP_INFO.phone}</span>`);
+    if (SHOP_INFO.address) contactBits.push(`<span>${SHOP_INFO.address}</span>`);
     const contactBarHTML = contactBits.length ? `<div class="inv-contact-bar">${contactBits.join("")}</div>` : "";
 
     return `
         <div class="inv-doc">
 
-            <div class="inv-header ${inv.isReturn ? 'is-return' : ''}">
-                <div class="inv-header-left">
-                    <img class="inv-logo" src="images/logo.jpg" alt="${SHOP_INFO.name}">
-                    <div>
+            <div class="inv-zigzag"></div>
+
+            <div class="inv-content">
+
+                <div class="inv-header ${inv.isReturn ? 'is-return' : ''}">
+                    <div class="inv-header-left">
+                        <img class="inv-logo" src="images/logo.jpg" alt="${SHOP_INFO.name}">
                         <div class="inv-shop-name">${SHOP_INFO.name}</div>
                         <div class="inv-shop-sub">${SHOP_INFO.tagline}</div>
                     </div>
+                    ${contactBarHTML}
+                    ${inv.isReturn ? `<div class="inv-header-right"><span class="inv-badge">فاتورة مرتجع</span></div>` : ""}
                 </div>
-                <div class="inv-header-right">
-                    <span class="inv-badge">${inv.isReturn ? 'فاتورة مرتجع' : 'فاتورة بيع'}</span>
-                    <div class="inv-number">${inv.invoiceId}</div>
-                </div>
-            </div>
 
-            ${contactBarHTML}
-
-            <div class="inv-body">
+                <div class="inv-divider">${DIVIDER}</div>
 
                 <div class="inv-meta-row">
-                    <div>
-                        <span class="lbl">التاريخ</span>
-                        <span class="val">${formatReceiptDateTime(inv.date)}</span>
-                    </div>
-                    ${inv.seller ? `
-                    <div>
-                        <span class="lbl">البائع</span>
-                        <span class="val">${inv.seller}</span>
-                    </div>
-                    ` : ""}
+                    <span class="lbl">DATE:</span>
+                    <span class="val">${formatReceiptDateTime(inv.date)}</span>
+                </div>
+                <div class="inv-meta-row">
+                    <span class="lbl">رقم الفاتورة:</span>
+                    <span class="val">${inv.invoiceId}</span>
+                </div>
+                ${inv.seller ? `
+                <div class="inv-meta-row">
+                    <span class="lbl">البائع:</span>
+                    <span class="val">${inv.seller}</span>
+                </div>
+                ` : ""}
+
+                <div class="inv-divider">${DIVIDER}</div>
+
+                <div class="inv-items">
+                    ${rowsHTML}
                 </div>
 
-                <table class="inv-table">
-                    <thead>
-                        <tr>
-                            <th class="inv-th-name">الصنف</th>
-                            <th>الكمية</th>
-                            <th>السعر</th>
-                            <th>الإجمالي</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${rowsHTML}
-                    </tbody>
-                </table>
+                <div class="inv-dashed"></div>
 
                 <div class="inv-summary">
                     <div class="inv-summary-box">
                         <div class="row total ${inv.isReturn ? 'is-return' : ''}">
-                            <span>${inv.isReturn ? 'إجمالي المرتجع' : 'الإجمالي'}</span>
-                            <span class="val">${Number(inv.total).toLocaleString()} ج</span>
+                            <span>${inv.isReturn ? 'إجمالي المرتجع:' : 'الإجمالي:'}</span>
+                            <span class="val">${Number(inv.total).toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
@@ -4582,43 +4660,49 @@ function renderReceiptPaperHTML(inv) {
 
                 ${returnFlagHTML}
 
+                <div class="inv-bars">
+                    <div class="inv-bar-long"></div>
+                    <div class="inv-bar-short"></div>
+                </div>
+
                 <div class="inv-footer">
+                    <div class="inv-qr">
+                        <svg id="${barcodeId}" class="receipt-qr"></svg>
+                    </div>
                     <div class="inv-footer-thanks">
                         شكرًا لتعاملكم معنا 🌹<br>
                         <b>${SHOP_INFO.name}</b>
                     </div>
-                    <div class="inv-qr">
-                        <div id="${barcodeId}" class="receipt-qr"></div>
-                        <div class="inv-qr-id">${inv.invoiceId}</div>
-                    </div>
                 </div>
 
             </div>
+
+            <div class="inv-zigzag"></div>
 
         </div>
     `;
 
 }
 
-// بيرسم QR code جوه الفاتورة بعد ما تتحط في الصفحة فعليًا
+// بيرسم الباركود جوه الفاتورة بعد ما تتحط في الصفحة فعليًا
 function renderReceiptBarcode(inv, doc) {
     doc = doc || document;
     const barcodeId = `bc-${(inv.invoiceId||"").replace(/[^a-zA-Z0-9]/g,"")}`;
     const container = doc.getElementById(barcodeId);
-    const lib = doc.defaultView && doc.defaultView.QRCode ? doc.defaultView.QRCode : window.QRCode;
+    const lib = doc.defaultView && doc.defaultView.JsBarcode ? doc.defaultView.JsBarcode : window.JsBarcode;
     if (!container || !lib) return;
     try {
-        container.innerHTML = "";
-        new lib(container, {
-            text: inv.invoiceId,
-            width: 130,
-            height: 130,
-            colorDark: "#0d1f35",
-            colorLight: "#ffffff",
-            correctLevel: lib.CorrectLevel.M
+        lib(container, inv.invoiceId, {
+            format: "CODE128",
+            width: 2,
+            height: 60,
+            displayValue: false,
+            margin: 0,
+            lineColor: "#2c3e50",
+            background: "transparent"
         });
     } catch (e) {
-        // في حالة عدم توفر الإنترنت مثلاً، تجاهل الـQR من غير ما نكسر الفاتورة
+        // في حالة فشل رسم الباركود لأي سبب، تجاهله من غير ما نكسر الفاتورة
         container.remove();
     }
 }
@@ -5600,54 +5684,54 @@ function printReceipt() {
             @media print{
                 .print-actions{ display:none; }
                 body{ background:#fff; padding:0; }
-                .inv-doc{ box-shadow:none !important; border:1px solid #eee; }
+                .inv-doc{ box-shadow:none !important; }
                 *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
             }
-            .receipt-wrap{ max-width:480px; margin:0 auto; }
+            .receipt-wrap{ max-width:420px; margin:0 auto; }
 
-            .inv-doc{ background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(13,31,53,0.14); overflow:hidden; }
-            .inv-header{ background:linear-gradient(135deg, #1a3a5e 0%, #2c5686 100%); padding:20px 22px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-            .inv-header.is-return{ background:linear-gradient(135deg, #c23636 0%, #dd5252 100%); }
-            .inv-header-left{ display:flex; align-items:center; gap:12px; min-width:0; }
-            .inv-logo{ width:46px; height:46px; border-radius:12px; object-fit:cover; border:2px solid rgba(255,255,255,0.25); flex-shrink:0; }
-            .inv-shop-name{ color:#fff; font-size:17px; font-weight:900; white-space:nowrap; }
-            .inv-shop-sub{ color:rgba(255,255,255,0.75); font-size:11px; font-weight:600; margin-top:2px; }
-            .inv-header-right{ text-align:left; flex-shrink:0; }
-            .inv-badge{ display:inline-block; background:rgba(255,255,255,0.16); color:#fff; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; }
-            .inv-number{ color:#fff; font-size:13px; font-weight:800; margin-top:6px; direction:ltr; text-align:left; }
-            .inv-contact-bar{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:6px 14px; padding:9px 22px; background:#f8fafc; border-bottom:1px solid #e2eaf2; font-size:11.5px; color:#4a6080; font-weight:700; }
+            .inv-doc{ background:#eef5f0; border-radius:4px; box-shadow:0 8px 32px rgba(13,31,53,0.14); overflow:hidden; font-family:'Courier New', Courier, monospace; }
+            .inv-zigzag{ height:14px; background:linear-gradient(135deg, #3f8f82 25%, transparent 25%) 0 50%, linear-gradient(225deg, #3f8f82 25%, transparent 25%) 0 50%; background-size:18px 18px; background-repeat:repeat-x; }
+            .inv-content{ padding:24px 22px 22px; }
+            .inv-header{ background:none; padding:0; display:flex; flex-direction:column; align-items:center; text-align:center; gap:2px; }
+            .inv-header.is-return .inv-shop-name{ color:#dc2626; }
+            .inv-header-left{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+            .inv-logo{ width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid #3f8f82; margin-bottom:2px; }
+            .inv-shop-name{ color:#2c3e50; font-size:25px; font-weight:900; letter-spacing:4px; white-space:nowrap; }
+            .inv-shop-sub{ color:#5b7083; font-size:11px; font-weight:600; margin-top:4px; }
+            .inv-header-right{ text-align:center; margin-top:8px; }
+            .inv-badge{ display:inline-block; background:#fef2f2; color:#dc2626; font-size:11px; font-weight:700; padding:3px 12px; border-radius:999px; margin-bottom:6px; }
+            .inv-number{ color:#2c3e50; font-size:13px; font-weight:800; direction:ltr; text-align:center; }
+            .inv-contact-bar{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:4px 14px; padding:6px 0 0; background:none; border:none; font-size:12px; color:#2c3e50; font-weight:700; }
             .inv-contact-bar span{ display:flex; align-items:center; gap:5px; }
-            .inv-contact-bar span:not(:last-child)::after{ content:""; display:inline-block; width:3px; height:3px; border-radius:50%; background:#8fa3bc; margin-right:14px; }
-            .inv-body{ padding:20px 22px 22px; }
-            .inv-meta-row{ display:flex; justify-content:space-between; gap:10px; margin-bottom:16px; }
-            .inv-meta-row .lbl{ display:block; font-size:10.5px; color:#8fa3bc; font-weight:600; margin-bottom:2px; }
-            .inv-meta-row .val{ font-size:13px; color:#0d1f35; font-weight:800; }
-            .inv-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
-            .inv-table thead th{ background:#f4f6f9; color:#8fa3bc; font-size:11px; font-weight:700; padding:9px 8px; text-align:center; border-bottom:1.5px solid #e2eaf2; }
-            .inv-table thead th:first-child{ border-radius:8px 0 0 0; }
-            .inv-table thead th:last-child{ border-radius:0 8px 0 0; }
-            .inv-table thead th.inv-th-name{ text-align:right; }
-            .inv-table tbody td{ padding:9px 8px; text-align:center; border-bottom:1px solid #e2eaf2; color:#0d1f35; }
-            .inv-table tbody tr:last-child td{ border-bottom:none; }
-            .inv-table tbody td.inv-td-name{ text-align:right; font-weight:700; }
-            .inv-table tbody td.inv-td-name .inv-idx{ color:#8fa3bc; font-weight:700; margin-left:4px; }
-            .inv-table tbody td.inv-td-total{ font-weight:800; white-space:nowrap; }
-            .inv-table tbody tr.is-return td.inv-td-total{ color:#dc2626; }
-            .inv-summary{ display:flex; justify-content:flex-end; margin-top:12px; }
-            .inv-summary-box{ min-width:180px; font-size:12px; color:#4a6080; }
+            .inv-contact-bar span:not(:last-child)::after{ content:""; display:inline-block; width:3px; height:3px; border-radius:50%; background:#5b7083; margin-right:14px; }
+            .inv-divider{ text-align:center; color:#3f8f82; font-size:14px; letter-spacing:1px; margin:12px 0; overflow:hidden; white-space:nowrap; }
+            .inv-body{ padding:0; }
+            .inv-meta-row{ display:flex; justify-content:center; gap:18px; text-align:center; }
+            .inv-meta-row .lbl{ display:inline; color:#5b7083; font-weight:700; font-size:11.5px; }
+            .inv-meta-row .val{ font-size:13px; color:#2c3e50; font-weight:800; margin-right:4px; }
+            .inv-items{ margin-top:14px; }
+            .inv-item-row{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:5px 0; font-size:13px; color:#2c3e50; }
+            .inv-item-name{ font-weight:700; }
+            .inv-item-price{ font-weight:700; white-space:nowrap; }
+            .inv-item-row.is-return .inv-item-price{ color:#dc2626; }
+            .inv-dashed{ border-top:2px dashed #2c3e50; margin:14px 0; }
+            .inv-summary{ display:block; margin-top:0; }
+            .inv-summary-box{ width:100%; min-width:0; font-size:12px; color:#5b7083; }
             .inv-summary-box .row{ display:flex; justify-content:space-between; padding:4px 0; }
-            .inv-summary-box .row.total{ margin-top:6px; padding-top:10px; border-top:1.5px solid #e2eaf2; font-size:16px; font-weight:900; color:#0d1f35; }
-            .inv-summary-box .row.total .val{ color:#e8442a; }
+            .inv-summary-box .row.total{ margin:0; padding:0; border:none; display:flex; justify-content:space-between; align-items:baseline; font-size:20px; font-weight:900; color:#2c3e50; letter-spacing:1.5px; }
+            .inv-summary-box .row.total .val{ color:#2c3e50; font-size:24px; }
             .inv-summary-box .row.total.is-return .val{ color:#dc2626; }
-            .inv-note-box{ margin-top:14px; padding:10px 12px; background:#fff8ec; border:1px solid #fde8c0; border-radius:8px; font-size:12.5px; color:#8a5a12; }
-            .inv-return-flag{ margin-top:14px; padding:10px 12px; background:#fef2f2; color:#dc2626; border-radius:8px; font-size:12px; font-weight:600; line-height:1.6; }
-            .inv-footer{ display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:18px; padding-top:16px; border-top:1.5px dashed #e2eaf2; }
-            .inv-footer-thanks{ font-size:12px; color:#8fa3bc; line-height:1.7; }
-            .inv-footer-thanks b{ color:#0d1f35; }
-            .inv-qr{ display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; }
-            .inv-qr .receipt-qr{ display:inline-block; padding:6px; background:#fff; border:1px solid #e2eaf2; border-radius:10px; }
-            .inv-qr .receipt-qr img, .inv-qr .receipt-qr canvas{ display:block; width:84px; height:84px; }
-            .inv-qr-id{ font-size:9.5px; color:#8fa3bc; font-weight:600; }
+            .inv-note-box{ margin-top:14px; padding:10px 12px; background:rgba(255,255,255,0.55); border:1px dashed #3f8f82; border-radius:4px; font-size:12px; color:#8a5a12; }
+            .inv-return-flag{ margin-top:14px; padding:10px 12px; background:rgba(255,255,255,0.55); color:#dc2626; border:1px dashed #dc2626; border-radius:4px; font-size:12px; font-weight:700; line-height:1.6; }
+            .inv-bars{ margin-top:20px; display:flex; gap:10px; align-items:center; }
+            .inv-bar-long{ height:8px; flex:0 0 65%; background:#33475b; border-radius:2px; }
+            .inv-bar-short{ height:8px; flex:0 0 22%; background:#33475b; border-radius:2px; }
+            .inv-footer{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:18px; padding-top:0; border:none; }
+            .inv-footer-thanks{ font-size:11.5px; color:#5b7083; text-align:center; line-height:1.6; order:2; }
+            .inv-footer-thanks b{ color:#2c3e50; }
+            .inv-qr{ display:flex; flex-direction:column; align-items:center; gap:4px; order:1; }
+            .inv-qr .receipt-qr{ display:block; background:#fff; padding:4px; border-radius:4px; }
+            .inv-qr-id{ font-size:9.5px; color:#5b7083; font-weight:600; letter-spacing:1px; }
         </style>
         </head>
         <body>
@@ -5657,16 +5741,17 @@ function printReceipt() {
             <div class="receipt-wrap">
                 ${renderReceiptPaperHTML(inv)}
             </div>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"><\/script>
             <script>
                 try {
-                    new QRCode(document.getElementById(${JSON.stringify(barcodeId)}), {
-                        text: ${JSON.stringify(inv.invoiceId)},
-                        width: 84,
-                        height: 84,
-                        colorDark: "#0d1f35",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.M
+                    JsBarcode(document.getElementById(${JSON.stringify(barcodeId)}), ${JSON.stringify(inv.invoiceId)}, {
+                        format: "CODE128",
+                        width: 2,
+                        height: 60,
+                        displayValue: false,
+                        margin: 0,
+                        lineColor: "#2c3e50",
+                        background: "transparent"
                     });
                 } catch (e) {
                     const el = document.getElementById(${JSON.stringify(barcodeId)});
@@ -5704,7 +5789,7 @@ async function captureReceiptBlob() {
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
     return await domtoimage.toBlob(node, {
-        bgcolor: "#f0f4f8",
+        bgcolor: "#eef5f0",
         width: node.offsetWidth * scale,
         height: node.offsetHeight * scale,
         style: {
@@ -8003,7 +8088,7 @@ function renderTypesManager() {
 
 function toggleType(type){
 
-    const wasOpen = window.openedTypes[type] !== false;
+    const wasOpen = window.openedTypes[type] === true;
     window.openedTypes[type] = !wasOpen;
 
     const header = [...document.querySelectorAll('.type-header')].find(h => h.dataset.type === type);
@@ -8031,7 +8116,7 @@ function toggleType(type){
 
         body.addEventListener('transitionend', function handler(e){
             if (e.propertyName !== 'max-height') return;
-            if (window.openedTypes[type] !== false) {
+            if (window.openedTypes[type] === true) {
                 body.style.maxHeight = 'none';
                 body.style.overflow = 'visible';
             }
@@ -8282,7 +8367,7 @@ if ('serviceWorker' in navigator) {
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.7.1/dom-to-image-more.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 </body>
