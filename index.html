@@ -173,7 +173,7 @@
   .history-name { font-size: 13.5px; color: var(--text-primary); font-weight: 800; letter-spacing: -0.1px; font-variant-numeric: tabular-nums; }
   .history-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 5px; }
   .history-price { font-size: 15px; font-weight: 800; color: var(--success); white-space: nowrap; }
-  .invoice-head-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+  .invoice-head-right { display: flex; flex-direction: row; align-items: center; gap: 8px; flex-shrink: 0; }
   .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; line-height: 1.8; }
   .empty-state i { font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.4; }
 
@@ -1158,6 +1158,8 @@
     padding:4px 2px;
 }
 .inv-toggle-all-btn:hover{ color:var(--accent); }
+.inv-toggle-all-btn:disabled{ opacity:0.45; cursor:not-allowed; }
+.inv-toggle-all-btn:disabled:hover{ color:var(--text-secondary); }
 
 .type-filter-buttons{
     display:flex;
@@ -3753,9 +3755,18 @@ function renderItems() {
     const forceOpen = !!(itemSearch || itemStatusFilter !== "all");
 
     const toggleAllBtn = document.getElementById("toggle-all-types-btn");
-    if (toggleAllBtn && forceOpen) {
-        toggleAllBtn.classList.add("is-expanded");
-        toggleAllBtn.innerHTML = '<i class="ti ti-arrows-vertical"></i> طي الكل';
+    if (toggleAllBtn) {
+        if (forceOpen) {
+            // وقت الفلترة/البحث كل المجموعات بتتفتح إجباريًا عشان تشوفي النتائج على طول،
+            // فزرار الطي/التوسيع مالوش معنى دلوقتي (أي طي هيتلغي على طول مع أي إعادة رسم) - نعطّله بدل ما يبان إنه مش شغال
+            toggleAllBtn.disabled = true;
+            toggleAllBtn.title = "متاح بس لما الفلتر يكون على \"الكل\"";
+            toggleAllBtn.classList.add("is-expanded");
+            toggleAllBtn.innerHTML = '<i class="ti ti-arrows-vertical"></i> طي الكل';
+        } else {
+            toggleAllBtn.disabled = false;
+            toggleAllBtn.title = "";
+        }
     }
 
     let html = "";
