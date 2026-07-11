@@ -3628,17 +3628,58 @@ function setItemStatusFilter(filter, btn) {
 }
 
 function toggleAllTypes() {
+
     const btn = document.getElementById("toggle-all-types-btn");
     const expanding = !btn.classList.contains("is-expanded");
+
     const allTypes = [...new Set(items.map(i => i.type))];
     const openedTypes = window.openedTypes || {};
     allTypes.forEach(t => { openedTypes[t] = expanding; });
     window.openedTypes = openedTypes;
+
     btn.classList.toggle("is-expanded", expanding);
     btn.innerHTML = expanding
         ? '<i class="ti ti-arrows-vertical"></i> طي الكل'
         : '<i class="ti ti-arrows-vertical"></i> توسيع الكل';
-    renderItems();
+
+    // بنحرك العناصر الموجودة فعليًا في الصفحة بنفس أسلوب toggleType، بدل ما نعيد
+    // بناء الـ DOM من الصفر عن طريق renderItems() - ده كان بيلغي التحريك (Transition) خالص،
+    // وكمان كان بيتعارض مع حالة الفلتر لإن renderItems() بيفتح كل المجموعات إجباريًا وقت الفلترة
+    document.querySelectorAll('.type-body').forEach(body => {
+
+        const type = body.dataset.type;
+        const header = [...document.querySelectorAll('.type-header')].find(h => h.dataset.type === type);
+        const arrow = header ? header.querySelector('.type-arrow') : null;
+
+        if (expanding) {
+
+            body.classList.add('open');
+            body.style.overflow = 'hidden';
+            body.style.maxHeight = body.scrollHeight + 'px';
+            if (arrow) arrow.classList.add('open');
+
+            body.addEventListener('transitionend', function handler(e){
+                if (e.propertyName !== 'max-height') return;
+                if (window.openedTypes[type] === true) {
+                    body.style.maxHeight = 'none';
+                    body.style.overflow = 'visible';
+                }
+                body.removeEventListener('transitionend', handler);
+            });
+
+        } else {
+
+            body.style.overflow = 'hidden';
+            body.style.maxHeight = body.scrollHeight + 'px';
+            body.offsetHeight; // نجبر المتصفح يسجل الارتفاع الحالي قبل ما نقفل
+            body.classList.remove('open');
+            body.style.maxHeight = '0px';
+            if (arrow) arrow.classList.remove('open');
+
+        }
+
+    });
+
 }
 
 function renderItems() {
@@ -3710,6 +3751,12 @@ function renderItems() {
     // وقت البحث أو الفلترة، الأنواع اللي فيها نتائج تتفتح تلقائيًا حتى لو كانت مطوية،
     // عشان المستخدم يشوف النتيجة على طول من غير ما يفتحها يدويًا
     const forceOpen = !!(itemSearch || itemStatusFilter !== "all");
+
+    const toggleAllBtn = document.getElementById("toggle-all-types-btn");
+    if (toggleAllBtn && forceOpen) {
+        toggleAllBtn.classList.add("is-expanded");
+        toggleAllBtn.innerHTML = '<i class="ti ti-arrows-vertical"></i> طي الكل';
+    }
 
     let html = "";
 
