@@ -2972,9 +2972,14 @@ async function loadData() {
   try {
     const res = await fetch(SCRIPT_URL);
 
-    if (!res.ok) throw new Error('Load failed');
+    if (!res.ok) throw new Error('Load failed (http)');
 
     const data = await res.json();
+
+    // لازم نتأكد من status اللي جوه الـ JSON، لإن Google Apps Script بيرجع HTTP 200
+    // حتى لو فشل فعليًا (lock timeout، شيت مش موجود، إلخ) - لو مأكدناش من ده، أي خطأ
+    // داخلي في السيرفر كان هيمسح المخزون والفواتير الظاهرة عندك ويوريها فاضية بالغلط
+    if (data.status !== "ok") throw new Error(data.message || 'Load failed (server)');
 
     items = data.items || [];
     sales = data.sales || [];
@@ -3000,7 +3005,7 @@ async function loadData() {
   } catch (err) {
     console.error(err);
     setSyncStatus('error', 'خطأ في الاتصال');
-    showToast('❌ تعذر الاتصال');
+    showToast('❌ تعذر الاتصال، البيانات المعروضة قد تكون قديمة');
   }
 }
 
@@ -3017,13 +3022,17 @@ async function saveData(includeSales = true) {
       method: 'POST',
       body: JSON.stringify(body)
     });
-    if (!res.ok) throw new Error('save failed');
+    if (!res.ok) throw new Error('save failed (http)');
+    // Google Apps Script بيرجع دايمًا HTTP 200 حتى لو حصل خطأ داخلي (lock timeout، exception، إلخ)
+    // فلازم نتأكد من status اللي جوه الـ JSON نفسه، مش بس إن الطلب وصل للسيرفر
+    const data = await res.json();
+    if (data.status !== "ok") throw new Error(data.message || 'save failed (server)');
     setSyncStatus('ok', 'تم الحفظ في السحابة ✓');
     return true;
   } catch (err) {
     console.error('saveData error:', err);
     setSyncStatus('error', 'خطأ في الحفظ');
-    showToast('❌ تعذر الحفظ، تحقق من الإنترنت وحاول تاني. لسه محصلش حفظ');
+    showToast('❌ تعذر الحفظ: ' + (err.message || 'خطأ غير معروف'));
     return false;
   }
 }
@@ -3043,13 +3052,16 @@ async function saveInvoiceRows(invoiceId, lines) {
           items: cleanItems
       })
     });
-    if (!res.ok) throw new Error('save failed');
+    if (!res.ok) throw new Error('save failed (http)');
+    // نفس الملحوظة: HTTP 200 لوحده معناش إن الحفظ نجح فعليًا في Google Apps Script
+    const data = await res.json();
+    if (data.status !== "ok") throw new Error(data.message || 'save failed (server)');
     setSyncStatus('ok', 'تم الحفظ في السحابة ✓');
     return true;
   } catch (err) {
     console.error('saveInvoiceRows error:', err);
     setSyncStatus('error', 'خطأ في الحفظ');
-    showToast('❌ تعذر الحفظ، تحقق من الإنترنت وحاول تاني. لسه محصلش حفظ');
+    showToast('❌ تعذر الحفظ: ' + (err.message || 'خطأ غير معروف'));
     return false;
   }
 }
@@ -3335,7 +3347,6 @@ async function importBackup(input) {
     if (!saved) {
         items = itemsBackup;
         sales = salesBackup;
-        showToast("❌ ما اتستوردش، حاول تاني لما النت يرجع");
         return;
     }
 
@@ -5436,12 +5447,11 @@ async function submitReturn(btn) {
         };
         sales.push(returnLine);
 
-        const saved = await saveInvoiceRows(invoiceId, [returnLine]);
+        const saved = await saveData();
 
         if (!saved) {
             items = itemsBackup;
             sales = salesBackup;
-            showToast("❌ ما اتحفظش، حاول تاني لما النت يرجع");
             return;
         }
 
@@ -5582,12 +5592,11 @@ async function applyInvoiceChangesAndSave(successMsg) {
     const invoiceId = editingInvoiceMeta ? editingInvoiceMeta.invoiceId : "";
     const finalLines = sales.filter(s => s.invoiceId === invoiceId);
 
-    const saved = await saveInvoiceRows(invoiceId, finalLines);
+    const saved = await saveData();
 
     if (!saved) {
         items = itemsBackup;
         sales = salesBackup;
-        showToast("❌ ما اتحفظش التعديل، حاول تاني لما النت يرجع");
         return false;
     }
 
@@ -6673,7 +6682,6 @@ async function addItem() {
 
     if (!saved) {
         items.pop();
-        showToast('❌ ما اتضافش الصنف، حاول تاني لما النت يرجع');
         return;
     }
 
@@ -6860,13 +6868,12 @@ async function finalizeSale() {
         invoiceTotal += c.total;
     });
 
-    const saved = await saveInvoiceRows(invoiceId, newLines);
+    const saved = await saveData();
 
     if (!saved) {
         // فشل الحفظ: نرجع الكميات والفواتير زي ما كانت، ونسيب الفاتورة في السلة عشان يقدر يعيد المحاولة
         qtyBackup.forEach(b => { items[b.itemIndex].qty = b.qty; });
         sales.length = salesLengthBefore;
-        showToast('❌ الفاتورة ما اتسجلتش، حاول تاني لما النت يرجع');
         return;
     }
 
@@ -6908,7 +6915,6 @@ async function deleteItem(i, btn) {
 
         if (!saved) {
             items.splice(i, 0, item);
-            showToast('❌ ما اتحذفش، حاول تاني لما النت يرجع');
             return;
         }
 
@@ -7074,7 +7080,6 @@ async function clearSales(btn) {
 
       if (!saved) {
           sales = salesBackup;
-          showToast('❌ ما اتحذفش، حاول تاني لما النت يرجع');
           return;
       }
 
@@ -7197,7 +7202,6 @@ async function saveEdit() {
 
     if (!saved) {
         items[editIndex] = originalItem;
-        showToast('❌ ما اتحفظش التعديل، حاول تاني لما النت يرجع');
         return;
     }
 
