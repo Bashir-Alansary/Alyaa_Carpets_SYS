@@ -2900,7 +2900,7 @@ button.btn-loading{
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXc75O4GkgB5GvcSUB_82LIChEpJYu1DF0AKh6insQTT6w1Z1LkeQq8oOO--M6WLpQoA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymzomhlwKoV1EuvRfc9Xnej1pPg8Xu4ZlpxsSx8aX91tnPf-TEFQKKhBRWF_ge9_pJYw/exec';
 
 // بيانات المحل اللي بتظهر في الفاتورة المطبوعة - عدّليها هنا وهتتحدث في كل مكان تلقائيًا
 const SHOP_INFO = {
@@ -3039,7 +3039,7 @@ async function saveData(includeSales = true) {
 
 // حفظ فاتورة واحدة بس (أسرع من saveData العادية اللي بتبعت كل سجل المبيعات).
 // بتستخدم في تسجيل بيع جديد، تعديل فاتورة، أو حذف/إلغاء فاتورة واحدة.
-async function saveInvoiceRows(invoiceId, lines) {
+async function saveInvoiceRows(invoiceId, lines, silent) {
   setSyncStatus('syncing', 'جاري الحفظ...');
   try {
     const cleanItems = items.map(i => ({...i, img: i.img || null}));
@@ -3060,10 +3060,24 @@ async function saveInvoiceRows(invoiceId, lines) {
     return true;
   } catch (err) {
     console.error('saveInvoiceRows error:', err);
-    setSyncStatus('error', 'خطأ في الحفظ');
-    showToast('❌ تعذر الحفظ: ' + (err.message || 'خطأ غير معروف'));
+    if (!silent) {
+      setSyncStatus('error', 'خطأ في الحفظ');
+      showToast('❌ تعذر الحفظ: ' + (err.message || 'خطأ غير معروف'));
+    }
     return false;
   }
+}
+
+// بيحاول يحفظ فاتورة واحدة بس بالطريقة السريعة (updateInvoiceRows). لو فشلت لأي سبب
+// (مثلاً السيرفر عنده نسخة قديمة من Code.gs لسه)، بيرجع تلقائيًا للطريقة الكاملة
+// المضمونة (saveData) من غير ما نضيع أي عملية بيع أو نوري المستخدم رسالة خطأ لغير داعي
+async function saveInvoiceRowsWithFallback(invoiceId, lines) {
+
+    const fastResult = await saveInvoiceRows(invoiceId, lines, true);
+    if (fastResult) return true;
+
+    return await saveData();
+
 }
 
 async function loadUsers() {
@@ -3935,6 +3949,9 @@ function renderSellSelect() {
     if (!available.length) {
 
         s.innerHTML = '<option>لا يوجد أصناف متاحة</option>';
+        s.value = "";
+        if (s._syncSearchable) s._syncSearchable();
+        updateSellPrice();
         return;
 
     }
@@ -3952,6 +3969,12 @@ function renderSellSelect() {
         `;
 
     }).join('');
+
+    // بعد إعادة بناء القائمة، المتصفح بيختار أول عنصر فيها تلقائيًا وكأن
+    // المستخدم اختاره فعلاً - وده اللي كان بيسبب ظهور سعر وكمية صنف قديم/غلط
+    // من غير ما يبان اسمه في خانة البحث. لازم نصفّر الاختيار صراحة ونزامن الخانة الظاهرة
+    s.value = "";
+    if (s._syncSearchable) s._syncSearchable();
 
     updateSellPrice();
 
@@ -3992,7 +4015,21 @@ function initSearchableSelect(selectId, inputId, listId) {
     }
 
     input.addEventListener('focus', () => renderList(""));
-    input.addEventListener('input', () => renderList(input.value));
+    input.addEventListener('input', () => {
+
+        renderList(input.value);
+
+        // لو المستخدم بيكتب أو بيمسح النص من غير ما يختار عنصر من القائمة،
+        // لازم نصفّر الاختيار القديم بدل ما تفضل بيانات الصنف السابق (السعر/الكمية) ظاهرة بالغلط
+        const opt = select.options[select.selectedIndex];
+        const currentText = (opt && opt.value !== "") ? opt.textContent.trim() : "";
+
+        if (input.value.trim() !== currentText && select.value !== "") {
+            select.value = "";
+            select.dispatchEvent(new Event('change'));
+        }
+
+    });
 
     list.addEventListener('mousedown', (e) => {
         const item = e.target.closest('.searchable-select-item');
@@ -4022,30 +4059,48 @@ function updateSellPrice() {
 
     const idx = parseInt(document.getElementById('sell-item').value);
 
-    if (isNaN(idx) || !items[idx]) return;
+    const priceInput = document.getElementById('sell-price');
+    const priceLabel = document.getElementById("sell-price-label");
+    const qtyLabel = document.getElementById("sell-qty-label");
+    const qtyInput = document.getElementById("sell-qty");
+
+    if (isNaN(idx) || !items[idx]) {
+
+        // مفيش صنف متختار فعليًا (النص اتمسح أو لسه معملش اختيار) - نصفّر
+        // كل حاجة بدل ما نسيب بيانات صنف قديم ظاهرة وكأنها لسه سارية
+        if (priceInput) priceInput.value = "";
+        if (priceLabel) priceLabel.textContent = "السعر";
+        if (qtyLabel) qtyLabel.textContent = "الكمية";
+        if (qtyInput) qtyInput.step = "1";
+        return;
+
+    }
 
     const item = items[idx];
 
-    document.getElementById('sell-price').value = item.price;
+    priceInput.value = item.price;
 
     // تحديث تسمية السعر حسب الوحدة
-    const priceLabel = document.getElementById("sell-price-label");
     if (priceLabel) {
         priceLabel.textContent = item.unit === "متر"
             ? "سعر المتر"
             : "سعر القطعة";
     }
 
+    // نقرّب الكمية لأقرب رقمين عشريين عشان منوريش كسور تراكمية زي 10.9899999999998
+    // (ناتجة عن حسابات الفاصلة العائمة الطبيعية في الجافاسكريبت)
+    const displayQty = item.unit === "متر"
+        ? Number(item.qty).toFixed(2).replace(/\.00$/, "")
+        : Number(item.qty);
+
     // تحديث تسمية الكمية حسب الوحدة
-    const qtyLabel = document.getElementById("sell-qty-label");
     if (qtyLabel) {
         qtyLabel.textContent = item.unit === "متر"
-            ? `الكمية (متر) - المتاح ${item.qty}`
-            : `الكمية (قطعة) - المتاح ${item.qty}`;
+            ? `الكمية (متر) - المتاح ${displayQty}`
+            : `الكمية (قطعة) - المتاح ${displayQty}`;
     }
 
     // السماح بالكسور للمتر فقط
-    const qtyInput = document.getElementById("sell-qty");
     qtyInput.step = item.unit === "متر" ? "0.01" : "1";
 }
 
@@ -5447,7 +5502,7 @@ async function submitReturn(btn) {
         };
         sales.push(returnLine);
 
-        const saved = await saveData();
+        const saved = await saveInvoiceRowsWithFallback(invoiceId, [returnLine]);
 
         if (!saved) {
             items = itemsBackup;
@@ -5592,7 +5647,7 @@ async function applyInvoiceChangesAndSave(successMsg) {
     const invoiceId = editingInvoiceMeta ? editingInvoiceMeta.invoiceId : "";
     const finalLines = sales.filter(s => s.invoiceId === invoiceId);
 
-    const saved = await saveData();
+    const saved = await saveInvoiceRowsWithFallback(invoiceId, finalLines);
 
     if (!saved) {
         items = itemsBackup;
@@ -6868,7 +6923,7 @@ async function finalizeSale() {
         invoiceTotal += c.total;
     });
 
-    const saved = await saveData();
+    const saved = await saveInvoiceRowsWithFallback(invoiceId, newLines);
 
     if (!saved) {
         // فشل الحفظ: نرجع الكميات والفواتير زي ما كانت، ونسيب الفاتورة في السلة عشان يقدر يعيد المحاولة
