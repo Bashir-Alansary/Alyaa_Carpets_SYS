@@ -2900,7 +2900,7 @@ button.btn-loading{
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymzomhlwKoV1EuvRfc9Xnej1pPg8Xu4ZlpxsSx8aX91tnPf-TEFQKKhBRWF_ge9_pJYw/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrPuOfHy9p6uh0lP9V5fMLlryjR25cPiT-uBZREw4vi9d3ZORPhIiaOTEET3aqA9Szew/exec';
 
 // بيانات المحل اللي بتظهر في الفاتورة المطبوعة - عدّليها هنا وهتتحدث في كل مكان تلقائيًا
 const SHOP_INFO = {
@@ -2914,6 +2914,32 @@ let items = [];
 let sales = [];
 let types = [];
 let currentUser = null;
+
+// ================= ATTRIBUTION SHIM =================
+// دي مش حماية ومش auth - دي بس بتحط اسم المستخدم على كل طلب رايح للسيرفر
+// عشان شيت "السجل" يعرف مين عمل إيه. السيرفر بيصدّق اللي جايله زي ما هو،
+// وده مقصود في الإصدار ده (شوف نوتة الـ Auth في آخر الملف).
+// بنلف حوالين fetch بدل ما نعدل 14 مكان فيهم نداء على السيرفر.
+(function () {
+  const rawFetch = window.fetch.bind(window);
+
+  window.fetch = function (url, opts) {
+    const isOurs = typeof url === 'string' && url.indexOf(SCRIPT_URL) === 0;
+
+    if (isOurs && opts && typeof opts.body === 'string' && currentUser) {
+      try {
+        const body = JSON.parse(opts.body);
+        if (body.action !== 'login' && !body.actor) {
+          body.actor = currentUser.username;
+          opts = Object.assign({}, opts, { body: JSON.stringify(body) });
+        }
+      } catch (e) { /* مش JSON - سيبه زي ما هو */ }
+    }
+
+    return rawFetch(url, opts);
+  };
+})();
+
 let editingUserIndex = -1;
 let itemSearch = "";
 let itemStatusFilter = "all";
@@ -2930,6 +2956,14 @@ let reportFrom = "";
 let reportTo = "";
 let visibleSummaryItems = 8;
 
+
+// أي نص جاي من الداتا لازم يعدي على دي قبل ما يتحط جوه innerHTML،
+// عشان اسم صنف فيه < أو & ما يكسرش الصفحة (أو يحقن HTML)
+function esc(v) {
+  return String(v ?? "").replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[c]);
+}
 
 function setSyncStatus(status, text) {
   const dot = document.getElementById('sync-dot');
@@ -2997,9 +3031,13 @@ async function loadData() {
 
     setSyncStatus('ok', 'متزامن مع Google Sheets ✓');
 
+    // الأصناف اتحمّلت من جديد -> لازم نعيد ربط السلة بأماكنها الجديدة
+    remapCart();
+
     renderStats();
     renderItems();
     renderHistory();
+    renderCart();
     checkLowStock();
 
   } catch (err) {
@@ -3073,10 +3111,11 @@ async function saveInvoiceRows(invoiceId, lines, silent) {
 // المضمونة (saveData) من غير ما نضيع أي عملية بيع أو نوري المستخدم رسالة خطأ لغير داعي
 async function saveInvoiceRowsWithFallback(invoiceId, lines) {
 
-    const fastResult = await saveInvoiceRows(invoiceId, lines, true);
-    if (fastResult) return true;
-
-    return await saveData();
+    // مفيش fallback على saveData هنا عن قصد.
+    // فشل الـ fetch مش معناه إن السيرفر منفذش - ممكن يكون كتب الفاتورة والرد ضاع.
+    // لو عملنا saveData ساعتها هندوس على كل سجل المبيعات بنسخة البراوزر القديمة
+    // ونمسح فواتير الأجهزة التانية. الفشل يفضل فشل، والمستخدم يحدّث ويعيد.
+    return await saveInvoiceRows(invoiceId, lines);
 
 }
 
@@ -3228,7 +3267,7 @@ function downloadBackup(btn) {
     // ===== شيت الفواتير (كل صنف في سطر مستقل) =====
     const salesRows = sales.map(s => ({
       "رقم الفاتورة": s.invoiceId || "",
-      "التاريخ": s.date || "",
+      "التاريخ": formatReceiptDateTime(s.date),
       "الصنف": s.name || "",
       "النوع": s.type || "",
       "الكمية": s.qty,
@@ -3428,7 +3467,7 @@ function exportAllData(btn) {
     csv += "\r\nالفواتير\r\n";
     csv += ["رقم الفاتورة", "نوع العملية", "التاريخ", "الصنف", "الكمية", "سعر الوحدة", "الإجمالي", "البائع"].map(esc).join(",") + "\r\n";
     sales.forEach(s => {
-      csv += [s.invoiceId, s.isReturn ? "مرتجع" : "بيع", s.date, s.name, s.qty, s.unitPrice, s.total, s.seller].map(esc).join(",") + "\r\n";
+      csv += [s.invoiceId, s.isReturn ? "مرتجع" : "بيع", formatReceiptDateTime(s.date), s.name, s.qty, s.unitPrice, s.total, s.seller].map(esc).join(",") + "\r\n";
     });
 
     csv += "\r\nالمستخدمين\r\n";
@@ -3476,8 +3515,8 @@ async function loadAutoBackups() {
         row.innerHTML = `
           <div class="user-avatar"><i class="ti ti-history"></i></div>
           <div class="user-info">
-            <div class="user-name">${bk.name || bk.date || "نسخة احتياطية"}</div>
-            <div class="user-meta">${bk.date || ""}</div>
+            <div class="user-name">${esc(bk.name || bk.date || "نسخة احتياطية")}</div>
+            <div class="user-meta">${esc(bk.date || "")}</div>
           </div>
           <button class="edit-btn" title="استرجاع"><i class="ti ti-download"></i></button>
         `;
@@ -3815,7 +3854,7 @@ function renderItems() {
 
                 <span class="type-title">
 
-                    ${type}
+                    ${esc(type)}
 
                     <span class="type-count">
                         ${grouped[type].length}
@@ -3885,7 +3924,7 @@ function renderItems() {
 
                         <div class="item-name">
 
-                            ${item.name}
+                            ${esc(item.name)}
 
                         </div>
 
@@ -3964,7 +4003,7 @@ function renderSellSelect() {
 
         return `
             <option value="${items.indexOf(item)}">
-                ${item.name} (${qty} ${item.unit})
+                ${esc(item.name)} (${qty} ${esc(item.unit)})
             </option>
         `;
 
@@ -4489,8 +4528,8 @@ function renderHistory() {
         <div class="invoice-line">
 
             <div>
-                <div class="il-name">${it.name}</div>
-                <div class="il-sub" style="color:var(--danger)">-${Math.abs(it.qty)} ${it.unit} × ${Number(it.unitPrice ?? (it.total / it.qty)).toLocaleString()} ج</div>
+                <div class="il-name">${esc(it.name)}</div>
+                <div class="il-sub" style="color:var(--danger)">-${Math.abs(it.qty)} ${esc(it.unit)} × ${Number(it.unitPrice ?? (it.total / it.qty)).toLocaleString()} ج</div>
             </div>
 
             <div class="il-total" style="color:var(--danger)">
@@ -4564,7 +4603,7 @@ function renderHistory() {
 
                             <span>${formatReceiptDateTime(inv.date)}</span>
 
-                            ${inv.seller ? `<span>•</span><span>${inv.seller}</span>` : ""}
+                            ${inv.seller ? `<span>•</span><span>${esc(inv.seller)}</span>` : ""}
 
                         </div>
 
@@ -4632,7 +4671,7 @@ function renderHistory() {
                     ?
                     `<div class="invoice-note">
 
-                        📝 ${inv.note}
+                        📝 ${esc(inv.note)}
 
                     </div>`
                     :
@@ -4697,9 +4736,9 @@ function renderReceiptPaperHTML(inv) {
     const rowsHTML = inv.items.map((it, idx) => `
         <tr class="${inv.isReturn ? 'is-return' : ''}">
             <td class="inv-td-name">
-                <span class="inv-idx">${idx+1}.</span>${it.name}${Math.abs(it.qty) > 1 || it.unit === 'متر' ? ` <span class="inv-item-note">(${Math.abs(it.qty)} ${it.unit})</span>` : ''}
+                <span class="inv-idx">${idx+1}.</span>${esc(it.name)}${Math.abs(it.qty) > 1 || it.unit === 'متر' ? ` <span class="inv-item-note">(${Math.abs(it.qty)} ${esc(it.unit)})</span>` : ''}
             </td>
-            <td>${Math.abs(it.qty)} ${it.unit}</td>
+            <td>${Math.abs(it.qty)} ${esc(it.unit)}</td>
             <td>${Number(it.unitPrice).toLocaleString()} ج</td>
             <td class="inv-td-total">${Number(it.total).toLocaleString()} ج</td>
         </tr>
@@ -4783,7 +4822,7 @@ function renderReceiptPaperHTML(inv) {
                     </div>
                 </div>
 
-                ${inv.note ? `<div class="inv-note-box">📝 ${inv.note}</div>` : ""}
+                ${inv.note ? `<div class="inv-note-box">📝 ${esc(inv.note)}</div>` : ""}
 
                 ${returnFlagHTML}
 
@@ -4889,7 +4928,7 @@ function openEditInvoice(i) {
 
     document.getElementById("edit-invoice-meta").innerHTML =
         `<span>${formatReceiptDateTime(inv.date)}</span>` +
-        (inv.seller ? `<span>•</span><span>${inv.seller}</span>` : "");
+        (inv.seller ? `<span>•</span><span>${esc(inv.seller)}</span>` : "");
 
     const statusBadgeEl = document.getElementById("edit-invoice-status-badge");
     if (editingIsReturn) {
@@ -4965,7 +5004,7 @@ function renderEditInvoiceLines() {
             return `
                 <div class="edit-invoice-line">
                     <div class="eil-name">
-                        ${l.name} ${l.isNew ? `<span style="color:${editingIsReturn ? 'var(--danger)' : 'var(--success)'};font-weight:700;font-size:11px">(${editingIsReturn ? 'مرتجع جديد' : 'جديد'})</span>` : ''}
+                        ${esc(l.name)} ${l.isNew ? `<span style="color:${editingIsReturn ? 'var(--danger)' : 'var(--success)'};font-weight:700;font-size:11px">(${editingIsReturn ? 'مرتجع جديد' : 'جديد'})</span>` : ''}
                         <span class="eil-unit">${l.unit}</span>
                     </div>
                     <input type="number" min="0" step="${l.unit === 'متر' ? '0.1' : '1'}" value="${displayQty}"
@@ -5004,7 +5043,7 @@ function renderEilAddSelect() {
         const qty = item.unit === "متر"
             ? Number(item.qty).toFixed(2).replace(/\.00$/, "")
             : Number(item.qty);
-        return `<option value="${items.indexOf(item)}">${item.name} (متاح: ${qty} ${item.unit})</option>`;
+        return `<option value="${items.indexOf(item)}">${esc(item.name)} (متاح: ${qty} ${esc(item.unit)})</option>`;
     }).join("");
 
     if (sel._syncSearchable) sel._syncSearchable();
@@ -5293,7 +5332,7 @@ function renderReturnItemSelect(invoiceId) {
             const qty = item.unit === "متر"
                 ? Number(item.qty).toFixed(2).replace(/\.00$/, "")
                 : Number(item.qty);
-            return `<option value="${idx}">${item.name} (بالمخزون حاليًا: ${qty} ${item.unit})</option>`;
+            return `<option value="${idx}">${esc(item.name)} (بالمخزون حاليًا: ${qty} ${esc(item.unit)})</option>`;
         }).join("");
 
     }
@@ -5481,7 +5520,8 @@ async function submitReturn(btn) {
     try {
 
         const now = new Date();
-        const date = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+        // ISO عشان Google Sheets ما يفسرش التاريخ بالغلط (شوف parseSaleDate)
+        const date = now.toISOString();
 
         item.qty = Number(item.qty) + qty;
 
@@ -6272,7 +6312,7 @@ function exportReportExcel(btn){
 
         // ورقة 1: تفاصيل المبيعات
         const salesRows = reportSales.map(s => ({
-            "التاريخ": s.date,
+            "التاريخ": formatReceiptDateTime(s.date),
             "رقم الفاتورة": s.invoiceId,
             "نوع العملية": s.isReturn ? "مرتجع" : "بيع",
             "الصنف": s.name,
@@ -6390,7 +6430,7 @@ function previewReport(){
         <tr>
             <td>${inv.invoiceId}</td>
             <td>${formatReceiptDateTime(inv.date)}</td>
-            <td>${inv.seller}</td>
+            <td>${esc(inv.seller)}</td>
             <td>${inv.itemsCount}</td>
             <td>${Number(inv.total).toLocaleString()} ج</td>
         </tr>
@@ -6757,6 +6797,28 @@ async function addItem() {
 
 let sellCart = [];
 
+// بيدور على الصنف بالاسم+الوحدة (مش برقم مكانه في الـ array)
+function findItemIndex(name, unit) {
+  const n = String(name || "").trim();
+  const u = String(unit || "قطعة").trim();
+  return items.findIndex(i =>
+    String(i.name || "").trim() === n &&
+    String(i.unit || "قطعة").trim() === u
+  );
+}
+
+// بيعيد ربط سطور السلة بأماكنها الجديدة في items بعد أي loadData أو حذف صنف.
+// بيرجع false لو فيه صنف في السلة مبقاش موجود في المخزون.
+function remapCart() {
+  let ok = true;
+  sellCart.forEach(c => {
+    const idx = findItemIndex(c.name, c.unit);
+    c.itemIndex = idx;
+    if (idx === -1) ok = false;
+  });
+  return ok;
+}
+
 function addToCart() {
   const idx = parseInt(document.getElementById('sell-item').value);
 
@@ -6837,8 +6899,8 @@ function renderCart() {
   list.innerHTML = sellCart.map((c, i) => `
     <div class="cart-item">
       <div>
-        <div class="cart-item-name">${c.name}</div>
-        <div class="cart-item-meta">${c.qty} ${c.unit} × ${c.price.toLocaleString()} ج</div>
+        <div class="cart-item-name">${esc(c.name)}</div>
+        <div class="cart-item-meta">${c.qty} ${esc(c.unit)} × ${c.price.toLocaleString()} ج</div>
       </div>
       <div class="cart-item-right">
         <div class="cart-item-total">${c.total.toLocaleString()} ج</div>
@@ -6858,6 +6920,15 @@ async function finalizeSale() {
   }
 
   const btn = document.getElementById('btn-sell');
+
+  // إعادة ربط السلة بالمخزون الحالي بالاسم+الوحدة.
+  // من غير ده، لو صنف اتمسح أو اتغير ترتيب الأصناف، الـ itemIndex بيشاور
+  // على صنف تاني خالص والمخزون بيتخصم من الغلط بصمت.
+  if (!remapCart()) {
+      showToast('❌ فيه صنف في الفاتورة مبقاش موجود في المخزون، راجع الفاتورة');
+      renderCart();
+      return;
+  }
 
   // التأكد إن الكميات لسه متاحة قبل التنفيذ النهائي (حماية من تغييرات لحظية)
   for (const c of sellCart) {
@@ -6892,7 +6963,8 @@ async function finalizeSale() {
   try {
 
     const now = new Date();
-    const date = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+    // ISO عشان Google Sheets ما يفسرش "7/2/2026" على إنها 7 فبراير بدل 2 يوليو
+    const date = now.toISOString();
     const invoiceId = `INV-${now.getTime()}`;
     const invoiceNote = document.getElementById('invoice-note').value.trim();
 
@@ -6926,9 +6998,22 @@ async function finalizeSale() {
     const saved = await saveInvoiceRowsWithFallback(invoiceId, newLines);
 
     if (!saved) {
-        // فشل الحفظ: نرجع الكميات والفواتير زي ما كانت، ونسيب الفاتورة في السلة عشان يقدر يعيد المحاولة
+        // فشل الحفظ: نرجع الكميات والفواتير زي ما كانت في الميموري...
         qtyBackup.forEach(b => { items[b.itemIndex].qty = b.qty; });
         sales.length = salesLengthBefore;
+        // ...وبعدين نسحب الحقيقة من السيرفر، لإن الفشل ممكن يكون في الرد بس
+        // والفاتورة تكون اتكتبت فعلاً. من غير ده المستخدم ممكن يعيدها ويتسجل مرتين.
+        showToast('⚠️ تعذر الحفظ - جاري التأكد من البيانات...');
+        await loadData();
+        const exists = sales.some(x => x.invoiceId === invoiceId);
+        if (exists) {
+            showToast('✅ الفاتورة كانت اتسجلت فعلاً، تم تحديث البيانات');
+            sellCart = [];
+            renderCart();
+            document.getElementById('invoice-note').value = '';
+        } else {
+            showToast('❌ الفاتورة اتسجلتش، جرب تاني');
+        }
         return;
     }
 
@@ -6974,6 +7059,8 @@ async function deleteItem(i, btn) {
         }
 
         await loadData();
+
+        // loadData بيعيد ربط السلة تلقائيًا (remapCart) بعد ما الأرقام اتغيرت بالحذف
 
         // هل لسه فيه منتجات من نفس النوع؟
         const hasItems = items.some(p => p.type === item.type);
@@ -7471,7 +7558,7 @@ function checkAuth() {
 
     const saved = localStorage.getItem("currentUser");
 
-    if(saved){
+    if (saved) {
 
         currentUser = JSON.parse(saved);
 
@@ -7481,7 +7568,7 @@ function checkAuth() {
 
         loadData();
 
-    }else{
+    } else {
 
         showLoginScreen();
 
@@ -7521,7 +7608,7 @@ async function login(btn){
 
         const data = await res.json();
 
-        if (data.status == "ok") {
+        if (data.status === "ok" && data.user) {
 
             currentUser = data.user;
             localStorage.setItem("currentUser", JSON.stringify(currentUser));
@@ -7531,7 +7618,7 @@ async function login(btn){
 
         } else {
 
-            setLoginError("اسم المستخدم أو كلمة المرور غير صحيحة");
+            setLoginError(data.message || "اسم المستخدم أو كلمة المرور غير صحيحة");
 
         }
 
@@ -7934,7 +8021,7 @@ function openOutStockModal(){
 
                     <div class="stock-alert-name">
 
-                        ${i.name}
+                        ${esc(i.name)}
 
                     </div>
 
@@ -7984,7 +8071,7 @@ function openLowStockModal(){
 
                     <div class="stock-alert-name">
 
-                        ${i.name}
+                        ${esc(i.name)}
 
                     </div>
 
@@ -8275,7 +8362,7 @@ function exportSales() {
 
     const rows = filteredSales.map(s => ({
         "رقم الفاتورة": s.invoiceId || "",
-        "التاريخ": s.date || "",
+        "التاريخ": formatReceiptDateTime(s.date),
         "البائع": s.seller || "",
         "الصنف": s.name || "",
         "النوع": s.type || "",
@@ -8300,6 +8387,16 @@ function exportSales() {
     showToast("✅ تم تصدير الفواتير");
 
 }
+
+// لما المستخدم يرجع للتاب بعد ما ساب الصفحة مفتوحة، نجيب أحدث بيانات.
+// من غير ده الصفحة المفتوحة من الصبح بتفضل شغالة على داتا الصبح.
+let lastAutoRefresh = Date.now();
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden || !currentUser) return;
+  if (Date.now() - lastAutoRefresh < 30000) return; // مانتلعبش لو بيبدل تابات بسرعة
+  lastAutoRefresh = Date.now();
+  loadData();
+});
 
 checkAuth();
 
