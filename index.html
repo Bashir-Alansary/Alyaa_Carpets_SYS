@@ -2809,8 +2809,8 @@ button.btn-loading{
 
     <div class="subnav" role="tablist">
       <button class="subnav-item active" id="sub-users"   onclick="switchAdmin('users')"><i class="ti ti-users"></i>الموظفين</button>
-      <button class="subnav-item"        id="sub-backups" onclick="switchAdmin('backups')"><i class="ti ti-database"></i>النسخ</button>
       <button class="subnav-item"        id="sub-log"     onclick="switchAdmin('log')"><i class="ti ti-list-check"></i>السجل</button>
+      <button class="subnav-item"        id="sub-backups" onclick="switchAdmin('backups')"><i class="ti ti-database"></i>النسخ</button>
       <button class="subnav-item"        id="sub-tools"   onclick="switchAdmin('tools')"><i class="ti ti-tool"></i>أدوات</button>
     </div>
 
@@ -2820,6 +2820,16 @@ button.btn-loading{
         <i class="ti ti-user-plus"></i> إضافة موظف
       </button>
       <div id="users-list"></div>
+    </div>
+
+    <!-- ============ السجل ============ -->
+    <div id="admin-log" style="display:none">
+      <div class="log-filters" id="log-filters"></div>
+      <div id="log-list"></div>
+      <div id="log-more" style="display:none;margin-top:10px"></div>
+      <button class="btn-secondary" id="btn-load-log" onclick="loadLog(this)" style="margin-top:10px">
+        <i class="ti ti-refresh"></i> تحديث السجل
+      </button>
     </div>
 
     <!-- ============ النسخ الاحتياطي ============ -->
@@ -2868,16 +2878,6 @@ button.btn-loading{
           <i class="ti ti-folder-open"></i> اختيار ملف للاستيراد
         </button>
       </div>
-    </div>
-
-    <!-- ============ السجل ============ -->
-    <div id="admin-log" style="display:none">
-      <div class="log-filters" id="log-filters"></div>
-      <div id="log-list"></div>
-      <div id="log-more" style="display:none;margin-top:10px"></div>
-      <button class="btn-secondary" id="btn-load-log" onclick="loadLog(this)" style="margin-top:10px">
-        <i class="ti ti-refresh"></i> تحديث السجل
-      </button>
     </div>
 
     <!-- ============ أدوات ============ -->
@@ -3059,7 +3059,7 @@ button.btn-loading{
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyjfTMNpp5r7153IwhqW-I0ysWY96XaVqrBmRrL4qUk9gm4QmeyZ2kUm2TNXXRu54Z9FQ/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNYT8idN7ZYold_DOz3uJErLBOYfNZAyxdq77onG7v5lRvQJfIdtLyWdmYiZQO2Cwqew/exec';
 
 // بيانات المحل اللي بتظهر في الفاتورة المطبوعة - عدّليها هنا وهتتحدث في كل مكان تلقائيًا
 const SHOP_INFO = {
@@ -3116,6 +3116,89 @@ let reportFrom = "";
 let reportTo = "";
 let visibleSummaryItems = 8;
 
+
+// ===== تجهيز ملفات Excel =====
+// الملفات كانت بتطلع صفوف خام: الورقة بتفتح من الشمال لليمين (الأعمدة العربية
+// بالمقلوب)، والفلوس أرقام عادية من غير فواصل، ومفيش فلترة ولا تجميد للعناوين.
+// الدوال دي بتعمل ده كله بشكل موحّد على كل تصدير.
+
+const XLS_FMT = {
+  money: '#,##0.00 "ج"',   // فلوس
+  int:   '#,##0',          // كميات صحيحة
+  dec:   '#,##0.00'        // كميات عشرية (أمتار)
+};
+
+// نفس ألوان البرنامج عشان الملف المصدَّر يبان إنه طالع من نفس المكان
+const XLS_STYLE = {
+  header: {
+    font:      { bold: true, sz: 11, color: { rgb: "FFFFFF" }, name: "Calibri" },
+    fill:      { patternType: "solid", fgColor: { rgb: "0D1F35" } },
+    alignment: { horizontal: "center", vertical: "center", wrapText: true },
+    border: {
+      bottom: { style: "medium", color: { rgb: "E8442A" } }
+    }
+  },
+  cell: {
+    alignment: { horizontal: "right", vertical: "center" },
+    border: {
+      top:    { style: "hair", color: { rgb: "D8E2EC" } },
+      bottom: { style: "hair", color: { rgb: "D8E2EC" } },
+      left:   { style: "hair", color: { rgb: "D8E2EC" } },
+      right:  { style: "hair", color: { rgb: "D8E2EC" } }
+    }
+  },
+  stripe: { fill: { patternType: "solid", fgColor: { rgb: "F4F6F9" } } }
+};
+
+/**
+ * بتجهّز ورقة Excel جاهزة للقراية:
+ *  - عرض أعمدة مظبوط (من غيره كل حاجة بتطلع #####)
+ *  - صف عناوين ملوّن وعريض
+ *  - فلترة جاهزة على العناوين
+ *  - تنسيق أرقام (الفلوس بجنيه، الأمتار بعشري)
+ *  - خطوط فاصلة وتظليل سطر ورا سطر
+ * cols: [{ w: 20, fmt: XLS_FMT.money }, ...] بترتيب الأعمدة
+ */
+function prepSheet(ws, rowsCount, cols) {
+  ws["!cols"] = cols.map(c => ({ wch: c.w }));
+  ws["!rows"] = [{ hpt: 24 }];   // صف العناوين أعلى شوية
+
+  const lastCol = XLSX.utils.encode_col(cols.length - 1);
+  const lastRow = rowsCount + 1;   // +1 لصف العناوين
+
+  // فلترة على صف العناوين: المحاسب يقدر يرتب ويفلتر من غير ما يعمل حاجة
+  ws["!autofilter"] = { ref: `A1:${lastCol}1` };
+
+  cols.forEach((c, ci) => {
+    const col = XLSX.utils.encode_col(ci);
+
+    // العنوان
+    const head = ws[`${col}1`];
+    if (head) head.s = XLS_STYLE.header;
+
+    // الصفوف
+    for (let r = 2; r <= lastRow; r++) {
+      const cell = ws[`${col}${r}`];
+      if (!cell) continue;
+
+      if (c.fmt && cell.t === "n") cell.z = c.fmt;
+
+      cell.s = (r % 2 === 0)
+        ? Object.assign({}, XLS_STYLE.cell, XLS_STYLE.stripe)
+        : XLS_STYLE.cell;
+    }
+  });
+
+  return ws;
+}
+
+// الكتاب كله من اليمين للشمال - من غيرها العمود الأول بيبقى في الشمال
+// والقراية بتبقى عكس اتجاه الجدول
+function newRtlBook() {
+  const wb = XLSX.utils.book_new();
+  wb.Workbook = { Views: [{ RTL: true }] };
+  return wb;
+}
 
 // أيقونات Tabler دي *خط* بيتحمّل من CDN. أي حاجة بتتحول لصورة (المشاركة عن
 // طريق dom-to-image) أو بتتفتح في نافذة طباعة جديدة، الخط مش بيتضمّن معاها
@@ -3453,7 +3536,7 @@ function downloadBackup(btn) {
 
   try {
 
-    const wb = XLSX.utils.book_new();
+    const wb = newRtlBook();
 
     // ===== شيت المخزون =====
     const itemsRows = items.map(it => ({
@@ -3464,8 +3547,12 @@ function downloadBackup(btn) {
       "السعر": it.price,
       "الحد الأدنى": it.min
     }));
-    const itemsSheet = XLSX.utils.json_to_sheet(itemsRows);
-    itemsSheet["!cols"] = [{wch:14},{wch:28},{wch:10},{wch:14},{wch:10},{wch:12}];
+    const itemsSheet = prepSheet(XLSX.utils.json_to_sheet(itemsRows), itemsRows.length, [
+        { w: 14 }, { w: 28 }, { w: 10 },
+        { w: 14, fmt: XLS_FMT.dec },
+        { w: 14, fmt: XLS_FMT.money },
+        { w: 14, fmt: XLS_FMT.dec }
+    ]);
     XLSX.utils.book_append_sheet(wb, itemsSheet, "المخزون");
 
     // ===== شيت الفواتير (كل صنف في سطر مستقل) =====
@@ -3481,8 +3568,13 @@ function downloadBackup(btn) {
       "البائع": s.seller || "",
       "ملاحظات": s.note || ""
     }));
-    const salesSheet = XLSX.utils.json_to_sheet(salesRows);
-    salesSheet["!cols"] = [{wch:20},{wch:18},{wch:26},{wch:12},{wch:10},{wch:10},{wch:12},{wch:12},{wch:14},{wch:30}];
+    const salesSheet = prepSheet(XLSX.utils.json_to_sheet(salesRows), salesRows.length, [
+        { w: 22 }, { w: 18 }, { w: 26 }, { w: 12 }, { w: 10 },
+        { w: 10, fmt: XLS_FMT.dec },
+        { w: 14, fmt: XLS_FMT.money },
+        { w: 14, fmt: XLS_FMT.money },
+        { w: 14 }, { w: 30 }
+    ]);
     XLSX.utils.book_append_sheet(wb, salesSheet, "الفواتير");
 
     // ===== شيت المستخدمين (من غير كلمات السر) =====
@@ -3490,14 +3582,12 @@ function downloadBackup(btn) {
       "اسم المستخدم": u.username || "",
       "الصلاحية": u.role === "admin" ? "مدير" : "موظف"
     }));
-    const usersSheet = XLSX.utils.json_to_sheet(usersRows);
-    usersSheet["!cols"] = [{wch:20},{wch:14}];
+    const usersSheet = prepSheet(XLSX.utils.json_to_sheet(usersRows), usersRows.length, [{ w: 20 }, { w: 14 }]);
     XLSX.utils.book_append_sheet(wb, usersSheet, "المستخدمين");
 
     // ===== شيت الأنواع =====
     const typesRows = (types || []).map(t => ({ "النوع": typeof t === "string" ? t : (t.name || "") }));
-    const typesSheet = XLSX.utils.json_to_sheet(typesRows);
-    typesSheet["!cols"] = [{wch:20}];
+    const typesSheet = prepSheet(XLSX.utils.json_to_sheet(typesRows), typesRows.length, [{ w: 20 }]);
     XLSX.utils.book_append_sheet(wb, typesSheet, "الأنواع");
 
     const stamp = new Date().toISOString().slice(0, 10);
@@ -3851,7 +3941,7 @@ function switchAdmin(section) {
   if (!isAdmin()) return;
   adminSection = section;
 
-  ['users', 'backups', 'log', 'tools'].forEach(x => {
+  ['users', 'log', 'backups', 'tools'].forEach(x => {
     const panel = document.getElementById('admin-' + x);
     const btn = document.getElementById('sub-' + x);
     if (panel) panel.style.display = x === section ? 'block' : 'none';
@@ -3898,6 +3988,15 @@ function onEditActiveChange() {
 // ===== السجل =====
 let logEntries = [];
 let logFilter = 'all';
+
+// أرقام الفواتير (INV-123) نص لاتيني جوه سطر عربي. الرقم اللي بعدها بياخد
+// اتجاه آخر حرف قوي قبله - وده حرف لاتيني - فبيتلزق بيها وبيتقلب معاها:
+// "RET-177 • 1 صنف" بتترسم "1 • RET-177 صنف".
+// <bdi> بتعزل الرقم كوحدة مستقلة فالباقي بيفضل عربي طبيعي.
+// بتتنادى بعد esc() - الوسم بيتحط على نص متهرّب خلاص.
+function isolateIds(escaped) {
+  return String(escaped).replace(/((?:INV|RET|QUO)-\d+)/g, '<bdi>$1</bdi>');
+}
 
 // السجل بيتبنى من مصدرين:
 //  1. شيت "السجل" - العمليات اللي مبتسيبش أثر (حذف، إلغاء، تعديل، استرجاع نسخة)
@@ -4081,7 +4180,7 @@ function renderLog() {
             <span class="log-user">${esc(e.user || '-')}</span>
             <span class="log-time">${esc(time)}</span>
           </div>
-          ${e.details ? `<div class="log-details">${esc(e.details)}</div>` : ''}
+          ${e.details ? `<div class="log-details">${isolateIds(esc(e.details))}</div>` : ''}
         </div>
       </div>`;
   });
@@ -7053,11 +7152,18 @@ function exportReportExcel(btn){
             "البائع": s.seller
         }));
 
-        const salesSheet = XLSX.utils.json_to_sheet(salesRows);
-        salesSheet["!cols"] = [
-            { wch: 12 }, { wch: 14 }, { wch: 10 }, { wch: 22 }, { wch: 14 },
-            { wch: 8 }, { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 14 }
-        ];
+        const salesSheet = prepSheet(XLSX.utils.json_to_sheet(salesRows), salesRows.length, [
+            { w: 18 },                    // التاريخ
+            { w: 18 },                    // رقم الفاتورة
+            { w: 11 },                    // نوع العملية
+            { w: 24 },                    // الصنف
+            { w: 14 },                    // النوع
+            { w: 10, fmt: XLS_FMT.dec },  // الكمية
+            { w: 9 },                     // الوحدة
+            { w: 14, fmt: XLS_FMT.money },// سعر الوحدة
+            { w: 14, fmt: XLS_FMT.money },// الإجمالي
+            { w: 14 }                     // البائع
+        ]);
 
         // ورقة 2: ملخص الأصناف (نفس ملخص الشاشة)
         const summary = {};
@@ -7081,12 +7187,15 @@ function exportReportExcel(btn){
                 "الإيراد": d.revenue
             }));
 
-        const summarySheet = XLSX.utils.json_to_sheet(summaryRows);
-        summarySheet["!cols"] = [
-            { wch: 22 }, { wch: 10 }, { wch: 10 }, { wch: 16 }, { wch: 12 }
-        ];
+        const summarySheet = prepSheet(XLSX.utils.json_to_sheet(summaryRows), summaryRows.length, [
+            { w: 24 },                     // الصنف
+            { w: 11, fmt: XLS_FMT.dec },   // المباع
+            { w: 9 },                      // الوحدة
+            { w: 18, fmt: XLS_FMT.dec },   // المتبقي
+            { w: 15, fmt: XLS_FMT.money }  // الإيراد
+        ]);
 
-        const wb = XLSX.utils.book_new();
+        const wb = newRtlBook();
         XLSX.utils.book_append_sheet(wb, salesSheet, "تفاصيل المبيعات");
         XLSX.utils.book_append_sheet(wb, summarySheet, "ملخص الأصناف");
 
@@ -7662,7 +7771,7 @@ function renderCart() {
     </div>
   `).join('');
 
-  const total = sellCart.reduce((s, c) => s + c.total, 0);
+  const total = round2(sellCart.reduce((s, c) => s + c.total, 0));
   document.getElementById('cart-total-val').textContent = total.toLocaleString() + ' جنيه';
 }
 
@@ -9154,13 +9263,20 @@ function exportSales() {
         "ملاحظات": s.note || ""
     }));
 
-    const sheet = XLSX.utils.json_to_sheet(rows);
-    sheet["!cols"] = [
-        {wch:20}, {wch:18}, {wch:14}, {wch:26}, {wch:12},
-        {wch:10}, {wch:10}, {wch:12}, {wch:12}, {wch:30}
-    ];
+    const sheet = prepSheet(XLSX.utils.json_to_sheet(rows), rows.length, [
+        { w: 22 },                       // رقم الفاتورة
+        { w: 18 },                       // التاريخ
+        { w: 14 },                       // البائع
+        { w: 26 },                       // الصنف
+        { w: 12 },                       // النوع
+        { w: 10 },                       // الوحدة
+        { w: 10, fmt: XLS_FMT.dec },     // الكمية
+        { w: 14, fmt: XLS_FMT.money },   // سعر الوحدة
+        { w: 14, fmt: XLS_FMT.money },   // الإجمالي
+        { w: 30 }                        // ملاحظات
+    ]);
 
-    const wb = XLSX.utils.book_new();
+    const wb = newRtlBook();
     XLSX.utils.book_append_sheet(wb, sheet, "الفواتير");
 
     XLSX.writeFile(wb, "فواتير_" + new Date().toISOString().slice(0,10) + ".xlsx");
@@ -9365,7 +9481,10 @@ if ('serviceWorker' in navigator) {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.7.1/dom-to-image-more.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- xlsx-js-style = نفس SheetJS 0.18.5 + دعم تنسيق الخلايا (ألوان/خط عريض/حدود).
+     النسخة المجانية الأصلية بتكتب الأرقام والنص بس من غير أي تنسيق، فالملف
+     المصدَّر كان بيطلع خام. نفس الـ API بالظبط فالقراية (استيراد النسخ) ما اتغيرتش. -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 
 </body>
 </html>
