@@ -72,6 +72,82 @@
   .stat-val { font-size: 22px; font-weight: 900; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1.25; }
   .stat-val-sub { font-size: 13px; color: var(--text-muted); font-weight: 700; margin-top: 2px; }
   .stat-unit { font-size: 12px; color: var(--text-secondary); font-weight: 400; }
+  /* ===== الإدارة: تنقل فرعي ===== */
+  /* ===== عرض السعر: لازم يبان إنه مش فاتورة من مسافة ===== */
+  .inv-header.is-quote::after { background: linear-gradient(90deg, var(--text-secondary) 0%, var(--text-muted) 100%); }
+  .inv-badge.is-quote { color: var(--text-secondary); }
+  .inv-doc.is-quote { position: relative; }
+  /* علامة مائية: بتمنع حد يستخدم الورقة كإثبات شراء */
+  .inv-doc.is-quote::before {
+    content: "غير مسجّل"; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-24deg);
+    font-size: 54px; font-weight: 900; color: rgba(13,31,53,0.055);
+    white-space: nowrap; pointer-events: none; z-index: 2; letter-spacing: 2px;
+  }
+  .quote-notice {
+    background: var(--warning-bg); border: 1px dashed #e3c48a; border-radius: 10px;
+    padding: 10px 12px; margin-top: 12px; font-size: 11.5px; font-weight: 600;
+    color: var(--warning); line-height: 1.7;
+  }
+  .quote-valid { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+  .btn-row-sell { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; margin-top: 12px; }
+  .btn-row-sell button { margin-top: 0 !important; }
+
+  .field-hint { font-size: 11px; color: var(--text-muted); line-height: 1.6; margin-top: 6px; }
+
+  .subnav { display: flex; gap: 4px; background: var(--surface-2); padding: 4px; border-radius: 14px; margin-bottom: 14px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+  .subnav-item { flex: 1; padding: 9px 2px; border: none; border-radius: 10px; background: transparent; font-family: inherit; font-size: 11.5px; font-weight: 700; color: var(--text-muted); cursor: pointer; text-align: center; transition: all 0.18s; }
+  .subnav-item i { display: block; font-size: 16px; margin-bottom: 3px; }
+  .subnav-item.active { background: var(--accent-bg); color: var(--accent); }
+  .subnav-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  /* ===== منطقة الخطر: العمليات اللي مالهاش رجعة ===== */
+  .danger-zone { border: 1px solid #f0cfcb; background: linear-gradient(180deg, #fffbfa 0%, #fff5f3 100%); border-radius: 16px; padding: 14px; margin-top: 4px; }
+  .danger-zone-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .danger-zone-head i { color: var(--danger); font-size: 16px; }
+  .danger-zone-title { font-size: 13px; font-weight: 800; color: var(--danger); }
+  .danger-zone-note { font-size: 11.5px; color: #9b5a52; line-height: 1.6; margin-bottom: 12px; }
+  .danger-zone .admin-tool-desc { color: #9b5a52; }
+
+  /* ===== السجل ===== */
+  /* بتلف على سطر تاني بدل ما تخرج بره الشاشة أو تختفي في scroll مخفي */
+  .log-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .log-chip { flex: 0 0 auto; padding: 6px 13px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-2); font-family: inherit; font-size: 12px; font-weight: 700; color: var(--text-secondary); cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+  .log-chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .log-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .log-row { display: flex; gap: 10px; align-items: flex-start; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; margin-bottom: 7px; box-shadow: var(--shadow); }
+  .log-icon { width: 30px; height: 30px; min-width: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .log-body { flex: 1; min-width: 0; }
+  /* السطر الأول: العملية + المستخدم على اليمين، الوقت مدفوع لآخر الشمال */
+  .log-line1 { display: flex; align-items: baseline; gap: 6px; }
+  .log-action { font-size: 13px; font-weight: 800; color: var(--text-primary); white-space: nowrap; }
+  .log-user { font-size: 11.5px; font-weight: 700; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .log-time { margin-inline-start: auto; flex: 0 0 auto; padding-inline-start: 8px; font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .log-details { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; word-break: break-word; line-height: 1.5; }
+
+  /* ===== سويتش التفعيل ===== */
+  .switch-field { display: flex; align-items: center; gap: 12px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; cursor: pointer; user-select: none; }
+  .switch-text { flex: 1; min-width: 0; }
+  .switch-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .switch-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.5; }
+  .switch { position: relative; flex: 0 0 auto; width: 46px; height: 26px; }
+  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .switch-track { position: absolute; inset: 0; background: #cbd5e1; border-radius: 999px; transition: background 0.2s; pointer-events: none; }
+  .switch-track::after { content: ""; position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.2s; }
+  .switch input:checked + .switch-track { background: var(--success); }
+  .switch input:checked + .switch-track::after { transform: translateX(-20px); }
+  .switch input:focus-visible + .switch-track { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .log-day { font-size: 11px; font-weight: 800; color: var(--text-muted); margin: 14px 0 7px; padding-right: 2px; }
+  .log-day:first-child { margin-top: 0; }
+
+  .backup-row { display: flex; align-items: center; gap: 10px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; margin-bottom: 7px; }
+  .backup-row-info { flex: 1; min-width: 0; }
+  .backup-row-date { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .backup-row-tag { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .backup-restore-btn { flex: 0 0 auto; padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-1); font-family: inherit; font-size: 11.5px; font-weight: 700; color: var(--text-secondary); cursor: pointer; }
+  .backup-restore-btn:active { background: var(--surface-0); }
+
   .tabs { display: flex; gap: 6px; margin-bottom: 14px; background: var(--surface-2); padding: 5px; border-radius: 16px; box-shadow: var(--shadow); }
   .tab { flex: 1; padding: 8px 4px; border: none; border-radius: 12px; background: transparent; font-size: 11px; color: var(--text-muted); cursor: pointer; text-align: center; user-select: none; font-weight: 600; transition: all 0.2s; }
   .tab i { display: block; font-size: 17px; margin-bottom: 2px; }
@@ -1520,6 +1596,25 @@
 
 }
 
+/* نفس نمط كروت الرئيسية: الوحدة صغيرة جنب الرقم، وأي تفصيل تحت في سطر منفصل.
+   "4 قطعة + 2 متر" في سطر واحد بخط 20px كان بيتكسر أول ما الأرقام تكبر. */
+.report-card-unit{
+    font-size:12px;
+    color:var(--text-secondary);
+    font-weight:400;
+}
+
+.report-card-sub{
+    font-size:12.5px;
+    color:var(--text-muted);
+    font-weight:700;
+    margin-top:3px;
+    font-variant-numeric:tabular-nums;
+}
+
+.report-card-sub.is-return{ color:var(--danger); }
+.report-card-sub.is-net{ color:var(--text-secondary); }
+
 .report-grid{
 
     display:grid;
@@ -2212,7 +2307,8 @@ button.btn-loading{
       </div>
       <div class="field">
         <label id="min-label">الحد الأدنى (عدد القطع)</label>
-        <input type="number" id="add-min" placeholder="2" min="1" inputmode="numeric">
+        <input type="number" id="add-min" placeholder="2" min="0" inputmode="decimal">
+        <div class="field-hint">لما الكمية توصل للرقم ده، الصنف هيتعلّم "منخفض" وينبهك تجيب كمية جديدة.</div>
       </div>
       <button class="btn-primary" id="btn-add" onclick="addItem()"><i class="ti ti-plus"></i> إضافة للمخزون</button>
     </div>
@@ -2231,11 +2327,11 @@ button.btn-loading{
       <div class="row2">
         <div class="field">
           <label id="sell-qty-label">الكمية</label>
-          <input type="number" id="sell-qty" placeholder="1" min="1" inputmode="numeric">
+          <input type="number" id="sell-qty" placeholder="1" min="0" step="0.01" inputmode="decimal">
         </div>
         <div class="field">
           <label id="sell-price-label">سعر البيع (جنيه)</label>
-          <input type="number" id="sell-price" placeholder="0" min="0" inputmode="numeric">
+          <input type="number" id="sell-price" placeholder="0" min="0" step="0.01" inputmode="decimal">
         </div>
       </div>
       <button class="btn-primary" id="btn-add-cart" onclick="addToCart()" style="background:linear-gradient(135deg,#1f7a4d,#2fa86a)"><i class="ti ti-playlist-add"></i> أضف للفاتورة</button>
@@ -2253,7 +2349,7 @@ button.btn-loading{
       <div class="field" style="margin-top:15px;">
         <details style="border:1.5px solid var(--border); border-radius:10px; padding:11px 14px; background:var(--surface-0);">
             <summary style="cursor:pointer;font-weight:600; color:var(--text-secondary);">
-                📝 ملاحظات (اختياري)
+                <i class="ti ti-notes"></i> ملاحظات (اختياري)
             </summary>
 
             <textarea
@@ -2263,7 +2359,10 @@ button.btn-loading{
                 style="margin-top:10px; padding:11px 14px;"></textarea>
         </details>
     </div>
-      <button class="btn-primary" id="btn-sell" onclick="finalizeSale()"><i class="ti ti-shopping-cart"></i> تسجيل البيع وإغلاق الفاتورة</button>
+      <div class="btn-row-sell">
+        <button class="btn-secondary" id="btn-quote" onclick="showQuote()"><i class="ti ti-file-text"></i> عرض سعر</button>
+        <button class="btn-primary" id="btn-sell" onclick="finalizeSale()"><i class="ti ti-shopping-cart"></i> تسجيل البيع</button>
+      </div>
     </div>
   </div>
 
@@ -2504,10 +2603,9 @@ button.btn-loading{
                 إجمالي المبيعات
             </div>
 
-            <div class="report-card-value"
-                id="report-total-sales">
-                0 جنيه
-            </div>
+            <div class="report-card-value" id="report-total-sales">0 جنيه</div>
+            <div class="report-card-sub is-return" id="report-returns" style="display:none"></div>
+            <div class="report-card-sub is-net" id="report-net" style="display:none"></div>
 
         </div>
 
@@ -2534,10 +2632,8 @@ button.btn-loading{
                 الكمية المباعة
             </div>
 
-            <div class="report-card-value"
-                id="report-total-qty">
-                0
-            </div>
+            <div class="report-card-value" id="report-total-qty">0</div>
+            <div class="report-card-sub" id="report-total-qty-sub" style="display:none"></div>
 
         </div>
 
@@ -2711,68 +2807,105 @@ button.btn-loading{
   <!-- ADMIN TAB -->
   <div id="tab-admin" style="display:none">
 
-    <!-- إدارة المستخدمين -->
-    <div class="section-title">إدارة المستخدمين</div>
-    <div class="form-card">
-      <div class="field"><label>الاسم</label><input type="text" id="new-name" placeholder="اسم الموظف"></div>
-      <div class="row2">
-        <div class="field"><label>يوزر</label><input type="text" id="new-user" placeholder="username" dir="ltr"></div>
-        <div class="field"><label>باسورد</label><input type="password" id="new-pass" placeholder="••••••" dir="ltr"></div>
-      </div>
-      <div class="field">
-    <label>الصلاحية</label><select id="new-role"><option value="cashier">Cashier</option><option value="admin">Admin</option></select></div>
-      <button class="btn-primary" onclick="addUser(this)"><i class="ti ti-user-plus"></i> إضافة موظف</button>
+    <div class="subnav" role="tablist">
+      <button class="subnav-item active" id="sub-users"   onclick="switchAdmin('users')"><i class="ti ti-users"></i>الموظفين</button>
+      <button class="subnav-item"        id="sub-backups" onclick="switchAdmin('backups')"><i class="ti ti-database"></i>النسخ</button>
+      <button class="subnav-item"        id="sub-log"     onclick="switchAdmin('log')"><i class="ti ti-list-check"></i>السجل</button>
+      <button class="subnav-item"        id="sub-tools"   onclick="switchAdmin('tools')"><i class="ti ti-tool"></i>أدوات</button>
     </div>
-    <div class="section-title">👥 الموظفون الحاليون</div>
-    <div id="users-list"></div>
 
-    <!-- النسخ الاحتياطي -->
-    <div class="section-title">النسخ الاحتياطي</div>
-    <div class="form-card">
-      <div class="admin-tool-head">
-        <div class="admin-tool-icon c-navy"><i class="ti ti-download"></i></div>
-        <div class="admin-tool-text">
-          <div class="admin-tool-title">نسخة احتياطية يدوية</div>
-          <div class="admin-tool-desc">تنزيل نسخة كاملة من بيانات النظام (المنتجات، الأنواع، الفواتير، المستخدمين) في ملف Excel واضح وسهل القراءة</div>
-        </div>
-      </div>
-      <button class="btn-primary" id="btn-download-backup" onclick="downloadBackup(this)"><i class="ti ti-download"></i> تنزيل نسخة احتياطية</button>
+    <!-- ============ الموظفين ============ -->
+    <div id="admin-users">
+      <button class="btn-primary" style="margin-top:0;margin-bottom:14px" onclick="openAddUser()">
+        <i class="ti ti-user-plus"></i> إضافة موظف
+      </button>
+      <div id="users-list"></div>
     </div>
-    <div class="form-card">
-      <div class="admin-tool-head">
-        <div class="admin-tool-icon c-warning"><i class="ti ti-folder-open"></i></div>
-        <div class="admin-tool-text">
-          <div class="admin-tool-title">استيراد نسخة احتياطية</div>
-          <div class="admin-tool-desc">بيرجّع المخزون والفواتير للحالة اللي كانت عليها وقت أخذ النسخة. ⚠️ ده هيمسح المخزون والفواتير الحالية ويستبدلها بالكامل — لا يمكن التراجع عن العملية دي. (المستخدمين وكلمات السر مش بيتغيروا)</div>
+
+    <!-- ============ النسخ الاحتياطي ============ -->
+    <div id="admin-backups" style="display:none">
+
+      <div class="section-title" style="margin-top:0">النسخ التلقائية</div>
+      <div class="form-card">
+        <div class="admin-tool-head" style="margin-bottom:12px">
+          <div class="admin-tool-icon c-success"><i class="ti ti-cloud-check"></i></div>
+          <div class="admin-tool-text">
+            <div class="admin-tool-title">نسخة كل يوم الساعة 2 صباحًا</div>
+            <div class="admin-tool-desc">بتتحفظ على Google Drive تلقائيًا. النظام بيحتفظ بآخر 30 نسخة.</div>
+          </div>
         </div>
+        <div id="auto-backup-list"></div>
       </div>
-      <input type="file" id="restore-backup-file" accept=".xlsx,.json" style="display:none" onchange="importBackup(this)">
-      <button class="btn-danger-outline" id="btn-restore-backup" style="width:100%" onclick="document.getElementById('restore-backup-file').click()">
-        <i class="ti ti-folder-open"></i> استيراد نسخة احتياطية
+
+      <div class="section-title">نسخة على جهازك</div>
+      <div class="form-card">
+        <div class="admin-tool-head">
+          <div class="admin-tool-icon c-navy"><i class="ti ti-download"></i></div>
+          <div class="admin-tool-text">
+            <div class="admin-tool-title">تنزيل نسخة احتياطية</div>
+            <div class="admin-tool-desc">ملف Excel فيه المخزون والأنواع والفواتير والموظفين. مفيد قبل أي تغيير كبير.</div>
+          </div>
+        </div>
+        <button class="btn-primary" id="btn-download-backup" onclick="downloadBackup(this)">
+          <i class="ti ti-download"></i> تنزيل نسخة
+        </button>
+      </div>
+
+      <div class="section-title">منطقة الخطر</div>
+      <div class="danger-zone">
+        <div class="danger-zone-head">
+          <i class="ti ti-alert-triangle"></i>
+          <div class="danger-zone-title">استيراد ملف من جهازك</div>
+        </div>
+        <div class="danger-zone-note">
+          بيمسح المخزون والفواتير الحالية بالكامل ويحط اللي في الملف مكانهم.
+          <b>مفيش رجوع.</b> الموظفين وكلمات السر مش بيتغيروا.
+          <br>لو عايز ترجع لحالة قديمة، استخدم النسخ التلقائية فوق — دي أأمن.
+        </div>
+        <input type="file" id="restore-backup-file" accept=".xlsx,.json" style="display:none" onchange="importBackup(this)">
+        <button class="btn-danger-outline" id="btn-restore-backup" style="width:100%;margin-top:0"
+                onclick="document.getElementById('restore-backup-file').click()">
+          <i class="ti ti-folder-open"></i> اختيار ملف للاستيراد
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ السجل ============ -->
+    <div id="admin-log" style="display:none">
+      <div class="log-filters" id="log-filters"></div>
+      <div id="log-list"></div>
+      <div id="log-more" style="display:none;margin-top:10px"></div>
+      <button class="btn-secondary" id="btn-load-log" onclick="loadLog(this)" style="margin-top:10px">
+        <i class="ti ti-refresh"></i> تحديث السجل
       </button>
     </div>
-    <div class="form-card">
-      <div class="admin-tool-head" style="margin-bottom:12px">
-        <div class="admin-tool-icon c-success"><i class="ti ti-history"></i></div>
-        <div class="admin-tool-text">
-          <div class="admin-tool-title">النسخ الاحتياطي التلقائي</div>
-          <div class="admin-tool-desc">نسخة يومية تلقائية تُحفظ على Google Drive، مع الاحتفاظ بآخر 30 نسخة وإمكانية الاسترجاع</div>
-        </div>
-      </div>
-      <div id="auto-backup-list">
-        <div class="empty-state" style="padding:24px 10px">
-          <i class="ti ti-history"></i>
-          سيتم عرض النسخ الاحتياطية التلقائية هنا بمجرد ربط خدمة Google Drive من الخادم
-        </div>
-      </div>
-    </div>
 
-    <!-- أدوات النظام -->
-    <div class="section-title">أدوات النظام</div>
-    <div class="form-card">
-      <div class="row2">
-        <button class="btn-secondary" id="btn-resync" onclick="resyncSystem(this)"><i class="ti ti-refresh"></i> إعادة المزامنة</button>
-        <button class="btn-secondary" id="btn-export-all" onclick="exportAllData(this)"><i class="ti ti-table-export"></i> تصدير جميع البيانات</button>
+    <!-- ============ أدوات ============ -->
+    <div id="admin-tools" style="display:none">
+      <div class="form-card">
+        <div class="admin-tool-head">
+          <div class="admin-tool-icon c-navy"><i class="ti ti-refresh"></i></div>
+          <div class="admin-tool-text">
+            <div class="admin-tool-title">إعادة المزامنة</div>
+            <div class="admin-tool-desc">بيسحب أحدث بيانات من Google Sheets. استخدمه لو حاسس إن اللي على الشاشة قديم.</div>
+          </div>
+        </div>
+        <button class="btn-secondary" id="btn-resync" onclick="resyncSystem(this)" style="margin-top:0">
+          <i class="ti ti-refresh"></i> إعادة المزامنة
+        </button>
+      </div>
+
+      <div class="form-card">
+        <div class="admin-tool-head">
+          <div class="admin-tool-icon c-navy"><i class="ti ti-table-export"></i></div>
+          <div class="admin-tool-text">
+            <div class="admin-tool-title">تصدير البيانات</div>
+            <div class="admin-tool-desc">ملف CSV بكل الفواتير والمخزون، للفتح في Excel أو إرساله للمحاسب.</div>
+          </div>
+        </div>
+        <button class="btn-secondary" id="btn-export-all" onclick="exportAllData(this)" style="margin-top:0">
+          <i class="ti ti-table-export"></i> تصدير جميع البيانات
+        </button>
       </div>
     </div>
 
@@ -2780,6 +2913,32 @@ button.btn-loading{
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="add-user-modal">
+  <div class="modal">
+    <div class="modal-title"><span>إضافة موظف</span><button class="modal-close" onclick="closeAddUser()"><i class="ti ti-x"></i></button></div>
+    <div class="field"><label>الاسم</label><input type="text" id="new-name" placeholder="اسم الموظف"></div>
+    <div class="row2">
+      <div class="field"><label>يوزر</label><input type="text" id="new-user" placeholder="username" dir="ltr" autocomplete="off"></div>
+      <div class="field"><label>باسورد</label><input type="password" id="new-pass" placeholder="••••••" dir="ltr" autocomplete="new-password"></div>
+    </div>
+    <div class="field">
+      <label>الصلاحية</label>
+      <select id="new-role" onchange="onNewRoleChange()">
+        <option value="cashier">كاشير — بيع ومخزون وفواتير</option>
+        <option value="admin">أدمن — كل حاجة + التقارير والإدارة</option>
+      </select>
+    </div>
+    <div id="new-role-warn" style="display:none; background:var(--warning-bg); color:var(--warning); border-radius:10px; padding:10px 12px; font-size:12px; font-weight:600; line-height:1.6; margin-bottom:12px;">
+      <i class="ti ti-alert-circle"></i>
+      الأدمن بيقدر يشوف التقارير والأرباح، ويمسح أصناف وفواتير، ويضيف موظفين.
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="closeAddUser()">إلغاء</button>
+      <button class="btn-primary" id="btn-add-user" onclick="addUser(this)" style="margin-top:0"><i class="ti ti-user-plus"></i> إضافة</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
@@ -2877,7 +3036,7 @@ button.btn-loading{
 
     <div class="field">
         <label>الكمية المراد إرجاعها</label>
-        <input type="number" id="return-qty" min="0" step="1" placeholder="الكمية" value="1" oninput="updateReturnTotal()">
+        <input type="number" id="return-qty" min="0" step="0.01" inputmode="decimal" placeholder="الكمية" value="1" oninput="updateReturnTotal()">
     </div>
 
     <input type="hidden" id="return-price">
@@ -2900,7 +3059,7 @@ button.btn-loading{
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrPuOfHy9p6uh0lP9V5fMLlryjR25cPiT-uBZREw4vi9d3ZORPhIiaOTEET3aqA9Szew/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyjfTMNpp5r7153IwhqW-I0ysWY96XaVqrBmRrL4qUk9gm4QmeyZ2kUm2TNXXRu54Z9FQ/exec';
 
 // بيانات المحل اللي بتظهر في الفاتورة المطبوعة - عدّليها هنا وهتتحدث في كل مكان تلقائيًا
 const SHOP_INFO = {
@@ -2921,6 +3080,7 @@ let currentUser = null;
 // وده مقصود في الإصدار ده (شوف نوتة الـ Auth في آخر الملف).
 // بنلف حوالين fetch بدل ما نعدل 14 مكان فيهم نداء على السيرفر.
 (function () {
+  if (typeof window.fetch !== 'function') return;   // حارس: من غيره السكريبت كله بيموت لو fetch مش موجودة
   const rawFetch = window.fetch.bind(window);
 
   window.fetch = function (url, opts) {
@@ -2956,6 +3116,32 @@ let reportFrom = "";
 let reportTo = "";
 let visibleSummaryItems = 8;
 
+
+// أيقونات Tabler دي *خط* بيتحمّل من CDN. أي حاجة بتتحول لصورة (المشاركة عن
+// طريق dom-to-image) أو بتتفتح في نافذة طباعة جديدة، الخط مش بيتضمّن معاها
+// فالأيقونة بتطلع مربع فاضي. عشان كده أي أيقونة في ورقة بتتطبع أو تتشارك
+// لازم تبقى SVG مضمّن - ده بيترسم دايمًا لإنه جزء من الصفحة نفسها.
+const DOC_ICONS = {
+  phone: '<path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/>',
+  pin: '<path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"/>',
+  store: '<path d="M3 21l18 0"/><path d="M3 7v1a3 3 0 0 0 6 0v-1m0 1a3 3 0 0 0 6 0v-1m0 1a3 3 0 0 0 6 0v-1h-18l2 -4h14l2 4"/><path d="M5 21l0 -10.15"/><path d="M19 21l0 -10.15"/><path d="M9 21v-4a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v4"/>'
+};
+
+function docIcon(name, size) {
+  const body = DOC_ICONS[name];
+  if (!body) return "";
+  return `<svg viewBox="0 0 24 24" width="${size || 13}" height="${size || 13}" fill="none"
+    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+    style="vertical-align:-2px;flex-shrink:0">${body}</svg>`;
+}
+
+// الأرقام العشرية في JS بتجمّع خطأ: 10 - 3.3 = 6.699999999999999،
+// وبعدين + 3.3 = 9.999999999999998. الخطأ بيتراكم مع كل بيعة ومرتجع،
+// وبيتكتب في الشيت كده. بنقرّب عند كل عملية حسابية عشان مايتراكمش.
+// المتر بـ 2 عشري (سنتيمتر) والفلوس بـ 2 عشري (قرش) - أدق من كده مالوش معنى.
+function round2(n) {
+  return Math.round((Number(n) + Number.EPSILON) * 100) / 100;
+}
 
 // أي نص جاي من الداتا لازم يعدي على دي قبل ما يتحط جوه innerHTML،
 // عشان اسم صنف فيه < أو & ما يكسرش الصفحة (أو يحقن HTML)
@@ -3015,8 +3201,21 @@ async function loadData() {
     // داخلي في السيرفر كان هيمسح المخزون والفواتير الظاهرة عندك ويوريها فاضية بالغلط
     if (data.status !== "ok") throw new Error(data.message || 'Load failed (server)');
 
-    items = data.items || [];
-    sales = data.sales || [];
+    // الداتا القديمة في الشيت فيها أرقام زي 9.999999999999998 من قبل ما نحط round2.
+    // بننضفها هنا أول ما تتحمّل، فأول حفظ جاي بيكتب الرقم الصح مكانه.
+    items = (data.items || []).map(i => ({
+      ...i,
+      qty: round2(i.qty),
+      price: round2(i.price),
+      min: round2(i.min)
+    }));
+
+    sales = (data.sales || []).map(s => ({
+      ...s,
+      qty: round2(s.qty),
+      unitPrice: round2(s.unitPrice),
+      total: round2(s.total)
+    }));
 
     // حماية: لو الـ Google Apps Script مش بيحفظ حقل isReturn (لإنه حقل جديد ممكن يكون مش
     // موجود في كود السيرفر القديم)، نرجعه من رقم الفاتورة نفسه، لإن كل فاتورة مرتجع
@@ -3036,6 +3235,9 @@ async function loadData() {
 
     renderStats();
     renderItems();
+    // لازم تتحدّث هنا: القايمة بتخزن أرقام أماكن الأصناف في الـ option values.
+    // من غيرها، لو الترتيب اتغير والقايمة مفتوحة، "أضف للفاتورة" بتضيف صنف تاني.
+    renderSellSelect();
     renderHistory();
     renderCart();
     checkLowStock();
@@ -3050,7 +3252,8 @@ async function loadData() {
 async function saveData(includeSales = true) {
   setSyncStatus('syncing', 'جاري الحفظ...');
   try {
-    const cleanItems = items.map(i => ({...i, img: i.img || null}));
+    // img مش عمود في الشيت والباك بيتجاهله - بيتبعت على الفاضي في كل حفظ
+    const cleanItems = items.map(i => ({ type: i.type, name: i.name, unit: i.unit, qty: i.qty, price: i.price, min: i.min }));
     const body = {
         action: "save",
         items: cleanItems
@@ -3080,7 +3283,8 @@ async function saveData(includeSales = true) {
 async function saveInvoiceRows(invoiceId, lines, silent) {
   setSyncStatus('syncing', 'جاري الحفظ...');
   try {
-    const cleanItems = items.map(i => ({...i, img: i.img || null}));
+    // img مش عمود في الشيت والباك بيتجاهله - بيتبعت على الفاضي في كل حفظ
+    const cleanItems = items.map(i => ({ type: i.type, name: i.name, unit: i.unit, qty: i.qty, price: i.price, min: i.min }));
     const res = await fetch(SCRIPT_URL, {
       method: 'POST',
       body: JSON.stringify({
@@ -3430,7 +3634,6 @@ async function resyncSystem(btn) {
   try {
     await loadData();
     await loadUsers();
-    renderAdminStats();
     showToast("✅ تمت إعادة المزامنة بنجاح");
   } catch (err) {
     console.error(err);
@@ -3500,6 +3703,8 @@ async function loadAutoBackups() {
   const container = document.getElementById("auto-backup-list");
   if (!container || !isAdmin()) return;
 
+  container.innerHTML = '<div class="empty-state" style="padding:20px 10px">جاري التحميل...</div>';
+
   try {
     const res = await fetch(SCRIPT_URL, {
       method: "POST",
@@ -3507,48 +3712,67 @@ async function loadAutoBackups() {
     });
     const data = await res.json();
 
-    if (data.status === "ok" && Array.isArray(data.backups) && data.backups.length) {
-      container.innerHTML = "";
-      data.backups.forEach(bk => {
-        const row = document.createElement("div");
-        row.className = "user-row";
-        row.innerHTML = `
-          <div class="user-avatar"><i class="ti ti-history"></i></div>
-          <div class="user-info">
-            <div class="user-name">${esc(bk.name || bk.date || "نسخة احتياطية")}</div>
-            <div class="user-meta">${esc(bk.date || "")}</div>
-          </div>
-          <button class="edit-btn" title="استرجاع"><i class="ti ti-download"></i></button>
-        `;
-        row.querySelector(".edit-btn").onclick = () => restoreBackup(bk.id);
-        container.appendChild(row);
-      });
-    } else {
+    if (data.status !== "ok") throw new Error(data.message || "فشل التحميل");
+
+    const backups = Array.isArray(data.backups) ? data.backups : [];
+
+    if (!backups.length) {
       container.innerHTML = `
         <div class="empty-state" style="padding:24px 10px">
-          <i class="ti ti-history"></i>
-          لا توجد نسخ احتياطية تلقائية بعد. سيتم عرضها هنا فور تفعيل النسخ اليومي على Google Drive من الخادم
-        </div>
-      `;
+          <i class="ti ti-cloud-off"></i>
+          مفيش نسخ لسه. أول نسخة تلقائية هتتاخد الساعة 2 صباحًا.
+        </div>`;
+      return;
     }
+
+    container.innerHTML = backups.map((bk, i) => {
+      // اسم النسخة بيبقى زي backup_2026-07-17_02-00_قبل-الاسترجاع
+      const parts = String(bk.name || "").split("_");
+      const tag = parts.length > 3 ? parts.slice(3).join("_") : "";
+      return `
+        <div class="backup-row">
+          <div class="log-icon stat-icon ${i === 0 ? 'c-success' : 'c-navy'}" style="margin-bottom:0">
+            <i class="ti ${i === 0 ? 'ti-cloud-check' : 'ti-cloud'}"></i>
+          </div>
+          <div class="backup-row-info">
+            <div class="backup-row-date">${esc(bk.date || bk.name || "نسخة")}</div>
+            <div class="backup-row-tag">${i === 0 ? 'أحدث نسخة' : ''}${tag ? (i === 0 ? ' • ' : '') + esc(tag) : ''}</div>
+          </div>
+          <button class="backup-restore-btn" data-id="${esc(bk.id)}" data-date="${esc(bk.date || '')}">استرجاع</button>
+        </div>`;
+    }).join("");
+
+    container.querySelectorAll(".backup-restore-btn").forEach(btn => {
+      btn.onclick = () => restoreBackup(btn.dataset.id, btn.dataset.date);
+    });
+
   } catch (err) {
-    // الخدمة غير مفعّلة بعد على الخادم - نعرض حالة فارغة بدل الخطأ
+    console.error(err);
     container.innerHTML = `
       <div class="empty-state" style="padding:24px 10px">
-        <i class="ti ti-history"></i>
-        سيتم عرض النسخ الاحتياطية التلقائية هنا بمجرد ربط خدمة Google Drive من الخادم
-      </div>
-    `;
+        <i class="ti ti-alert-circle"></i>
+        تعذر تحميل النسخ. افتح تبويب الإدارة تاني للمحاولة.
+      </div>`;
   }
 }
 
-async function restoreBackup(backupId) {
+// الاسترجاع بيرجّع المخزون والفواتير والأنواع *والموظفين* لحالة النسخة.
+// الباك بياخد نسخة أمان من الوضع الحالي قبل ما يكتب، فالعملية ليها رجعة.
+async function restoreBackup(backupId, backupDate) {
   if (!isAdmin()) {
     showToast("❌ ليس لديك صلاحية");
     return;
   }
 
-  if (!confirm("سيتم استبدال البيانات الحالية بهذه النسخة الاحتياطية. هل أنت متأكد؟")) return;
+  const when = backupDate ? `نسخة ${backupDate}` : "النسخة دي";
+  const ok = confirm(
+    `هترجّع بيانات النظام لحالتها في ${when}.\n\n` +
+    `• المخزون والفواتير والأنواع والموظفين هيترجعوا لحالة النسخة\n` +
+    `• أي بيع أو تعديل حصل بعد النسخة دي هيتشال\n` +
+    `• النظام هياخد نسخة من الوضع الحالي قبل الاسترجاع، فتقدر ترجع\n\n` +
+    `تكمّل؟`
+  );
+  if (!ok) return;
 
   try {
     showToast("⏳ جاري الاسترجاع...");
@@ -3558,17 +3782,28 @@ async function restoreBackup(backupId) {
     });
     const data = await res.json();
 
-    if (data.status === "ok") {
-      showToast("✅ تم استرجاع النسخة الاحتياطية");
+    if (data.status !== "ok") {
+      showToast("❌ " + (data.message || "فشل الاسترجاع"));
+      return;
+    }
+
+    // نجح: نحمّل كل حاجة من جديد. أي خطأ هنا مالوش علاقة بالاسترجاع نفسه،
+    // فبنبلغ بالنجاح ونطلب تحديث بدل ما نقول "فشل" والاسترجاع اتعمل خلاص.
+    showToast("✅ تم الاسترجاع");
+    try {
+      sellCart = [];
       await loadData();
       await loadUsers();
-      renderAdminStats();
-    } else {
-      showToast("❌ " + (data.message || "فشل الاسترجاع"));
+      await loadAutoBackups();
+      renderCart();
+    } catch (e) {
+      console.error(e);
+      showToast("✅ الاسترجاع تم — حدّث الصفحة لعرض البيانات");
     }
+
   } catch (err) {
     console.error(err);
-    showToast("❌ تعذر الاتصال بالخادم للاسترجاع");
+    showToast("❌ تعذر الاتصال بالخادم. حدّث الصفحة وشوف الاسترجاع تم ولا لأ.");
   }
 }
 
@@ -3604,13 +3839,274 @@ function switchTab(tab) {
   if (tab === 'history') renderHistory();
   if (tab === 'inventory') renderItems();
   if (tab === 'reports') renderReports();
-  if (tab === 'admin') {
-    loadUsers();
-    loadAutoBackups();
+  if (tab === 'admin') switchAdmin(adminSection);
+}
+
+// ===== الإدارة: تنقل فرعي =====
+// الصفحة كانت scroll واحد طويل فيه المستخدمين والنسخ والأدوات مع بعض.
+// دلوقتي كل قسم لوحده، والقسم الخطر (الاستيراد) بقى معزول بصريًا.
+let adminSection = 'users';
+
+function switchAdmin(section) {
+  if (!isAdmin()) return;
+  adminSection = section;
+
+  ['users', 'backups', 'log', 'tools'].forEach(x => {
+    const panel = document.getElementById('admin-' + x);
+    const btn = document.getElementById('sub-' + x);
+    if (panel) panel.style.display = x === section ? 'block' : 'none';
+    if (btn) btn.classList.toggle('active', x === section);
+  });
+
+  if (section === 'users') loadUsers();
+  if (section === 'backups') loadAutoBackups();
+  if (section === 'log') loadLog();
+}
+
+function openAddUser() {
+  if (!isAdmin()) return;
+  ['new-name', 'new-user', 'new-pass'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('new-role').value = 'cashier';
+  onNewRoleChange();
+  document.getElementById('add-user-modal').classList.add('open');
+  setTimeout(() => document.getElementById('new-name').focus(), 60);
+}
+
+function closeAddUser() {
+  document.getElementById('add-user-modal').classList.remove('open');
+}
+
+// الأدمن صلاحية كبيرة - نقول للمستخدم بالظبط هو بيدي إيه قبل ما يضيفه
+function onNewRoleChange() {
+  const isAdminRole = document.getElementById('new-role').value === 'admin';
+  document.getElementById('new-role-warn').style.display = isAdminRole ? 'block' : 'none';
+}
+
+function onEditRoleChange() {
+  const isAdminRole = document.getElementById('edit-user-role').value === 'admin';
+  document.getElementById('edit-role-warn').style.display = isAdminRole ? 'block' : 'none';
+}
+
+// السويتش لازم يقول نتيجته، مش بس حالته
+function onEditActiveChange() {
+  const on = document.getElementById('edit-user-active').checked;
+  document.getElementById('edit-active-desc').textContent = on
+    ? 'يقدر يسجّل دخول ويشتغل على النظام'
+    : 'مش هيقدر يسجّل دخول من جديد';
+}
+
+// ===== السجل =====
+let logEntries = [];
+let logFilter = 'all';
+
+// السجل بيتبنى من مصدرين:
+//  1. شيت "السجل" - العمليات اللي مبتسيبش أثر (حذف، إلغاء، تعديل، استرجاع نسخة)
+//  2. شيت "المبيعات" - البيع والمرتجع، محسوبين هنا في البراوزر
+// البيع مش بيتكتب في شيت السجل عن قصد: الفاتورة نفسها فيها البائع والتاريخ،
+// فتسجيله كان هيكلّف كتابة زيادة على كل بيعة (أهم مسار في النظام) ويكبّر الشيت
+// على الفاضي. والفواتير محمّلة في الميموري أصلاً، فعرضها هنا مجاني.
+const LOG_META = {
+  sale:          { label: 'بيع',             icon: 'ti-shopping-cart',cls: 'c-success' },
+  return:        { label: 'مرتجع',           icon: 'ti-arrow-back-up',cls: 'c-warning' },
+  login:         { label: 'دخول',            icon: 'ti-login',        cls: 'c-navy' },
+  editInvoice:   { label: 'تعديل فاتورة',    icon: 'ti-receipt',      cls: 'c-warning' },
+  cancelInvoice: { label: 'إلغاء فاتورة',    icon: 'ti-receipt-off',  cls: 'c-danger' },
+  invoice:       { label: 'فاتورة',          icon: 'ti-receipt',      cls: 'c-success' },
+  addItem:       { label: 'إضافة صنف',       icon: 'ti-package',      cls: 'c-navy' },
+  editItem:      { label: 'تعديل صنف',       icon: 'ti-edit',         cls: 'c-warning' },
+  deleteItem:    { label: 'حذف صنف',         icon: 'ti-trash',        cls: 'c-danger' },
+  bulkSales:     { label: 'تغيير جماعي للفواتير', icon: 'ti-database', cls: 'c-danger' },
+  save:          { label: 'مزامنة كاملة',    icon: 'ti-database',     cls: 'c-warning' },
+  addUser:       { label: 'إضافة موظف',      icon: 'ti-user-plus',    cls: 'c-navy' },
+  updateUser:    { label: 'تعديل موظف',      icon: 'ti-user-edit',    cls: 'c-warning' },
+  deleteUser:    { label: 'حذف موظف',        icon: 'ti-user-minus',   cls: 'c-danger' },
+  addType:       { label: 'إضافة نوع',       icon: 'ti-plus',         cls: 'c-navy' },
+  updateType:    { label: 'تعديل نوع',       icon: 'ti-edit',         cls: 'c-warning' },
+  deleteType:    { label: 'حذف نوع',         icon: 'ti-trash',        cls: 'c-danger' },
+  restoreBackup: { label: 'استرجاع نسخة',    icon: 'ti-history',      cls: 'c-danger' }
+};
+
+// "كل الفواتير" و"البيع والمرتجع" كانوا بيجاوبوا نفس السؤال تقريبًا، والفرق بينهم
+// (التعديل) مكانش واضح لحد. شلنا واحد وحطينا التعديل في "خطرة" - لإنه فعلاً
+// بيكتب فوق القيم القديمة ومبيسيبش أثر ليها.
+const LOG_FILTERS = [
+  { key: 'all',    label: 'الكل' },
+  { key: 'danger', label: 'خطرة' },
+  { key: 'sales',  label: 'بيع' },
+  { key: 'users',  label: 'موظفين' },
+  { key: 'login',  label: 'دخول' }
+];
+
+// تعديل الصنف جوه "خطرة" عن قصد: تغيير الكمية أو السعر بالإيد أخطر من حذف نوع،
+// وده أشهر مكان بيحصل فيه تلاعب في محل.
+const DANGER_ACTIONS = ['deleteUser', 'deleteType', 'restoreBackup', 'save', 'bulkSales',
+                        'cancelInvoice', 'editInvoice', 'deleteItem', 'editItem'];
+const USER_ACTIONS = ['addUser', 'updateUser', 'deleteUser'];
+
+const FEED_PAGE = 25;      // بيعرض 25 ويزوّد 25 مع كل ضغطة "عرض المزيد"
+let feedVisible = FEED_PAGE;
+
+// بيبني الأحداث من الفواتير اللي في الميموري: كل فاتورة = حدث واحد مش سطر لكل صنف
+function salesAsEvents() {
+  const byInvoice = new Map();
+
+  sales.forEach(s => {
+    const id = String(s.invoiceId || '').trim();
+    if (!id) return;
+
+    if (!byInvoice.has(id)) {
+      byInvoice.set(id, { id, date: s.date, seller: s.seller, isReturn: !!s.isReturn, lines: 0, total: 0 });
+    }
+    const g = byInvoice.get(id);
+    g.lines++;
+    g.total += Number(s.total) || 0;
+    if (s.isReturn) g.isReturn = true;
+  });
+
+  return [...byInvoice.values()].map(g => ({
+    date: g.date,
+    user: g.seller || '-',
+    action: g.isReturn ? 'return' : 'sale',
+    details: `${g.id} • ${g.lines} صنف • ${Math.abs(Math.round(g.total)).toLocaleString('en-US')} ج`
+  }));
+}
+
+// بيدمج شيت السجل مع الفواتير ويرتب بالأحدث.
+// بنحسب التاريخ مرة واحدة لكل حدث بدل ما نـ parse في كل مقارنة sort.
+function buildFeed() {
+  const all = logEntries.concat(salesAsEvents()).map(e => {
+    const d = parseSaleDate(e.date);
+    return { ...e, _t: d ? d.getTime() : 0, _d: d };
+  });
+  all.sort((a, b) => b._t - a._t);
+  return all;
+}
+
+async function loadLog(btn) {
+  const list = document.getElementById('log-list');
+  if (!list) return;
+
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> جاري التحميل...'; }
+  list.innerHTML = '<div class="empty-state" style="padding:24px 10px">جاري تحميل السجل...</div>';
+
+  try {
+    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getLog', limit: 200 }) });
+    const data = await res.json();
+
+    if (data.status !== 'ok') throw new Error(data.message || 'فشل التحميل');
+
+    logEntries = data.log || [];
+    feedVisible = FEED_PAGE;
+    renderLogFilters();
+    renderLog();
+
+  } catch (err) {
+    // شيت السجل فشل - بس الفواتير محمّلة في الميموري، فبنعرضها بدل شاشة خطأ فاضية
+    console.error(err);
+    logEntries = [];
+    renderLogFilters();
+    renderLog();
+    showToast('⚠️ تعذر تحميل شيت السجل — بيعرض الفواتير بس');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-refresh"></i> تحديث السجل'; }
+  }
+}
+
+function renderLogFilters() {
+  const box = document.getElementById('log-filters');
+  if (!box) return;
+  box.innerHTML = LOG_FILTERS.map(f =>
+    `<button class="log-chip ${f.key === logFilter ? 'active' : ''}" onclick="setLogFilter('${f.key}')">${esc(f.label)}</button>`
+  ).join('');
+}
+
+function setLogFilter(key) {
+  logFilter = key;
+  feedVisible = FEED_PAGE;   // فلتر جديد -> نبدأ من الأول
+  renderLogFilters();
+  renderLog();
+}
+
+function showMoreFeed() {
+  feedVisible += FEED_PAGE;
+  renderLog();
+}
+
+function logMatches(entry) {
+  if (logFilter === 'all') return true;
+  if (logFilter === 'sales') return entry.action === 'sale' || entry.action === 'return';
+  if (logFilter === 'login') return entry.action === 'login';
+  if (logFilter === 'users') return USER_ACTIONS.includes(entry.action);
+  if (logFilter === 'danger') return DANGER_ACTIONS.includes(entry.action);
+  return true;
+}
+
+function renderLog() {
+  const list = document.getElementById('log-list');
+  if (!list) return;
+
+  const all = buildFeed().filter(logMatches);
+  const rows = all.slice(0, feedVisible);
+
+  const moreBoxEarly = document.getElementById('log-more');
+
+  if (!rows.length) {
+    if (moreBoxEarly) moreBoxEarly.style.display = 'none';
+    list.innerHTML = `<div class="empty-state" style="padding:28px 10px">
+      <i class="ti ti-list-search"></i>
+      ${logFilter === 'all'
+        ? 'مفيش أي نشاط لسه. أول بيعة أو عملية هتظهر هنا.'
+        : 'مفيش عمليات في الفلتر ده.'}
+    </div>`;
+    return;
+  }
+
+  let html = '';
+  let lastDay = '';
+
+  rows.forEach(e => {
+    const d = e._d;
+    const day = d ? d.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' }) : 'بدون تاريخ';
+    if (day !== lastDay) { html += `<div class="log-day">${esc(day)}</div>`; lastDay = day; }
+
+    const meta = LOG_META[e.action] || { label: e.action, icon: 'ti-point', cls: 'c-navy' };
+    const time = d ? d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
+
+    html += `
+      <div class="log-row">
+        <div class="log-icon stat-icon ${meta.cls}" style="margin-bottom:0"><i class="ti ${meta.icon}"></i></div>
+        <div class="log-body">
+          <div class="log-line1">
+            <span class="log-action">${esc(meta.label)}</span>
+            <span class="log-user">${esc(e.user || '-')}</span>
+            <span class="log-time">${esc(time)}</span>
+          </div>
+          ${e.details ? `<div class="log-details">${esc(e.details)}</div>` : ''}
+        </div>
+      </div>`;
+  });
+
+  list.innerHTML = html;
+
+  // زرار "عرض المزيد" جوه القايمة نفسها، عشان يفضل تحت آخر كارت مباشرة
+  const remaining = all.length - rows.length;
+  const moreBox = document.getElementById('log-more');
+  if (moreBox) {
+    if (remaining > 0) {
+      moreBox.style.display = 'block';
+      moreBox.innerHTML = `
+        <button class="btn-secondary" style="margin-top:0" onclick="showMoreFeed()">
+          <i class="ti ti-chevron-down"></i> عرض المزيد (${remaining} متبقي)
+        </button>`;
+    } else {
+      moreBox.style.display = 'none';
+      moreBox.innerHTML = '';
+    }
   }
 }
 
 function renderStats() {
+
 
     const totalPieces = items
         .filter(i => (i.unit || "قطعة") === "قطعة")
@@ -3839,12 +4335,13 @@ function renderItems() {
 
         const isOpen = forceOpen ? true : (openedTypes[type] === true);
 
-        const typeAttr = String(type).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+        // الاسم بيتحط في data-type بس. قبل كده كان بيتحقن جوه onclick كـ JS string
+        // بـ escaping لعلامة الـ ' بس - فاسم فيه " أو \\ كان بيكسر الـ attribute.
+        // دلوقتي الضغط بيتمسك بـ delegation والاسم بيتقرا من الـ dataset.
+        const typeAttr = esc(type);
 
         html += `
-        <div class="type-header"
-            data-type="${typeAttr}"
-            onclick="toggleType('${type.replace(/'/g,"\\'")}')">
+        <div class="type-header" data-type="${typeAttr}">
 
             <div class="type-left">
 
@@ -3869,20 +4366,12 @@ function renderItems() {
                 ?
                 `<span class="type-actions" onclick="event.stopPropagation()">
 
-                    <button
-                        class="type-edit-btn"
-                        onclick="editType('${type.replace(/'/g,"\\'")}', this)">
-
+                    <button class="type-edit-btn" data-type="${typeAttr}">
                         <i class="ti ti-pencil"></i>
-
                     </button>
 
-                    <button
-                        class="type-delete-btn"
-                        onclick="deleteTypeConfirm('${type.replace(/'/g,"\\'")}', this)">
-
+                    <button class="type-delete-btn" data-type="${typeAttr}">
                         <i class="ti ti-trash"></i>
-
                     </button>
 
                 </span>`
@@ -3910,10 +4399,14 @@ function renderItems() {
 
             const min = Number(item.min);
 
+            // بنقارن بالأرقام: qty فوق ممكن يبقى نص (toFixed للمتر).
+            // وبنستخدم <= 0 زي الفلتر بالظبط - قبل كده البادج كان == 0 والفلتر <= 0،
+            // فصنف بكمية سالبة كان بيتفلتر "نفد" ويتعرض "منخفض".
+            const qtyNum = Number(item.qty);
             const badge =
-                qty == 0
+                qtyNum <= 0
                     ? '<span class="badge badge-out">نفد</span>'
-                    : qty <= min
+                    : qtyNum <= min
                     ? '<span class="badge badge-low">منخفض</span>'
                     : '<span class="badge badge-ok">متاح</span>';
 
@@ -3930,11 +4423,11 @@ function renderItems() {
 
                         <div class="item-meta">
 
-                            <span>📦 ${qty} ${item.unit}</span>
+                            <span><i class="ti ti-package"></i> ${qty} ${esc(item.unit)}</span>
 
                             <span>•</span>
 
-                            <span>💰 ${Number(item.price).toLocaleString()} ج/${item.unit}</span>
+                            <span><i class="ti ti-coin"></i> ${Number(item.price).toLocaleString()} ج/${esc(item.unit)}</span>
 
                             <span>•</span>
 
@@ -3963,6 +4456,31 @@ function renderItems() {
     el.innerHTML = html;
 }
 
+// الضغط على شرايط المرتجعات وزراير القفز - بالـ dataset مش بـ onclick محقون
+document.addEventListener('click', (e) => {
+  const chip = e.target.closest('.linked-return-chip');
+  if (chip && chip.dataset.rid) { closeEditInvoice(); jumpToInvoice(chip.dataset.rid); return; }
+
+  const jump = e.target.closest('[data-jump]');
+  if (jump) { e.stopPropagation(); closeInvoiceMenus(); jumpToInvoice(jump.dataset.jump); }
+});
+
+// الضغط على الأنواع بيتمسك هنا مرة واحدة بدل onclick على كل عنصر.
+// الاسم بيتقرا من الـ dataset، فمهما كان فيه علامات (" ' \\ &) مش هيكسر حاجة.
+document.addEventListener('click', (e) => {
+  const list = document.getElementById('item-list');
+  if (!list || !list.contains(e.target)) return;
+
+  const editBtn = e.target.closest('.type-edit-btn');
+  if (editBtn) { e.stopPropagation(); editType(editBtn.dataset.type, editBtn); return; }
+
+  const delBtn = e.target.closest('.type-delete-btn');
+  if (delBtn) { e.stopPropagation(); deleteTypeConfirm(delBtn.dataset.type, delBtn); return; }
+
+  const header = e.target.closest('.type-header');
+  if (header) toggleType(header.dataset.type);
+});
+
 function searchItems(value) {
     itemSearch = value.trim().toLowerCase();
 
@@ -3983,6 +4501,14 @@ function renderSellSelect() {
 
     const s = document.getElementById('sell-item');
 
+    // نفتكر اللي كان متختار بهويته (اسم+وحدة) مش برقمه.
+    // الهوية بتتقرا من الـ option نفسه مش من items[index] - لإن الدالة دي بتتنده
+    // من loadData *بعد* ما items اتستبدلت، فالرقم القديم بيشاور على صنف تاني خالص.
+    const prevOpt = s.options[s.selectedIndex];
+    const prevKey = (prevOpt && prevOpt.dataset.name)
+        ? { name: prevOpt.dataset.name, unit: prevOpt.dataset.unit }
+        : null;
+
     const available = items.filter(i => Number(i.qty) > 0);
 
     if (!available.length) {
@@ -4002,7 +4528,9 @@ function renderSellSelect() {
             : Number(item.qty);
 
         return `
-            <option value="${items.indexOf(item)}">
+            <option value="${items.indexOf(item)}"
+                    data-name="${esc(item.name)}"
+                    data-unit="${esc(item.unit || 'قطعة')}">
                 ${esc(item.name)} (${qty} ${esc(item.unit)})
             </option>
         `;
@@ -4013,6 +4541,15 @@ function renderSellSelect() {
     // المستخدم اختاره فعلاً - وده اللي كان بيسبب ظهور سعر وكمية صنف قديم/غلط
     // من غير ما يبان اسمه في خانة البحث. لازم نصفّر الاختيار صراحة ونزامن الخانة الظاهرة
     s.value = "";
+
+    // وبعد التصفير، نرجّع اللي كان متختار بهويته لو لسه موجود ومتاح.
+    // كده لو loadData اشتغل والمستخدم كان مختار صنف، اختياره ما يضيعش -
+    // وفي نفس الوقت مبنعتمدش على رقم المكان القديم.
+    if (prevKey) {
+        const idx = findItemIndex(prevKey.name, prevKey.unit);
+        if (idx !== -1 && Number(items[idx].qty) > 0) s.value = String(idx);
+    }
+
     if (s._syncSearchable) s._syncSearchable();
 
     updateSellPrice();
@@ -4594,7 +5131,7 @@ function renderHistory() {
                     <div class="invoice-head-texts">
 
                         <div class="history-name" ${inv.isReturn ? 'style="color:var(--danger)"' : ''}>
-                            ${inv.invoiceId}
+                            ${esc(inv.invoiceId)}
                         </div>
 
                         ${statusBadgeHTML ? `<div class="history-badge-row">${statusBadgeHTML}</div>` : ""}
@@ -4638,13 +5175,13 @@ function renderHistory() {
                                 </button>
 
                                 ${inv.isReturn && inv.relatedInvoiceId ? `
-                                <button class="invoice-menu-item invoice-menu-item-danger" onclick="event.stopPropagation(); closeInvoiceMenus(); jumpToInvoice('${inv.relatedInvoiceId}')">
+                                <button class="invoice-menu-item invoice-menu-item-danger" data-jump="${esc(inv.relatedInvoiceId)}">
                                     <i class="ti ti-external-link"></i> الفاتورة الأصلية
                                 </button>
                                 ` : ""}
 
                                 ${!inv.isReturn && inv.linkedReturns && inv.linkedReturns.length ? `
-                                <button class="invoice-menu-item invoice-menu-item-danger" onclick="event.stopPropagation(); closeInvoiceMenus(); jumpToInvoice('${inv.linkedReturns[0]}')">
+                                <button class="invoice-menu-item invoice-menu-item-danger" data-jump="${esc(inv.linkedReturns[0])}">
                                     <i class="ti ti-external-link"></i> ${inv.linkedReturns.length > 1 ? `المرتجعات (${inv.linkedReturns.length})` : "المرتجع"}
                                 </button>
                                 ` : ""}
@@ -4749,27 +5286,30 @@ function renderReceiptPaperHTML(inv) {
     const returnedLines = (inv.netByLine || []).filter(nb => nb.returnedQty > 0);
 
     const returnFlagHTML = inv.isReturn
-        ? (inv.relatedInvoiceId ? `<div class="inv-return-flag">مرتجع من الفاتورة: <b>${inv.relatedInvoiceId}</b></div>` : `<div class="inv-return-flag">مرتجع عام (بدون فاتورة محددة)</div>`)
+        ? (inv.relatedInvoiceId ? `<div class="inv-return-flag">مرتجع من الفاتورة: <b>${esc(inv.relatedInvoiceId)}</b></div>` : `<div class="inv-return-flag">مرتجع عام (بدون فاتورة محددة)</div>`)
         : (returnedLines.length
             ? `<div class="inv-return-flag">
-                ⚠️ تم إرجاع: ${returnedLines.map(nb => `${nb.returnedQty} ${nb.unit} ${nb.name}`).join('، ')}
-                ${inv.linkedReturns && inv.linkedReturns.length ? `<br>رقم المرتجع: <b>${inv.linkedReturns.join('، ')}</b>` : ""}
+                ⚠️ تم إرجاع: ${returnedLines.map(nb => `${nb.returnedQty} ${esc(nb.unit)} ${esc(nb.name)}`).join('، ')}
+                ${inv.linkedReturns && inv.linkedReturns.length ? `<br>رقم المرتجع: <b>${esc(inv.linkedReturns.join('، '))}</b>` : ""}
                </div>`
             : "");
 
     const contactBits = [];
-    if (SHOP_INFO.phone) contactBits.push(`<span><i class="ti ti-phone"></i> ${SHOP_INFO.phone}</span>`);
-    if (SHOP_INFO.address) contactBits.push(`<span><i class="ti ti-map-pin"></i> ${SHOP_INFO.address}</span>`);
+    // SVG مضمّن مش أيقونة خط - عشان تبان في الصورة المشاركة وفي الطباعة
+    if (SHOP_INFO.phone) contactBits.push(`<span>${docIcon('phone')} ${esc(SHOP_INFO.phone)}</span>`);
+    if (SHOP_INFO.address) contactBits.push(`<span>${docIcon('pin')} ${esc(SHOP_INFO.address)}</span>`);
     const contactBarHTML = contactBits.length ? `<div class="inv-contact-bar">${contactBits.join("")}</div>` : "";
 
     return `
-        <div class="inv-doc">
+        <div class="inv-doc ${inv.isQuote ? 'is-quote' : ''}">
 
-            <div class="inv-header ${inv.isReturn ? 'is-return' : ''}">
+            <div class="inv-header ${inv.isQuote ? 'is-quote' : inv.isReturn ? 'is-return' : ''}">
 
                 <div class="inv-header-left">
-                    <span class="inv-badge ${inv.isReturn ? 'is-return' : ''}">${inv.isReturn ? 'فاتورة مرتجع' : 'فاتورة بيع'}</span>
-                    <div class="inv-number">${inv.invoiceId}</div>
+                    <span class="inv-badge ${inv.isQuote ? 'is-quote' : inv.isReturn ? 'is-return' : ''}">${inv.isQuote ? 'عرض سعر' : inv.isReturn ? 'فاتورة مرتجع' : 'فاتورة بيع'}</span>
+                    ${inv.isQuote
+                        ? `<div class="quote-valid">غير مسجّل</div>`
+                        : `<div class="inv-number">${esc(inv.invoiceId)}</div>`}
                 </div>
 
                 <div class="inv-header-right">
@@ -4790,8 +5330,8 @@ function renderReceiptPaperHTML(inv) {
 
                 <div class="inv-meta-row">
                     <div>
-                        <span class="lbl">البائع</span>
-                        <span class="val">${inv.seller || "-"}</span>
+                        <span class="lbl">${inv.isQuote ? 'إعداد' : 'البائع'}</span>
+                        <span class="val">${esc(inv.seller || "-")}</span>
                     </div>
                     <div>
                         <span class="lbl">التاريخ</span>
@@ -4816,7 +5356,7 @@ function renderReceiptPaperHTML(inv) {
                 <div class="inv-summary">
                     <div class="inv-summary-box">
                         <div class="row total ${inv.isReturn ? 'is-return' : ''}">
-                            <span>${inv.isReturn ? 'إجمالي المرتجع' : 'الإجمالي'}</span>
+                            <span>${inv.isQuote ? 'الإجمالي التقديري' : inv.isReturn ? 'إجمالي المرتجع' : 'الإجمالي'}</span>
                             <span class="val">${Number(inv.total).toLocaleString()} ج</span>
                         </div>
                     </div>
@@ -4824,15 +5364,21 @@ function renderReceiptPaperHTML(inv) {
 
                 ${inv.note ? `<div class="inv-note-box">📝 ${esc(inv.note)}</div>` : ""}
 
+                ${inv.isQuote ? `<div class="quote-notice">
+                    <b>ده عرض سعر، مش فاتورة.</b><br>
+                    • مفيش بيعة اتسجلت ومفيش بضاعة اتحجزت<br>
+                    • الأسعار والتوفّر بيتأكدوا وقت الشراء
+                </div>` : ""}
+
                 ${returnFlagHTML}
 
                 <div class="inv-footer">
-                    <div class="inv-qr">
+                    ${inv.isQuote ? "" : `<div class="inv-qr">
                         <div id="${barcodeId}" class="receipt-qr"></div>
-                        <div class="inv-qr-id">${inv.invoiceId}</div>
-                    </div>
+                        <div class="inv-qr-id">${esc(inv.invoiceId)}</div>
+                    </div>`}
                     <div class="inv-footer-thanks">
-                        شكرًا لتعاملكم معنا 🌹<br>
+                        ${inv.isQuote ? 'في انتظارك 🌹' : 'شكرًا لتعاملكم معنا 🌹'}<br>
                         <b>${SHOP_INFO.name}</b>
                     </div>
                 </div>
@@ -4869,16 +5415,101 @@ function renderReceiptBarcode(inv, doc) {
 
 let currentReceiptInvoice = null;
 
+// بيبني أوبجكت الفاتورة من سجل المبيعات اللي في الميموري.
+// نفس الشكل اللي renderHistory بيبنيه، عشان ورقة الفاتورة تشتغل زي ما هي.
+function buildInvoiceFromSales(invoiceId) {
+    const lines = sales.filter(s => String(s.invoiceId).trim() === String(invoiceId).trim());
+    if (!lines.length) return null;
+
+    const first = lines[0];
+    const inv = {
+        invoiceId: String(invoiceId).trim(),
+        date: first.date,
+        seller: first.seller,
+        note: first.note || "",
+        items: lines,
+        total: lines.reduce((t, s) => t + Number(s.total || 0), 0),
+        isReturn: !!first.isReturn,
+        relatedInvoiceId: first.relatedInvoiceId || ""
+    };
+
+    if (!inv.isReturn) {
+        const status = getInvoiceReturnStatus(inv.invoiceId);
+        inv.returnStatus = status.status;
+        inv.linkedReturns = status.linkedReturns;
+        inv.netByLine = status.netByLine;
+    }
+    return inv;
+}
+
+// ===== عرض السعر =====
+// العميل عايز يعرف هيدفع كام قبل ما يقرر. ده مستند تاني خالص مش فاتورة:
+// مفيش بيعة بتتسجل، مفيش مخزون بيتخصم، ومفيش رقم فاتورة.
+// بيبان مختلف عن الفاتورة عن قصد (بادج + علامة مائية + تنبيه) عشان محدش
+// يستخدمه كإثبات شراء، ولا العميل يفتكر إنه اشترى فعلاً.
+//
+// مفيش تاريخ سريان عن قصد: المحل مبيلتزمش بمدة، فكتابة تاريخ كانت هتبقى
+// وعد مش هيتنفذ. التنبيه بيقول إن الأسعار بتتأكد وقت الشراء وخلاص.
+
+function showQuote() {
+    if (!sellCart.length) {
+        showToast("❌ ضيف أصناف الأول عشان تعمل عرض سعر");
+        return;
+    }
+
+    // نتأكد إن الأصناف لسه موجودة، زي ما بنعمل في البيع بالظبط
+    if (!remapCart()) {
+        showToast("❌ فيه صنف في القايمة مبقاش موجود في المخزون");
+        renderCart();
+        return;
+    }
+
+    const now = new Date();
+
+    const quote = {
+        isQuote: true,
+        invoiceId: "",
+        date: now.toISOString(),
+        seller: currentUser ? currentUser.username : "",
+        note: document.getElementById('invoice-note').value.trim(),
+        isReturn: false,
+        items: sellCart.map(c => ({
+            name: c.name, type: c.type, unit: c.unit,
+            qty: c.qty, unitPrice: c.price, total: c.total
+        })),
+        total: round2(sellCart.reduce((t, c) => t + Number(c.total || 0), 0))
+    };
+
+    showReceiptDoc(quote);
+}
+
+// بتتنده أول ما البيعة أو المرتجع يتسجل - اللحظة اللي بتدي فيها الفاتورة للعميل
+function openReceiptFor(invoiceId) {
+    const inv = buildInvoiceFromSales(invoiceId);
+    if (!inv) return;
+    showReceiptDoc(inv);
+}
+
 function openReceipt(i) {
 
     const inv = historyInvoicesCache[i];
     if (!inv) return;
 
+    showReceiptDoc(inv);
+}
+
+function showReceiptDoc(inv) {
+
     currentReceiptInvoice = inv;
+
+    const title = document.querySelector("#receipt-overlay .receipt-topbar h3");
+    if (title) title.textContent = inv.isQuote ? "عرض سعر" : "الفاتورة";
 
     document.getElementById("receipt-capture").innerHTML = renderReceiptPaperHTML(inv);
     document.getElementById("receipt-overlay").classList.add("open");
-    renderReceiptBarcode(inv);
+
+    // الباركود بيرمز لفاتورة مسجّلة - عرض السعر مالوش
+    if (!inv.isQuote) renderReceiptBarcode(inv);
 
 }
 
@@ -4948,7 +5579,7 @@ function openEditInvoice(i) {
             <div class="eim-returns-panel">
                 <div class="eim-returns-title"><i class="ti ti-rotate"></i> المرتجعات المرتبطة بالفاتورة دي</div>
                 <div class="eim-returns-chips">
-                    ${inv.linkedReturns.map(rid => `<span class="linked-return-chip" onclick="closeEditInvoice(); jumpToInvoice('${rid}')">${rid}</span>`).join("")}
+                    ${inv.linkedReturns.map(rid => `<span class="linked-return-chip" data-rid="${esc(rid)}">${esc(rid)}</span>`).join("")}
                 </div>
                 <div class="eim-net-table">
                     ${(inv.netByLine || []).map(nb => `
@@ -5432,6 +6063,9 @@ function updateReturnPrice() {
     const soldInfo = document.getElementById("return-sold-info");
     const soldText = document.getElementById("return-sold-qty-text");
 
+    // الكسور للمتر بس. من غير ده كان مستحيل ترجّع 2.5 متر.
+    qtyInput.step = (item && item.unit === "متر") ? "0.01" : "1";
+
     if (maxReturnable) {
 
         qtyInput.max = maxReturnable;
@@ -5523,7 +6157,7 @@ async function submitReturn(btn) {
         // ISO عشان Google Sheets ما يفسرش التاريخ بالغلط (شوف parseSaleDate)
         const date = now.toISOString();
 
-        item.qty = Number(item.qty) + qty;
+        item.qty = round2(Number(item.qty) + qty);
 
         const invoiceId = `RET-${now.getTime()}`;
         const returnLine = {
@@ -5534,7 +6168,7 @@ async function submitReturn(btn) {
             unit: item.unit,
             qty: -qty,
             unitPrice: price,
-            total: -(qty * price),
+            total: round2(-(qty * price)),
             date,
             seller: currentUser ? currentUser.username : "",
             note: note,
@@ -5557,6 +6191,9 @@ async function submitReturn(btn) {
         checkLowStock();
         closeReturnModal();
         showToast(`✅ تم تسجيل مرتجع "${item.name}" وزيادة المخزون`);
+
+        // فاتورة المرتجع دي إيصال العميل باسترداد فلوسه - يستاهل يفتح لوحده زي البيع
+        openReceiptFor(invoiceId);
 
     } finally {
         setButtonLoading(btn, false);
@@ -5599,11 +6236,24 @@ function updateInvoiceLine(idx, field, value) {
             const stockItem = items.find(it => it.name === line.name && it.unit === line.unit);
             // الكمية المتاحة لزيادة السطر ده = المخزون الحالي + الكمية اللي السطر ده أصلاً حاجزها
             const maxAllowed = stockItem
-                ? Number(stockItem.qty) + Number(line.originalQty)
+                ? round2(Number(stockItem.qty) + Number(line.originalQty))
                 : Number(line.originalQty);
 
             if (v > maxAllowed) {
                 showToast(`❌ أقصى كمية متاحة من "${line.name}" هي ${maxAllowed} ${line.unit}`);
+                renderEditInvoiceLines();
+                return;
+            }
+
+            // الحد الأدنى: مينفعش الكمية تقل عن اللي العميل رجّعه فعلاً من السطر ده،
+            // وإلا بنبقى رجّعنا فلوس أكتر من اللي بعناه، والمخزون بيزيد من العدم.
+            const invId = editingInvoiceMeta ? editingInvoiceMeta.invoiceId : "";
+            const alreadyReturned = invId
+                ? getAlreadyReturnedQtyForInvoiceItem(invId, line.name, line.unit)
+                : 0;
+
+            if (alreadyReturned > 0 && v < alreadyReturned) {
+                showToast(`❌ اترجع ${alreadyReturned} ${line.unit} من "${line.name}" — الكمية مينفعش تقل عن كده. الغي المرتجع الأول.`);
                 renderEditInvoiceLines();
                 return;
             }
@@ -5617,7 +6267,21 @@ function updateInvoiceLine(idx, field, value) {
 }
 
 function removeInvoiceLine(idx) {
-    editingInvoiceLines[idx].removed = true;
+    const line = editingInvoiceLines[idx];
+
+    // نفس منطق الحد الأدنى: شيل السطر = كميته بقت صفر. لو عليه مرتجع،
+    // ده معناه إننا رجّعنا حاجة مبعناهاش.
+    if (!editingIsReturn && !line.isNew && editingInvoiceMeta) {
+        const returned = getAlreadyReturnedQtyForInvoiceItem(
+            editingInvoiceMeta.invoiceId, line.name, line.unit
+        );
+        if (returned > 0) {
+            showToast(`❌ مينفعش تشيل "${line.name}" — اترجع منه ${returned} ${line.unit}. الغي المرتجع الأول.`);
+            return;
+        }
+    }
+
+    line.removed = true;
     renderEditInvoiceLines();
 }
 
@@ -5638,7 +6302,7 @@ async function applyInvoiceChangesAndSave(successMsg) {
             // صنف مضاف جديد ثم اتحذف قبل الحفظ: محصلش أي تأثير فعلي، تجاهله
             if (l.isNew) return;
 
-            if (stockItem) stockItem.qty = Number(stockItem.qty) + l.originalQty;
+            if (stockItem) stockItem.qty = round2(Number(stockItem.qty) + l.originalQty);
 
             const idx = sales.indexOf(l.ref);
             if (idx >= 0) sales.splice(idx, 1);
@@ -5647,7 +6311,7 @@ async function applyInvoiceChangesAndSave(successMsg) {
 
             // صنف جديد مُضاف للفاتورة: نخصم من المخزون (أو نزوده لو مرتجع، لإن الكمية سالبة أصلاً)
             // الحد الأدنى صفر كخط دفاع أخير حتى لو حصل تعارض مع تعديل تاني في نفس الوقت
-            if (stockItem) stockItem.qty = Math.max(0, Number(stockItem.qty) - l.qty);
+            if (stockItem) stockItem.qty = round2(Math.max(0, Number(stockItem.qty) - l.qty));
 
             const newSaleRecord = {
                 invoiceId: editingInvoiceMeta ? editingInvoiceMeta.invoiceId : "",
@@ -5656,7 +6320,7 @@ async function applyInvoiceChangesAndSave(successMsg) {
                 unit: l.unit,
                 qty: l.qty,
                 unitPrice: l.unitPrice,
-                total: l.qty * l.unitPrice,
+                total: round2(l.qty * l.unitPrice),
                 date: editingInvoiceMeta ? editingInvoiceMeta.date : "",
                 seller: editingInvoiceMeta ? editingInvoiceMeta.seller : "",
                 note: newNote
@@ -5672,8 +6336,8 @@ async function applyInvoiceChangesAndSave(successMsg) {
 
         } else {
 
-            const delta = l.qty - l.originalQty;
-            if (stockItem) stockItem.qty = Math.max(0, Number(stockItem.qty) - delta);
+            const delta = round2(l.qty - l.originalQty);
+            if (stockItem) stockItem.qty = round2(Math.max(0, Number(stockItem.qty) - delta));
 
             l.ref.qty = l.qty;
             l.ref.unitPrice = l.unitPrice;
@@ -5778,6 +6442,23 @@ async function cancelWholeInvoice() {
 
     const invoiceId = document.getElementById("edit-invoice-id").textContent;
 
+    // فاتورة عليها مرتجع مينفعش تتلغي: الإلغاء بيرجّع كمياتها كلها للمخزون،
+    // والمرتجع كان رجّع جزء منها خلاص -> المخزون بيزيد من العدم، والمرتجع
+    // بيفضل يتيم بيشاور على فاتورة مش موجودة وبيطرح فلوس من التقارير للأبد.
+    // لازم المرتجع يتلغي الأول عشان الحسابات تفضل مقفولة.
+    if (!editingIsReturn) {
+        const status = getInvoiceReturnStatus(invoiceId);
+        if (status.linkedReturns.length) {
+            const list = status.linkedReturns.join("، ");
+            alert(
+                `مينفعش تحذف الفاتورة دي وهي مرتبطة بمرتجع.\n\n` +
+                `المرتجعات: ${list}\n\n` +
+                `الغي المرتجع الأول، وبعدين احذف الفاتورة.`
+            );
+            return;
+        }
+    }
+
     const typed = prompt(
         editingIsReturn
         ? `هيتم إلغاء المرتجع ${invoiceId} بالكامل، والكمية هتتخصم تاني من المخزون. مفيش رجوع بعد كده.\n\nاكتب كلمة "حذف" بالظبط للتأكيد:`
@@ -5818,7 +6499,11 @@ function printReceipt() {
         <head>
         <meta charset="UTF-8">
         <base href="${document.baseURI}">
-        <title>فاتورة ${inv.invoiceId} - ${SHOP_INFO.name}</title>
+        <title>فاتورة ${esc(inv.invoiceId)} - ${SHOP_INFO.name}</title>
+        <!-- النافذة دي مستند منفصل: مبيورّتش خطوط الصفحة الأصلية.
+             من غير اللينك ده الخط بيقع على Tahoma والشكل بيتغير في الطباعة.
+             الأيقونات كلها SVG مضمّن فمش محتاجين خط الأيقونات هنا. -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap">
         <style>
             * { box-sizing:border-box; }
             html,body{ height:auto; }
@@ -6049,8 +6734,16 @@ function renderReports() {
 
     const reportSales = getReportSales();
 
-    // إجمالي المبيعات
-    const totalSales = reportSales.reduce((sum, s) => sum + Number(s.total || 0), 0);
+    // "المبيعات" لازم تعني نفس الحاجة هنا وفي الرئيسية.
+    // الرئيسية بتوري الإجمالي (بعنا بكام) والمرتجع تحته منفصل - وده الصح،
+    // لإن طرحهم في بعض بصمت بيخبّي معلومة مهمة. التقرير كان بيوري الصافي
+    // تحت نفس اللابل، فالرقمين كانوا مختلفين على نفس الاسم.
+    const salesOnly = reportSales.filter(s => !s.isReturn);
+    const returnsOnly = reportSales.filter(s => s.isReturn);
+
+    const grossSales = round2(salesOnly.reduce((sum, s) => sum + Number(s.total || 0), 0));
+    const returnsTotal = round2(returnsOnly.reduce((sum, s) => sum + Math.abs(Number(s.total || 0)), 0));
+    const netSales = round2(grossSales - returnsTotal);
 
     // الفواتير (المرتجعات مستبعدة من العدّ، لكنها متضمنة في الإجمالي المالي كخصم)
     const invoiceIds = [...new Set(
@@ -6059,26 +6752,62 @@ function renderReports() {
 
     const invoicesCount = invoiceIds.length;
 
-    // الكمية المباعة
-    const totalQty = reportSales.reduce((sum, s) => sum + Number(s.qty || 0), 0);
+    // الكمية المباعة: القطع والأمتار مبيتجمعوش مع بعض - "47" كانت مالهاش معنى
+    // لما تكون خليط من الاتنين. كل وحدة لوحدها، والأولى في السطر الكبير والباقي تحت
+    // (نفس نمط كارت "إجمالي المخزون" في الرئيسية).
+    const qtyByUnit = {};
+    reportSales.forEach(s => {
+        const u = s.unit || "قطعة";
+        qtyByUnit[u] = round2((qtyByUnit[u] || 0) + Number(s.qty || 0));
+    });
 
-    // متوسط الفاتورة
+    const qtyUnits = Object.keys(qtyByUnit)
+        .filter(u => qtyByUnit[u] !== 0)
+        .sort((a, b) => Math.abs(qtyByUnit[b]) - Math.abs(qtyByUnit[a]));
+
+    // المتوسط على الإجمالي مش الصافي: المرتجع مش فاتورة، فقسمة الصافي على عدد
+    // الفواتير كانت بتخلط مفهومين وتطلّع رقم مالوش معنى (600/2 بدل 670/2).
     const averageInvoice = invoicesCount
-        ? totalSales / invoicesCount
+        ? round2(grossSales / invoicesCount)
         : 0;
 
     //--------------------------------
     // الكروت
     //--------------------------------
 
-    document.getElementById("report-total-sales").textContent =
-        totalSales.toLocaleString() + " جنيه";
+    // الرقم الكبير = الإجمالي (زي الرئيسية بالظبط)، والمرتجع والصافي تحته
+    document.getElementById("report-total-sales").innerHTML =
+        `${grossSales.toLocaleString()} <span class="report-card-unit">جنيه</span>`;
+
+    const returnsEl = document.getElementById("report-returns");
+    const netEl = document.getElementById("report-net");
+
+    if (returnsEl && netEl) {
+        if (returnsTotal > 0) {
+            returnsEl.textContent = `− ${returnsTotal.toLocaleString()} ج مرتجع`;
+            returnsEl.style.display = "block";
+            netEl.textContent = `= ${netSales.toLocaleString()} ج صافي`;
+            netEl.style.display = "block";
+        } else {
+            returnsEl.style.display = "none";
+            netEl.style.display = "none";
+        }
+    }
 
     document.getElementById("report-total-invoices").textContent =
         invoicesCount;
 
-    document.getElementById("report-total-qty").textContent =
-        totalQty;
+    // الوحدة الأكبر في السطر الرئيسي، والباقي في سطر تحتها
+    document.getElementById("report-total-qty").innerHTML = qtyUnits.length
+        ? `${qtyByUnit[qtyUnits[0]].toLocaleString()} <span class="report-card-unit">${esc(qtyUnits[0])}</span>`
+        : "0";
+
+    const qtySubEl = document.getElementById("report-total-qty-sub");
+    if (qtySubEl) {
+        const rest = qtyUnits.slice(1).map(u => `${qtyByUnit[u].toLocaleString()} ${esc(u)}`).join(" • ");
+        qtySubEl.textContent = rest;
+        qtySubEl.style.display = rest ? "block" : "none";
+    }
 
     document.getElementById("report-average").textContent =
         averageInvoice.toLocaleString(undefined,{
@@ -6130,7 +6859,7 @@ function renderReports() {
 
         }
 
-        topProducts[s.name].qty += Number(s.qty);
+        topProducts[s.name].qty = round2(topProducts[s.name].qty + Number(s.qty));
 
     });
 
@@ -6153,7 +6882,7 @@ function renderReports() {
         <div class="top-rank ${medals[i]}">${i+1}</div>
 
         <div style="flex:1; min-width:0;">
-            <div class="top-item-name">${p[0]}</div>
+            <div class="top-item-name">${esc(p[0])}</div>
         </div>
 
         <div class="top-item-value">
@@ -6186,7 +6915,7 @@ function renderReports() {
 
         }
 
-        revenueProducts[s.name].total+=Number(s.total);
+        revenueProducts[s.name].total = round2(revenueProducts[s.name].total + Number(s.total));
 
     });
 
@@ -6209,7 +6938,7 @@ function renderReports() {
         <div class="top-rank ${medals[i]}">${i+1}</div>
 
         <div style="flex:1; min-width:0;">
-            <div class="top-item-name">${p[0]}</div>
+            <div class="top-item-name">${esc(p[0])}</div>
         </div>
 
         <div class="top-item-value">
@@ -6250,9 +6979,9 @@ function renderReports() {
 
         if(summary[s.name]){
 
-            summary[s.name].sold+=Number(s.qty);
+            summary[s.name].sold = round2(summary[s.name].sold + Number(s.qty));
 
-            summary[s.name].revenue+=Number(s.total);
+            summary[s.name].revenue = round2(summary[s.name].revenue + Number(s.total));
 
         }
 
@@ -6269,8 +6998,8 @@ function renderReports() {
         <div class="summary-row">
 
             <div>
-                <div class="summary-row-name">${name}</div>
-                <div class="summary-row-sub">مباع: ${d.sold} ${d.unit} • باقي: ${d.remain} ${d.unit}</div>
+                <div class="summary-row-name">${esc(name)}</div>
+                <div class="summary-row-sub">مباع: ${d.sold} ${esc(d.unit)} • باقي: ${d.remain} ${esc(d.unit)}</div>
             </div>
 
             <div class="summary-row-value">${d.revenue.toLocaleString()} ج</div>
@@ -6337,8 +7066,8 @@ function exportReportExcel(btn){
         });
         reportSales.forEach(s => {
             if (summary[s.name]) {
-                summary[s.name].sold += Number(s.qty);
-                summary[s.name].revenue += Number(s.total);
+                summary[s.name].sold = round2(summary[s.name].sold + Number(s.qty));
+                summary[s.name].revenue = round2(summary[s.name].revenue + Number(s.total));
             }
         });
 
@@ -6440,7 +7169,7 @@ function previewReport(){
     const topProducts = {};
     reportSales.forEach(s => {
         if (!topProducts[s.name]) topProducts[s.name] = { qty: 0, unit: s.unit || "" };
-        topProducts[s.name].qty += Number(s.qty);
+        topProducts[s.name].qty = round2(topProducts[s.name].qty + Number(s.qty));
     });
     const topList = Object.entries(topProducts).sort((a,b)=>b[1].qty-a[1].qty).slice(0,5);
 
@@ -6459,13 +7188,13 @@ function previewReport(){
         ? list.map((p,i)=>`
             <div class="rank-row">
                 <div class="rank-badge ${medalClass[i]}">${i+1}</div>
-                <div class="rank-name">${p[0]}</div>
+                <div class="rank-name">${esc(p[0])}</div>
                 <div class="rank-value">${valueFn(p[1])}</div>
             </div>
         `).join("")
         : `<div class="empty-note">لا توجد بيانات</div>`;
 
-    const topListHTML = renderRankedList(topList, v => `${v.qty} ${v.unit}`);
+    const topListHTML = renderRankedList(topList, v => `${v.qty} ${esc(v.unit)}`);
     const topRevenueHTML = renderRankedList(revenueList, v => `${Number(v.total).toLocaleString()} ج`);
 
     // ===== ملخص الأصناف =====
@@ -6490,10 +7219,27 @@ function previewReport(){
     `).join("") || `<tr><td colspan="4" class="empty-cell">لا توجد بيانات</td></tr>`;
 
     // ===== أرقام الملخص العلوي =====
-    const totalSales = reportSales.reduce((sum,s)=>sum+Number(s.total||0),0);
-    const totalQty = reportSales.reduce((sum,s)=>sum+Number(s.qty||0),0);
+    // نفس تعريف الشاشة بالظبط: الإجمالي والمرتجع والصافي كل واحد لوحده،
+    // والوحدات مش بتتجمع مع بعض.
+    const rSalesOnly = reportSales.filter(s => !s.isReturn);
+    const rReturnsOnly = reportSales.filter(s => s.isReturn);
+
+    const grossSales = round2(rSalesOnly.reduce((sum,s)=>sum+Number(s.total||0),0));
+    const returnsTotal = round2(rReturnsOnly.reduce((sum,s)=>sum+Math.abs(Number(s.total||0)),0));
+    const netSales = round2(grossSales - returnsTotal);
+
+    const rQtyByUnit = {};
+    reportSales.forEach(s => {
+        const u = s.unit || "قطعة";
+        rQtyByUnit[u] = round2((rQtyByUnit[u] || 0) + Number(s.qty || 0));
+    });
+    const totalQtyText = Object.keys(rQtyByUnit)
+        .filter(u => rQtyByUnit[u] !== 0)
+        .map(u => `${rQtyByUnit[u].toLocaleString()} ${u}`)
+        .join(" • ") || "0";
+
     const totalInvoices = invoicesList.length;
-    const averageInvoice = totalInvoices ? totalSales/totalInvoices : 0;
+    const averageInvoice = totalInvoices ? round2(grossSales/totalInvoices) : 0;
 
     const now = new Date();
     const generatedAt = formatReceiptDateTime(now);
@@ -6504,6 +7250,8 @@ function previewReport(){
 <head>
 <meta charset="UTF-8">
 <title>تقرير المبيعات - سجاد علياء</title>
+<!-- مستند منفصل: محتاج خطه بنفسه. الأيقونة SVG مضمّن فمش محتاج خط الأيقونات. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap">
 <style>
     * { box-sizing: border-box; }
     body {
@@ -6633,7 +7381,7 @@ function previewReport(){
 
         <div class="report-header">
             <div class="brand">
-                <div class="logo-dot"><i class="ti ti-carpet"></i></div>
+                <div class="logo-dot">${docIcon('store', 22)}</div>
                 <div>
                     <h1>سجاد علياء - تقرير المبيعات</h1>
                     <p>الفترة: ${getReportFilterLabel()}</p>
@@ -6645,9 +7393,11 @@ function previewReport(){
         </div>
 
         <div class="summary-grid">
-            <div class="summary-card"><div class="label">إجمالي المبيعات</div><div class="value">${totalSales.toLocaleString()} جنيه</div></div>
+            <div class="summary-card"><div class="label">إجمالي المبيعات</div><div class="value">${grossSales.toLocaleString()} جنيه</div></div>
+            ${returnsTotal > 0 ? `<div class="summary-card"><div class="label">المرتجعات</div><div class="value" style="color:#c0392b">− ${returnsTotal.toLocaleString()} جنيه</div></div>
+            <div class="summary-card"><div class="label">صافي المبيعات</div><div class="value">${netSales.toLocaleString()} جنيه</div></div>` : ""}
             <div class="summary-card"><div class="label">عدد الفواتير</div><div class="value">${totalInvoices}</div></div>
-            <div class="summary-card"><div class="label">الكمية المباعة</div><div class="value">${totalQty}</div></div>
+            <div class="summary-card"><div class="label">الكمية المباعة</div><div class="value">${esc(totalQtyText)}</div></div>
             <div class="summary-card"><div class="label">متوسط الفاتورة</div><div class="value">${averageInvoice.toLocaleString(undefined,{maximumFractionDigits:0})} جنيه</div></div>
         </div>
 
@@ -6731,7 +7481,9 @@ async function addItem() {
   const price = parseFloat(priceRaw);
 
   const minRaw = document.getElementById('add-min').value;
-  const min = minRaw === "" ? (unit === "متر" ? 2 : 2)
+  // الافتراضي كان 2 للاتنين (الفرعين كانوا نفس الرقم) رغم إن الـ placeholder
+  // بيقول 1.50 للمتر، و saveEdit بيستخدم 1.5. بقوا متطابقين دلوقتي.
+  const min = minRaw === "" ? (unit === "متر" ? 1.5 : 2)
     : (unit === "متر" ? parseFloat(minRaw) : parseInt(minRaw));
 
   // ===== Validation =====
@@ -6771,7 +7523,8 @@ async function addItem() {
 
   try {
 
-    items.push({ type, name, unit, qty, price, min, img: null });
+    // img مش موجود في الشيت خالص والباك بيتجاهله - حقل ميت
+    items.push({ type, name, unit, qty: round2(qty), price: round2(price), min: round2(min) });
 
     const saved = await saveData(false);
 
@@ -6871,7 +7624,7 @@ if (!Number.isFinite(qty) || qty <= 0) {
       unit: item.unit,
       qty,
       price,
-      total: qty * price
+      total: round2(qty * price)
   });
 
   showToast(`✅ تمت إضافة ${item.name} للفاتورة`);
@@ -6977,7 +7730,7 @@ async function finalizeSale() {
 
     sellCart.forEach(c => {
         const stockItem = items[c.itemIndex];
-        stockItem.qty = Number(stockItem.qty) - c.qty;
+        stockItem.qty = round2(Number(stockItem.qty) - c.qty);
         const line = {
           invoiceId,
           name: c.name,
@@ -6992,7 +7745,7 @@ async function finalizeSale() {
       };
         sales.push(line);
         newLines.push(line);
-        invoiceTotal += c.total;
+        invoiceTotal = round2(invoiceTotal + c.total);
     });
 
     const saved = await saveInvoiceRowsWithFallback(invoiceId, newLines);
@@ -7024,6 +7777,11 @@ async function finalizeSale() {
     renderCart();
     document.getElementById('invoice-note').value = '';
     document.getElementById('sell-qty').value = '';
+
+    // الفاتورة بتتفتح بعد التسجيل مش قبله: دي اللحظة اللي بتديها فيها للعميل،
+    // وبتبقى فاتورة حقيقية ليها رقم ومتسجلة فعلاً - مش معاينة لحاجة ممكن تفشل.
+    // فيها زراير المشاركة والطباعة والتحميل. لو مش عايزها، اقفلها عادي.
+    openReceiptFor(invoiceId);
 
   } finally {
 
@@ -7237,6 +7995,11 @@ async function clearSales(btn) {
 
 let editIndex = -1;
 
+// بنحفظ هوية الصنف (اسم+وحدة) مش رقم مكانه في الـ array.
+// من غير كده: تفتح التعديل، تخرج من التاب دقيقة، ترجع -> loadData بيستبدل items
+// والترتيب يتغير -> تدوس حفظ فتعدّل صنف تاني خالص.
+let editingItemKey = null;
+
 function openEdit(i) {
 
     if (!isAdmin()) {
@@ -7244,14 +8007,16 @@ function openEdit(i) {
         return;
     }
 
-    editIndex = i;
-
     const item = items[i];
+    if (!item) return;
+
+    editIndex = i;
+    editingItemKey = { name: item.name, unit: item.unit || "قطعة" };
 
     document.getElementById('edit-type').value = item.type;
     document.getElementById('edit-unit').value = item.unit || "قطعة";
     document.getElementById('edit-name').value = item.name;
-    document.getElementById('edit-qty').value = item.qty;
+    document.getElementById('edit-qty').value = round2(item.qty);
     document.getElementById('edit-price').value = item.price;
     document.getElementById('edit-min').value = item.min;
 
@@ -7262,6 +8027,8 @@ function openEdit(i) {
 
 function closeEdit() {
   document.getElementById('edit-modal').classList.remove('open');
+  editingItemKey = null;
+  editIndex = -1;
   editIndex = -1;
 }
 
@@ -7270,7 +8037,16 @@ async function saveEdit() {
       alert("ليس لديك صلاحية لتعديل المنتجات");
       return;
   }
-  if (editIndex < 0) return;
+  if (!editingItemKey) return;
+
+  // نلاقي الصنف من هويته دلوقتي، مش من رقمه وقت ما المودال اتفتح
+  const editIdx = findItemIndex(editingItemKey.name, editingItemKey.unit);
+  if (editIdx === -1) {
+    showToast('❌ الصنف ده مبقاش موجود في المخزون. اقفل وافتح من تاني.');
+    renderItems();
+    return;
+  }
+  editIndex = editIdx;
 
   const type = document.getElementById('edit-type').value;
   const unit = document.getElementById('edit-unit').value;
@@ -7335,9 +8111,9 @@ async function saveEdit() {
       type,
       unit,
       name,
-      qty,
-      price,
-      min,
+      qty: round2(qty),
+      price: round2(price),
+      min: round2(min),
     };
 
     const saved = await saveData(false);
@@ -7706,10 +8482,7 @@ async function addUser(btn) {
 
             showToast("✅ تم إضافة المستخدم");
 
-            document.getElementById("new-name").value = "";
-            document.getElementById("new-user").value = "";
-            document.getElementById("new-pass").value = "";
-            document.getElementById("new-role").value = "cashier";
+            closeAddUser();
 
             await loadUsers();
 
@@ -7743,7 +8516,15 @@ function openUserModal(index) {
     document.getElementById("edit-user-username").value = user.username;
     document.getElementById("edit-user-password").value = "";
     document.getElementById("edit-user-role").value = user.role;
-    document.getElementById("edit-user-active").checked = user.active;
+    document.getElementById("edit-user-active").checked = user.active === true;
+
+    onEditRoleChange();
+    onEditActiveChange();
+
+    // مينفعش تمسح حسابك انت وانت واقف فيه
+    const delBtn = document.getElementById("btn-delete-user");
+    const isSelf = currentUser && user.username === currentUser.username;
+    delBtn.style.display = isSelf ? "none" : "";
 
     document.getElementById("user-modal").classList.add("open");
 
@@ -8388,6 +9169,10 @@ function exportSales() {
 
 }
 
+// الـ labels والـ step والـ placeholder بتتظبط حسب الوحدة. كانت بتتنده عند
+// التغيير بس، فأول ما الصفحة تفتح كانت خانة الكمية من غير placeholder.
+changeUnitLabels();
+
 // لما المستخدم يرجع للتاب بعد ما ساب الصفحة مفتوحة، نجيب أحدث بيانات.
 // من غير ده الصفحة المفتوحة من الصبح بتفضل شغالة على داتا الصبح.
 let lastAutoRefresh = Date.now();
@@ -8410,63 +9195,60 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <div id="user-modal" class="modal-overlay">
-
-    <div class="modal">
-
-        <div class="modal-title">
-
-            تعديل المستخدم
-
-            <button class="modal-close" onclick="closeUserModal()">
-                ×
-            </button>
-
-        </div>
-
-        <div class="field">
-            <label>الاسم</label>
-            <input type="text" id="edit-user-name">
-        </div>
-
-        <div class="field">
-            <label>اسم المستخدم</label>
-            <input type="text" id="edit-user-username">
-        </div>
-
-        <div class="field">
-            <label>كلمة المرور (اختياري)</label>
-            <input type="password" id="edit-user-password" placeholder="اتركه لو مش عايز تغيّره">
-        </div>
-
-        <div class="field">
-            <label>الصلاحية</label>
-            <select id="edit-user-role">
-                <option value="admin">Admin</option>
-                <option value="cashier">Cashier</option>
-            </select>
-        </div>
-
-        <div class="field">
-            <label>
-                <input type="checkbox" id="edit-user-active">
-                المستخدم مفعل
-            </label>
-        </div>
-
-        <div class="btn-row">
-
-            <button class="btn-primary" onclick="saveUser(this)">
-                💾 حفظ
-            </button>
-
-            <button class="btn-secondary" onclick="deleteUser(this)">
-                🗑 حذف
-            </button>
-
-        </div>
-
+  <div class="modal">
+    <div class="modal-title">
+      <span>تعديل موظف</span>
+      <button class="modal-close" onclick="closeUserModal()"><i class="ti ti-x"></i></button>
     </div>
 
+    <div class="field"><label>الاسم</label><input type="text" id="edit-user-name"></div>
+
+    <div class="row2">
+      <div class="field"><label>يوزر</label><input type="text" id="edit-user-username" dir="ltr" autocomplete="off"></div>
+      <div class="field">
+        <label>باسورد جديد</label>
+        <input type="password" id="edit-user-password" dir="ltr" placeholder="سيبه فاضي" autocomplete="new-password">
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin:-8px 0 14px;line-height:1.5">
+      سيب خانة الباسورد فاضية لو مش عايز تغيّره.
+    </div>
+
+    <div class="field">
+      <label>الصلاحية</label>
+      <select id="edit-user-role" onchange="onEditRoleChange()">
+        <option value="cashier">كاشير — بيع ومخزون وفواتير</option>
+        <option value="admin">أدمن — كل حاجة + التقارير والإدارة</option>
+      </select>
+    </div>
+
+    <div id="edit-role-warn" style="display:none; background:var(--warning-bg); color:var(--warning); border-radius:10px; padding:10px 12px; font-size:12px; font-weight:600; line-height:1.6; margin-bottom:14px;">
+      <i class="ti ti-alert-circle"></i>
+      الأدمن بيقدر يشوف التقارير والأرباح، ويمسح أصناف وفواتير، ويضيف موظفين.
+    </div>
+
+    <label class="switch-field" for="edit-user-active">
+      <div class="switch-text">
+        <div class="switch-title">الحساب مفعّل</div>
+        <div class="switch-desc" id="edit-active-desc">يقدر يسجّل دخول ويشتغل على النظام</div>
+      </div>
+      <span class="switch">
+        <input type="checkbox" id="edit-user-active" onchange="onEditActiveChange()">
+        <span class="switch-track"></span>
+      </span>
+    </label>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="closeUserModal()">إلغاء</button>
+      <button class="btn-primary" id="btn-save-user" onclick="saveUser(this)" style="margin-top:0">
+        <i class="ti ti-check"></i> حفظ
+      </button>
+    </div>
+
+    <button class="btn-danger-outline" style="width:100%;margin-top:12px" id="btn-delete-user" onclick="deleteUser(this)">
+      <i class="ti ti-trash"></i> حذف الموظف نهائيًا
+    </button>
+  </div>
 </div>
 
 <div id="types-modal" class="modal-overlay centered" style="display:none;">
